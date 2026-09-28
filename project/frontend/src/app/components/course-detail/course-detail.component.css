@@ -1,0 +1,84 @@
+.course-detail-container {
+  padding: 2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.course-header {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.course-header h1 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.description {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+}
+
+.course-info {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.level, .status, .duration {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.level.beginner { background-color: #d4edda; color: #155724; }
+.level.intermediate { background-color: #fff3cd; color: #856404; }
+.level.advanced { background-color: #f8d7da; color: #721c24; }
+
+.status.draft { background-color: #e2e3e5; color: #383d41; }
+.status.published { background-color: #d1ecf1; color: #0c5460; }
+
+.duration {
+  background-color: #e7f3ff;
+  color: #004085;
+}
+
+.course-content {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.modules h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.module-card {
+  border-left: 4px solid #3498db;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.module-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+}
+
+.module-card p {
+  margin: 0;
+  color: #666;
+}

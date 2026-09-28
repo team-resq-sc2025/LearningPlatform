@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Strategy & Automation Architecture</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); overflow: hidden; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .tabs { display: flex; background: #f5f5f5; border-bottom: 2px solid #ddd; flex-wrap: wrap; }
+        .tabs button { flex: 1; min-width: 130px; padding: 12px 15px; border: none; background: #f5f5f5; color: #333; font-size: 12px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; }
+        .tabs button.active { background: white; color: #667eea; border-bottom-color: #667eea; }
+        .content { padding: 40px; max-height: 80vh; overflow-y: auto; }
+        .diagram-section { display: none; }
+        .diagram-section.active { display: block; }
+        .diagram-container { background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; }
+        .section-header { font-size: 2em; color: #667eea; margin-bottom: 20px; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        svg { max-width: 100%; height: auto; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #667eea; color: white; font-weight: 600; }
+        tr:hover { background: #f5f5f5; }
+        footer { background: #f5f5f5; padding: 20px; text-align: center; color: #666; border-top: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Testing Strategy & Automation</h1>
+            <p>Unit, Integration, E2E Testing & Continuous Quality Assurance</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openDiagram(event, 'pyramid')">Test Pyramid</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'unit')">Unit Testing</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'integration')">Integration Testing</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'e2e')">E2E Testing</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'performance')">Performance Testing</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'pipeline')">CI/CD Integration</button>
+        </div>
+
+        <div class="content">
+            <!-- Test Pyramid -->
+            <div id="pyramid" class="diagram-section active">
+                <h2 class="section-header">Testing Pyramid & Strategy</h2>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Pyramid -->
+                        <polygon points="500,50 100,350 900,350" fill="none" stroke="#667eea" stroke-width="3"/>
+
+                        <!-- Unit Tests (Bottom) -->
+                        <polygon points="500,350 150,300 850,300" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+                        <text x="500" y="280" text-anchor="middle" font-size="16" font-weight="bold" fill="#2e7d32">Unit Tests</text>
+                        <text x="500" y="305" text-anchor="middle" font-size="12" fill="#555">70% - Fast, Isolated, Mocked</text>
+                        <text x="500" y="325" text-anchor="middle" font-size="11" fill="#999">Functions, Classes, Utilities</text>
+
+                        <!-- Integration Tests (Middle) -->
+                        <polygon points="500,300 200,200 800,200" fill="#e3f2fd" stroke="#667eea" stroke-width="2"/>
+                        <text x="500" y="220" text-anchor="middle" font-size="14" font-weight="bold" fill="#1565c0">Integration Tests</text>
+                        <text x="500" y="242" text-anchor="middle" font-size="11" fill="#555">20% - Service Interaction, DB, Cache</text>
+                        <text x="500" y="260" text-anchor="middle" font-size="10" fill="#999">API endpoints, workflows, database</text>
+
+                        <!-- E2E Tests (Top) -->
+                        <polygon points="500,200 350,100 650,100" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+                        <text x="500" y="140" text-anchor="middle" font-size="14" font-weight="bold" fill="#e65100">E2E Tests</text>
+                        <text x="500" y="160" text-anchor="middle" font-size="11" fill="#555">10% - Full User Workflows, UI</text>
+                        <text x="500" y="175" text-anchor="middle" font-size="10" fill="#999">Selenium, Playwright, user journeys</text>
+
+                        <!-- Benefits -->
+                        <text x="50" y="420" font-size="13" font-weight="bold">Testing Strategy Benefits:</text>
+                        <rect x="50" y="435" width="900" height="230" fill="#f9f9f9" stroke="#ddd" stroke-width="1" rx="5"/>
+
+                        <text x="70" y="460" font-size="11" font-weight="bold">Unit Tests (Framework: Jest, Vitest, pytest)</text>
+                        <text x="70" y="478" font-size="10">✓ Test individual functions/classes in isolation</text>
+                        <text x="70" y="493" font-size="10">✓ Mock external dependencies (databases, APIs, services)</text>
+                        <text x="70" y="508" font-size="10">✓ Fast execution (&lt;100ms per test)</text>
+                        <text x="70" y="523" font-size="10">✓ High code coverage target: 80-90%</text>
+                        <text x="70" y="538" font-size="10">✓ Run on every commit (pre-commit hook)</text>
+
+                        <text x="70" y="565" font-size="11" font-weight="bold">Integration Tests (Framework: Pytest, Mocha, Jest)</text>
+                        <text x="70" y="583" font-size="10">✓ Test service interactions and workflows</text>
+                        <text x="70" y="598" font-size="10">✓ Use real/containerized databases and caches</text>
+                        <text x="70" y="613" font-size="10">✓ Moderate speed (100ms - 5s per test)</text>
+                        <text x="70" y="628" font-size="10">✓ Run on pull requests (block merge if fail)</text>
+                        <text x="70" y="643" font-size="10">✓ API contract testing, database schema validation</text>
+                    </svg>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Test Level</th>
+                        <th>Scope</th>
+                        <th>Tools</th>
+                        <th>Speed</th>
+                        <th>Coverage %</th>
+                        <th>When to Run</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Unit</strong></td>
+                        <td>Single function/class</td>
+                        <td>Jest, Vitest, pytest, Go testing</td>
+                        <td>&lt;100ms</td>
+                        <td>80-90%</td>
+                        <td>Pre-commit, every push</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration</strong></td>
+                        <td>Service/component interaction</td>
+                        <td>Pytest, Mocha, Testcontainers</td>
+                        <td>100ms-5s</td>
+                        <td>50-70%</td>
+                        <td>PR, before merge</td>
+                    </tr>
+                    <tr>
+                        <td><strong>E2E</strong></td>
+                        <td>Full user workflows</td>
+                        <td>Playwright, Selenium, Cypress</td>
+                        <td>5s-30s each</td>
+                        <td>Critical paths only</td>
+                        <td>Post-merge, nightly</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance</strong></td>
+                        <td>Load, stress, latency</td>
+                        <td>JMeter, k6, Locust</td>
+                        <td>Minutes</td>
+                        <td>N/A</td>
+                        <td>Pre-release, weekly</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Unit Testing -->
+            <div id="unit" class="diagram-section">
+                <h2 class="section-header">Unit Testing Architecture</h2>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+                        <text x="50" y="30" font-size="12" font-weight="bold">Unit Test Structure</text>
+
+                        <rect x="50" y="50" width="900" height="500" fill="#f9f9f9" stroke="#ddd" stroke-width="1" rx="5"/>
+
+                        <!-- Test File Structure -->
+                        <text x="70" y="75" font-size="11" font-weight="bold">✓ Test File Naming Convention:</text>
+                        <text x="70" y="95" font-size="10" fill="#666">src/services/lms.service.ts → tests/services/lms.service.test.ts</text>
+                        <text x="70" y="115" font-size="10" fill="#666">src/utils/validation.ts → tests/utils/validation.test.ts</text>
+
+                        <!-- AAA Pattern -->
+                        <text x="70" y="140" font-size="11" font-weight="bold">✓ Arrange-Act-Assert (AAA) Pattern:</text>
+                        <rect x="70" y="155" width="860" height="90" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="85" y="175" font-size="10" font-weight="bold">Arrange:</text>
+                        <text x="85" y="190" font-size="9">Set up test data, mocks, fixtures</text>
+                        <text x="85" y="210" font-size="10" font-weight="bold">Act:</text>
+                        <text x="85" y="225" font-size="9">Execute the function being tested</text>
+                        <text x="85" y="245" font-size="10" font-weight="bold">Assert:</text>
+                        <text x="85" y="260" font-size="9">Verify the result matches expectations</text>
+
+                        <!-- Mocking Strategy -->
+                        <text x="70" y="290" font-size="11" font-weight="bold">✓ Mocking & Dependency Injection:</text>
+                        <rect x="70" y="305" width="860" height="70" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="85" y="325" font-size="9">• Mock external APIs with Jest/Sinon/Mockito</text>
+                        <text x="85" y="340" font-size="9">• Inject dependencies to make tests deterministic</text>
+                        <text x="85" y="355" font-size="9">• Use fixtures for common test data</text>
+
+                        <!-- Coverage Targets -->
+                        <text x="70" y="410" font-size="11" font-weight="bold">✓ Code Coverage Targets (by service):</text>
+                        <rect x="70" y="425" width="860" height="100" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="85" y="445" font-size="9">LMS Service: 85%+ | Assessment Service: 90%+ | AI/Grading: 80%+</text>
+                        <text x="85" y="460" font-size="9">User Service: 85%+ | Analytics Service: 70%+ | Notification: 75%+</text>
+                        <text x="85" y="475" font-size="9">Critical business logic: 95%+ | Utilities: 80%+</text>
+                        <text x="85" y="490" font-size="9">Test Command: npm run test:unit --coverage</text>
+                        <text x="85" y="505" font-size="9">Fail build if coverage drops below target</text>
+                    </svg>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Component Type</th>
+                        <th>Testing Approach</th>
+                        <th>Mock/Real</th>
+                        <th>Coverage Target</th>
+                    </tr>
+                    <tr>
+                        <td>Business Logic</td>
+                        <td>Unit test each function separately</td>
+                        <td>Mock DB, APIs, external services</td>
+                        <td>90-95%</td>
+                    </tr>
+                    <tr>
+                        <td>Data Validators</td>
+                        <td>Test with valid/invalid inputs</td>
+                        <td>Mock</td>
+                        <td>95%+</td>
+                    </tr>
+                    <tr>
+                        <td>Utilities/Helpers</td>
+                        <td>Test edge cases and error conditions</td>
+                        <td>Mock</td>
+                        <td>85-90%</td>
+                    </tr>
+                    <tr>
+                        <td>API Route Handlers</td>
+                        <td>Integration tests (separate from unit)</td>
+                        <td>Mock services</td>
+                        <td>70-80%</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Integration Testing -->
+            <div id="integration" class="diagram-section">
+                <h2 class="section-header">Integration Testing</h2>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+                        <text x="50" y="30" font-size="12" font-weight="bold">Integration Test Architecture</text>
+
+                        <!-- Test Container Setup -->
+                        <rect x="50" y="50" width="900" height="600" fill="#f9f9f9" stroke="#ddd" stroke-width="1" rx="5"/>
+
+                        <text x="70" y="75" font-size="11" font-weight="bold">✓ Test Environment (Docker Containers):</text>
+                        <rect x="70" y="90" width="200" height="100" fill="#e8f5e9" stroke="#4caf50" stroke-width="1" rx="3"/>
+                        <text x="80" y="110" font-size="10" font-weight="bold">PostgreSQL</text>
+                        <text x="80" y="125" font-size="9">Fresh DB per test</text>
+                        <text x="80" y="140" font-size="9">Migrations auto-run</text>
+                        <text x="80" y="155" font-size="9">Schema validation</text>
+
+                        <rect x="280" y="90" width="200" height="100" fill="#e8f5e9" stroke="#4caf50" stroke-width="1" rx="3"/>
+                        <text x="290" y="110" font-size="10" font-weight="bold">Redis</text>
+                        <text x="290" y="125" font-size="9">In-memory cache</text>
+                        <text x="290" y="140" font-size="9">Test isolation</text>
+                        <text x="290" y="155" font-size="9">Cache invalidation</text>
+
+                        <rect x="490" y="90" width="200" height="100" fill="#e8f5e9" stroke="#4caf50" stroke-width="1" rx="3"/>
+                        <text x="500" y="110" font-size="10" font-weight="bold">Message Queue</text>
+                        <text x="500" y="125" font-size="9">Kafka/RabbitMQ test</text>
+                        <text x="500" y="140" font-size="9">Event consumption</text>
+                        <text x="500" y="155" font-size="9">Async job testing</text>
+
+                        <rect x="700" y="90" width="170" height="100" fill="#e8f5e9" stroke="#4caf50" stroke-width="1" rx="3"/>
+                        <text x="710" y="110" font-size="10" font-weight="bold">Mocked APIs</text>
+                        <text x="710" y="125" font-size="9">External service</text>
+                        <text x="710" y="140" font-size="9">stubs with Wiremock</text>
+                        <text x="710" y="155" font-size="9">or Mocker</text>
+
+                        <!-- Test Scenarios -->
+                        <text x="70" y="220" font-size="11" font-weight="bold">✓ Integration Test Scenarios:</text>
+
+                        <rect x="70" y="235" width="420" height="150" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="85" y="255" font-size="10" font-weight="bold">API Endpoint Testing</text>
+                        <text x="85" y="270" font-size="9">• Test full request → response cycle</text>
+                        <text x="85" y="285" font-size="9">• Verify database persistence</text>
+                        <text x="85" y="300" font-size="9">• Check response status &amp; headers</text>
+                        <text x="85" y="315" font-size="9">• Validate error handling</text>
+                        <text x="85" y="330" font-size="9">• Test with real/test DB data</text>
+                        <text x="85" y="345" font-size="9">• Use testcontainers for isolation</text>
+                        <text x="85" y="360" font-size="9">• Example: POST /courses → DB insert → GET validates</text>
+
+                        <rect x="510" y="235" width="420" height="150" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="525" y="255" font-size="10" font-weight="bold">Service Interaction Testing</text>
+                        <text x="525" y="270" font-size="9">• Test service A calling service B</text>
+                        <text x="525" y="285" font-size="9">• Mock remote service responses</text>
+                        <text x="525" y="300" font-size="9">• Verify circuit breaker behavior</text>
+                        <text x="525" y="315" font-size="9">• Test retry logic with backoff</text>
+                        <text x="525" y="330" font-size="9">• Validate timeout handling</text>
+                        <text x="525" y="345" font-size="9">• Test async event publishing</text>
+                        <text x="525" y="360" font-size="9">• Example: Assessment → AI Grading interaction</text>
+
+                        <!-- Database Testing -->
+                        <text x="70" y="420" font-size="11" font-weight="bold">✓ Database Integration Testing:</text>
+                        <rect x="70" y="435" width="860" height="100" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="85" y="455" font-size="9">• Run migrations in test DB | Verify schema correctness</text>
+                        <text x="85" y="470" font-size="9">• Test SQL queries with real data | Validate indexes work</text>
+                        <text x="85" y="485" font-size="9">• Test transactions &amp; rollback | Test row-level security (RLS)</text>
+                        <text x="85" y="500" font-size="9">• Test data relationships &amp; constraints | Cleanup after each test</text>
+                    </svg>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Test Type</th>
+                        <th>What to Test</th>
+                        <th>Tools</th>
+                        <th>Duration</th>
+                    </tr>
+                    <tr>
+                        <td>API Contract</td>
+                        <td>Request/response formats</td>
+                        <td>Pact, OpenAPI Validator</td>
+                        <td>1-2s per test</td>
+                    </tr>
+                    <tr>
+                        <td>Database Schema</td>
+                        <td>Migrations, relationships</td>
+                        <td>Testcontainers, Postgres</td>
+                        <td>5-10s</td>
+                    </tr>
+                    <tr>
+                        <td>Workflow</td>
+                        <td>Multi-step processes</td>
+                        <td>Pytest, Mocha + fixtures</td>
+                        <td>2-5s per test</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- E2E Testing -->
+            <div id="e2e" class="diagram-section">
+                <h2 class="section-header">End-to-End Testing</h2>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+                        <text x="50" y="30" font-size="12" font-weight="bold">E2E Testing Strategy</text>
+
+                        <rect x="50" y="50" width="900" height="500" fill="#f9f9f9" stroke="#ddd" stroke-width="1" rx="5"/>
+
+                        <text x="70" y="75" font-size="11" font-weight="bold">✓ User Journey Testing (Critical Paths Only):</text>
+
+                        <!-- Journey 1 -->
+                        <rect x="70" y="90" width="420" height="130" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+                        <text x="85" y="110" font-size="10" font-weight="bold">1. Learner Course Enrollment</text>
+                        <text x="85" y="128" font-size="9">Step 1: Login → Step 2: Browse courses</text>
+                        <text x="85" y="143" font-size="9">Step 3: Click Enroll → Step 4: Verify enrollment</text>
+                        <text x="85" y="158" font-size="9">Step 5: Access course materials</text>
+                        <text x="85" y="173" font-size="9">Tool: Playwright, Selenium, Cypress</text>
+                        <text x="85" y="188" font-size="9">Duration: 10-15 seconds</text>
+                        <text x="85" y="203" font-size="9">Frequency: Run on UI changes</text>
+
+                        <!-- Journey 2 -->
+                        <rect x="510" y="90" width="420" height="130" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+                        <text x="525" y="110" font-size="10" font-weight="bold">2. Assessment Submission &amp; Grading</text>
+                        <text x="525" y="128" font-size="9">Step 1: Login → Step 2: Start exam</text>
+                        <text x="525" y="143" font-size="9">Step 3: Answer questions → Step 4: Submit</text>
+                        <text x="525" y="158" font-size="9">Step 5: Wait for grading → Step 6: View results</text>
+                        <text x="525" y="173" font-size="9">Tool: Playwright with wait conditions</text>
+                        <text x="525" y="188" font-size="9">Duration: 30-60 seconds</text>
+                        <text x="525" y="203" font-size="9">Frequency: Nightly runs</text>
+
+                        <!-- Journey 3 -->
+                        <rect x="70" y="240" width="420" height="130" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+                        <text x="85" y="260" font-size="10" font-weight="bold">3. Course Creation (Admin)</text>
+                        <text x="85" y="278" font-size="9">Step 1: Login as trainer → Step 2: Create course</text>
+                        <text x="85" y="293" font-size="9">Step 3: Add modules → Step 4: Upload content</text>
+                        <text x="85" y="308" font-size="9">Step 5: Publish → Step 6: Verify visibility</text>
+                        <text x="85" y="323" font-size="9">Tool: Playwright with visual regression</text>
+                        <text x="85" y="338" font-size="9">Duration: 45-90 seconds</text>
+                        <text x="85" y="353" font-size="9">Frequency: After content changes</text>
+
+                        <!-- Journey 4 -->
+                        <rect x="510" y="240" width="420" height="130" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+                        <text x="525" y="260" font-size="10" font-weight="bold">4. Analytics Dashboard</text>
+                        <text x="525" y="278" font-size="9">Step 1: Login → Step 2: Navigate to analytics</text>
+                        <text x="525" y="293" font-size="9">Step 3: Load dashboards → Step 4: Check metrics</text>
+                        <text x="525" y="308" font-size="9">Step 5: Filter data → Step 6: Download report</text>
+                        <text x="525" y="323" font-size="9">Tool: Playwright + visual comparison</text>
+                        <text x="525" y="338" font-size="9">Duration: 20-30 seconds</text>
+                        <text x="525" y="353" font-size="9">Frequency: Weekly validation</text>
+
+                        <text x="70" y="410" font-size="11" font-weight="bold">✓ E2E Testing Best Practices:</text>
+                        <rect x="70" y="425" width="860" height="100" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="85" y="445" font-size="9">• Use Page Object Model (POM) for maintainability | Avoid brittle selectors (use data-testid)</text>
+                        <text x="85" y="460" font-size="9">• Run tests in real browsers (Chrome, Firefox, Safari) | Test on mobile viewport</text>
+                        <text x="85" y="475" font-size="9">• Implement visual regression testing | Take screenshots for failed tests</text>
+                        <text x="85" y="490" font-size="9">• Run tests against staging environment | Cleanup test data after runs</text>
+                        <text x="85" y="505" font-size="9">• Run critical E2E tests on every deploy | Run full suite nightly</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Performance Testing -->
+            <div id="performance" class="diagram-section">
+                <h2 class="section-header">Performance & Load Testing</h2>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 650" xmlns="http://www.w3.org/2000/svg">
+                        <text x="50" y="30" font-size="12" font-weight="bold">Performance Testing Strategy</text>
+
+                        <rect x="50" y="50" width="900" height="550" fill="#f9f9f9" stroke="#ddd" stroke-width="1" rx="5"/>
+
+                        <!-- Baseline Tests -->
+                        <text x="70" y="75" font-size="11" font-weight="bold">✓ Performance Baselines:</text>
+                        <table style="width: 860px; margin-left: 20px; margin-top: 10px; border-collapse: collapse; background: white;">
+                            <tr style="background: #667eea; color: white;">
+                                <td style="padding: 8px; border: 1px solid #ddd;">Metric</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Target</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Tool</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Frequency</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">API Response (p95)</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">&lt; 500ms</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">K6, JMeter</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Weekly</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Page Load Time</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">&lt; 2 seconds</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Lighthouse, WebPageTest</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Daily</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Concurrent Users (RPS)</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">1000+ RPS sustained</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">K6, Locust</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Pre-release</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Error Rate</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">&lt; 0.1% at baseline</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">APM monitoring</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Continuous</td>
+                            </tr>
+                        </table>
+
+                        <text x="70" y="260" font-size="11" font-weight="bold" style="margin-top: 20px;">✓ Load Test Scenarios:</text>
+
+                        <!-- Scenario 1 -->
+                        <rect x="70" y="275" width="420" height="130" fill="#e3f2fd" stroke="#667eea" stroke-width="1" rx="3"/>
+                        <text x="85" y="295" font-size="10" font-weight="bold">Normal Load (Baseline)</text>
+                        <text x="85" y="310" font-size="9">• 1000 users, 1 hour duration</text>
+                        <text x="85" y="325" font-size="9">• Ramp-up: 100 users/min</text>
+                        <text x="85" y="340" font-size="9">• Metrics: Response time, throughput</text>
+                        <text x="85" y="355" font-size="9">• Pass: &lt;500ms p95, &lt;0.1% errors</text>
+                        <text x="85" y="370" font-size="9">• Run: Weekly</text>
+                        <text x="85" y="385" font-size="9">• Tool: K6, Locust</text>
+
+                        <!-- Scenario 2 -->
+                        <rect x="510" y="275" width="420" height="130" fill="#e3f2fd" stroke="#667eea" stroke-width="1" rx="3"/>
+                        <text x="525" y="295" font-size="10" font-weight="bold">Spike Test (Exam Days)</text>
+                        <text x="525" y="310" font-size="9">• 5000 users suddenly (10x normal)</text>
+                        <text x="525" y="325" font-size="9">• Duration: 30 minutes</text>
+                        <text x="525" y="340" font-size="9">• Metrics: Auto-scaling behavior</text>
+                        <text x="525" y="355" font-size="9">• Pass: Handle spike &lt;2s latency increase</text>
+                        <text x="525" y="370" font-size="9">• Run: Before high-traffic events</text>
+                        <text x="525" y="385" font-size="9">• Tool: K6 with stages</text>
+
+                        <text x="70" y="440" font-size="11" font-weight="bold">✓ Web Performance Monitoring (Real User):</text>
+                        <rect x="70" y="455" width="860" height="110" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="85" y="475" font-size="9">• Core Web Vitals: LCP (&lt;2.5s), FID (&lt;100ms), CLS (&lt;0.1)</text>
+                        <text x="85" y="490" font-size="9">• Synthetic monitoring: Lighthouse automated daily</text>
+                        <text x="85" y="505" font-size="9">• Real User Monitoring (RUM): Google Analytics, DataDog</text>
+                        <text x="85" y="520" font-size="9">• Alert if p95 latency increases &gt;10% or error rate &gt;0.5%</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- CI/CD Pipeline -->
+            <div id="pipeline" class="diagram-section">
+                <h2 class="section-header">CI/CD Integration & Automated Testing</h2>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1100 750" xmlns="http://www.w3.org/2000/svg">
+                        <text x="50" y="30" font-size="12" font-weight="bold">Complete Testing Pipeline</text>
+
+                        <!-- Git Push -->
+                        <rect x="50" y="50" width="120" height="60" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="110" y="85" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Git Push</text>
+
+                        <!-- Pre-commit (Local) -->
+                        <rect x="200" y="50" width="150" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="275" y="70" text-anchor="middle" font-size="10" font-weight="bold">Pre-commit</text>
+                        <text x="275" y="90" text-anchor="middle" font-size="9">(Local, Fast)</text>
+
+                        <!-- Linting & Formatting -->
+                        <rect x="380" y="50" width="150" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="455" y="70" text-anchor="middle" font-size="10" font-weight="bold">Lint &amp; Format</text>
+                        <text x="455" y="90" text-anchor="middle" font-size="9">&lt;1 min</text>
+
+                        <!-- Unit Tests -->
+                        <rect x="560" y="50" width="150" height="60" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="635" y="70" text-anchor="middle" font-size="10" font-weight="bold">Unit Tests</text>
+                        <text x="635" y="90" text-anchor="middle" font-size="9">2-5 min</text>
+
+                        <!-- Build -->
+                        <rect x="740" y="50" width="130" height="60" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="805" y="80" text-anchor="middle" font-size="10" font-weight="bold">Build</text>
+                        <text x="805" y="95" text-anchor="middle" font-size="9">5 min</text>
+
+                        <!-- Pull Request Phase -->
+                        <text x="50" y="155" font-size="11" font-weight="bold">Pull Request Phase (Automated):</text>
+
+                        <rect x="50" y="170" width="820" height="100" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+
+                        <rect x="60" y="180" width="160" height="80" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="140" y="200" text-anchor="middle" font-size="10" font-weight="bold">Integration Tests</text>
+                        <text x="140" y="220" text-anchor="middle" font-size="9">8-15 min</text>
+                        <text x="140" y="235" text-anchor="middle" font-size="8">DB, Cache, APIs</text>
+
+                        <rect x="240" y="180" width="160" height="80" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="320" y="200" text-anchor="middle" font-size="10" font-weight="bold">Coverage Check</text>
+                        <text x="320" y="220" text-anchor="middle" font-size="9">1 min</text>
+                        <text x="320" y="235" text-anchor="middle" font-size="8">Fail if &lt;80%</text>
+
+                        <rect x="420" y="180" width="160" height="80" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="500" y="200" text-anchor="middle" font-size="10" font-weight="bold">SAST Security</text>
+                        <text x="500" y="220" text-anchor="middle" font-size="9">3-5 min</text>
+                        <text x="500" y="235" text-anchor="middle" font-size="8">SonarQube, Snyk</text>
+
+                        <rect x="600" y="180" width="160" height="80" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="680" y="200" text-anchor="middle" font-size="10" font-weight="bold">Code Review Check</text>
+                        <text x="680" y="220" text-anchor="middle" font-size="9">2 reviews req'd</text>
+                        <text x="680" y="235" text-anchor="middle" font-size="8">Approval gates</text>
+
+                        <!-- Staging Phase -->
+                        <text x="50" y="305" font-size="11" font-weight="bold">Staging Phase (Smoke Tests + E2E):</text>
+
+                        <rect x="50" y="320" width="820" height="100" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+
+                        <rect x="60" y="330" width="180" height="80" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="150" y="350" text-anchor="middle" font-size="10" font-weight="bold">Deploy to Staging</text>
+                        <text x="150" y="370" text-anchor="middle" font-size="9">5 min</text>
+                        <text x="150" y="385" text-anchor="middle" font-size="8">Blue-green</text>
+
+                        <rect x="260" y="330" width="180" height="80" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="350" y="350" text-anchor="middle" font-size="10" font-weight="bold">Smoke Tests</text>
+                        <text x="350" y="370" text-anchor="middle" font-size="9">5-10 min</text>
+                        <text x="350" y="385" text-anchor="middle" font-size="8">Basic functionality</text>
+
+                        <rect x="460" y="330" width="180" height="80" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="550" y="350" text-anchor="middle" font-size="10" font-weight="bold">E2E Tests (Critical)</text>
+                        <text x="550" y="370" text-anchor="middle" font-size="9">10-20 min</text>
+                        <text x="550" y="385" text-anchor="middle" font-size="8">User journeys</text>
+
+                        <rect x="660" y="330" width="200" height="80" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="760" y="350" text-anchor="middle" font-size="10" font-weight="bold">Performance Baseline</text>
+                        <text x="760" y="370" text-anchor="middle" font-size="9">10-15 min</text>
+                        <text x="760" y="385" text-anchor="middle" font-size="8">Latency, throughput</text>
+
+                        <!-- Production Phase -->
+                        <text x="50" y="455" font-size="11" font-weight="bold">Production Phase:</text>
+
+                        <rect x="50" y="470" width="820" height="120" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2" rx="5"/>
+
+                        <rect x="60" y="480" width="170" height="100" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="145" y="500" text-anchor="middle" font-size="10" font-weight="bold">Manual Approval</text>
+                        <text x="145" y="520" text-anchor="middle" font-size="9">Required for prod</text>
+                        <text x="145" y="535" text-anchor="middle" font-size="8">Gated release</text>
+                        <text x="145" y="550" text-anchor="middle" font-size="8">Audit trail</text>
+
+                        <rect x="250" y="480" width="170" height="100" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="335" y="500" text-anchor="middle" font-size="10" font-weight="bold">Deploy to Prod</text>
+                        <text x="335" y="520" text-anchor="middle" font-size="9">5-10 min</text>
+                        <text x="335" y="535" text-anchor="middle" font-size="8">Rolling update</text>
+                        <text x="335" y="550" text-anchor="middle" font-size="8">No downtime</text>
+
+                        <rect x="440" y="480" width="170" height="100" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="525" y="500" text-anchor="middle" font-size="10" font-weight="bold">Health Checks</text>
+                        <text x="525" y="520" text-anchor="middle" font-size="9">2 min</text>
+                        <text x="525" y="535" text-anchor="middle" font-size="8">Error rate, latency</text>
+                        <text x="525" y="550" text-anchor="middle" font-size="8">Auto-rollback if fail</text>
+
+                        <rect x="630" y="480" width="230" height="100" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>
+                        <text x="745" y="500" text-anchor="middle" font-size="10" font-weight="bold">Post-Deploy Validation</text>
+                        <text x="745" y="520" text-anchor="middle" font-size="9">5 min smoke tests</text>
+                        <text x="745" y="535" text-anchor="middle" font-size="8">Monitor dashboards</text>
+                        <text x="745" y="550" text-anchor="middle" font-size="8">Alert on anomalies</text>
+
+                        <!-- Continuous -->
+                        <text x="50" y="630" font-size="11" font-weight="bold">Continuous Testing (After Deploy):</text>
+                        <rect x="50" y="645" width="820" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="1" rx="5"/>
+                        <text x="70" y="665" font-size="9">✓ Nightly E2E tests | ✓ Weekly load tests | ✓ Monthly security scans | ✓ Real-time monitoring &amp; alerting</text>
+                    </svg>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Pipeline Stage</th>
+                        <th>Tests Run</th>
+                        <th>Duration</th>
+                        <th>Failure Action</th>
+                        <th>When Run</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Pre-commit</strong></td>
+                        <td>Format, lint, unit</td>
+                        <td>&lt;5 min</td>
+                        <td>Block commit</td>
+                        <td>On every commit</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pull Request</strong></td>
+                        <td>All + security scan</td>
+                        <td>15-30 min</td>
+                        <td>Block merge</td>
+                        <td>On PR creation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Staging</strong></td>
+                        <td>Integration, E2E, perf</td>
+                        <td>30-60 min</td>
+                        <td>Prevent promotion</td>
+                        <td>Before prod deploy</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Production</strong></td>
+                        <td>Smoke tests only</td>
+                        <td>5-10 min</td>
+                        <td>Auto-rollback</td>
+                        <td>After deploy</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Continuous</strong></td>
+                        <td>E2E, load, monitoring</td>
+                        <td>Ongoing</td>
+                        <td>Alert &amp; escalate</td>
+                        <td>24/7 nightly/weekly</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>🧪 Testing Strategy & Automation • Version 1.0 • Last Updated: 2026-09-28</p>
+        </footer>
+    </div>
+
+    <script>
+        function openDiagram(evt, diagramName) {
+            document.querySelectorAll('.diagram-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(diagramName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

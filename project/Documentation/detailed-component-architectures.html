@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Component Architectures</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+        }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+            overflow-x: auto;
+        }
+        .tabs button {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 15px;
+            border: none;
+            background: #f5f5f5;
+            color: #333;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        .tabs button:hover { background: #eee; }
+        .tabs button.active {
+            background: white;
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .content {
+            padding: 40px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .diagram-section { display: none; }
+        .diagram-section.active { display: block; }
+        .diagram-container {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .section-header {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        .subsection-title {
+            font-size: 1.3em;
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        svg { max-width: 100%; height: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover { background: #f5f5f5; }
+        .note {
+            background: #fffde7;
+            border-left: 4px solid #fbc02d;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Detailed Component Architectures</h1>
+            <p>Microservices, Data Flow, and Infrastructure Deep-Dive</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openDiagram(event, 'microservices')">Microservices</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'data-model')">Data Model</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'ai-agents')">AI & Agents</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'message-queue')">Message Queue</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'cache')">Caching Strategy</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'database')">Database</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'devops')">DevOps/CI-CD</button>
+        </div>
+
+        <div class="content">
+            <!-- Microservices Architecture -->
+            <div id="microservices" class="diagram-section active">
+                <h2 class="section-header">Microservices Architecture</h2>
+
+                <h3 class="subsection-title">Service Interaction Diagram</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#667eea"/>
+                            </marker>
+                        </defs>
+
+                        <!-- API Gateway -->
+                        <rect x="450" y="20" width="300" height="60" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="600" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="white">API Gateway & Router</text>
+
+                        <!-- Core Services -->
+                        <rect x="50" y="150" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="140" y="190" text-anchor="middle" font-size="12" font-weight="bold">LMS Service</text>
+                        <text x="140" y="210" text-anchor="middle" font-size="10" fill="#666">Course Mgmt</text>
+
+                        <rect x="270" y="150" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="360" y="190" text-anchor="middle" font-size="12" font-weight="bold">Assessment Service</text>
+                        <text x="360" y="210" text-anchor="middle" font-size="10" fill="#666">Exams & Grading</text>
+
+                        <rect x="490" y="150" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="580" y="190" text-anchor="middle" font-size="12" font-weight="bold">Analytics Service</text>
+                        <text x="580" y="210" text-anchor="middle" font-size="10" fill="#666">Reports & KPIs</text>
+
+                        <rect x="710" y="150" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="800" y="190" text-anchor="middle" font-size="12" font-weight="bold">User Service</text>
+                        <text x="800" y="210" text-anchor="middle" font-size="10" fill="#666">Auth & Mgmt</text>
+
+                        <rect x="930" y="150" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="1020" y="190" text-anchor="middle" font-size="12" font-weight="bold">Notification Service</text>
+                        <text x="1020" y="210" text-anchor="middle" font-size="10" fill="#666">Email & Alerts</text>
+
+                        <!-- Speciality Services -->
+                        <rect x="50" y="300" width="180" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="140" y="340" text-anchor="middle" font-size="12" font-weight="bold">AI/Grading Service</text>
+                        <text x="140" y="360" text-anchor="middle" font-size="10" fill="#666">LLM Integration</text>
+
+                        <rect x="270" y="300" width="180" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="360" y="340" text-anchor="middle" font-size="12" font-weight="bold">Plagiarism Service</text>
+                        <text x="360" y="360" text-anchor="middle" font-size="10" fill="#666">Detection & Scoring</text>
+
+                        <rect x="490" y="300" width="180" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="580" y="340" text-anchor="middle" font-size="12" font-weight="bold">Integration Service</text>
+                        <text x="580" y="360" text-anchor="middle" font-size="10" fill="#666">3rd Party APIs</text>
+
+                        <rect x="710" y="300" width="180" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="800" y="340" text-anchor="middle" font-size="12" font-weight="bold">Content Service</text>
+                        <text x="800" y="360" text-anchor="middle" font-size="10" fill="#666">Storage & Indexing</text>
+
+                        <rect x="930" y="300" width="180" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="1020" y="340" text-anchor="middle" font-size="12" font-weight="bold">Recommendation</text>
+                        <text x="1020" y="360" text-anchor="middle" font-size="10" fill="#666">ML Personalization</text>
+
+                        <!-- Data Layer -->
+                        <rect x="50" y="450" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="140" y="490" text-anchor="middle" font-size="12" font-weight="bold">PostgreSQL</text>
+                        <text x="140" y="510" text-anchor="middle" font-size="10" fill="#666">Primary Data Store</text>
+
+                        <rect x="270" y="450" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="360" y="490" text-anchor="middle" font-size="12" font-weight="bold">Redis Cache</text>
+                        <text x="360" y="510" text-anchor="middle" font-size="10" fill="#666">Session & Hot Data</text>
+
+                        <rect x="490" y="450" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="580" y="490" text-anchor="middle" font-size="12" font-weight="bold">Elasticsearch</text>
+                        <text x="580" y="510" text-anchor="middle" font-size="10" fill="#666">Full-Text Search</text>
+
+                        <rect x="710" y="450" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="800" y="490" text-anchor="middle" font-size="12" font-weight="bold">S3/Object Store</text>
+                        <text x="800" y="510" text-anchor="middle" font-size="10" fill="#666">Content & Files</text>
+
+                        <rect x="930" y="450" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="1020" y="490" text-anchor="middle" font-size="12" font-weight="bold">Kafka/RabbitMQ</text>
+                        <text x="1020" y="510" text-anchor="middle" font-size="10" fill="#666">Event Queue</text>
+
+                        <!-- Event Bus -->
+                        <rect x="50" y="600" width="1060" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="580" y="630" text-anchor="middle" font-size="12" font-weight="bold">Event Bus / Message Queue (Kafka, RabbitMQ, SQS)</text>
+
+                        <!-- Connections from Gateway -->
+                        <line x1="600" y1="80" x2="140" y2="150" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+                        <line x1="600" y1="80" x2="360" y2="150" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+                        <line x1="600" y1="80" x2="580" y2="150" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+                        <line x1="600" y1="80" x2="800" y2="150" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+                        <line x1="600" y1="80" x2="1020" y2="150" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+                    </svg>
+                </div>
+
+                <h3 class="subsection-title">Service Dependencies & Communication</h3>
+                <table>
+                    <tr>
+                        <th>Service</th>
+                        <th>Depends On</th>
+                        <th>Communication</th>
+                        <th>Data Exchange</th>
+                    </tr>
+                    <tr>
+                        <td>LMS Service</td>
+                        <td>User, Content, Analytics</td>
+                        <td>REST, Events</td>
+                        <td>Courses, Enrollments, Progress</td>
+                    </tr>
+                    <tr>
+                        <td>Assessment Service</td>
+                        <td>User, LMS, AI/Grading</td>
+                        <td>REST, Async Jobs</td>
+                        <td>Questions, Submissions, Grades</td>
+                    </tr>
+                    <tr>
+                        <td>AI/Grading Service</td>
+                        <td>Assessment, Plagiarism</td>
+                        <td>Job Queue, Events</td>
+                        <td>Submissions, Rubrics, Feedback</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics Service</td>
+                        <td>LMS, Assessment, User</td>
+                        <td>Event Stream (Kafka)</td>
+                        <td>Activity logs, Performance data</td>
+                    </tr>
+                    <tr>
+                        <td>Recommendation Service</td>
+                        <td>User, LMS, Analytics</td>
+                        <td>gRPC, Cache</td>
+                        <td>User profile, Learning history</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Data Model -->
+            <div id="data-model" class="diagram-section">
+                <h2 class="section-header">Data Model & Entity Relationships</h2>
+
+                <h3 class="subsection-title">Core Entity Relationships (ERD)</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Organizations -->
+                        <rect x="50" y="20" width="150" height="100" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="125" y="45" text-anchor="middle" font-size="12" font-weight="bold">Organization</text>
+                        <text x="125" y="65" text-anchor="middle" font-size="10">org_id (PK)</text>
+                        <text x="125" y="80" text-anchor="middle" font-size="10">name, plan, status</text>
+                        <text x="125" y="95" text-anchor="middle" font-size="10">created_at, updated_at</text>
+
+                        <!-- Users -->
+                        <rect x="250" y="20" width="150" height="100" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="325" y="45" text-anchor="middle" font-size="12" font-weight="bold">User</text>
+                        <text x="325" y="65" text-anchor="middle" font-size="10">user_id (PK)</text>
+                        <text x="325" y="80" text-anchor="middle" font-size="10">org_id (FK), role, email</text>
+                        <text x="325" y="95" text-anchor="middle" font-size="10">profile, status</text>
+
+                        <!-- Courses -->
+                        <rect x="450" y="20" width="150" height="100" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="525" y="45" text-anchor="middle" font-size="12" font-weight="bold">Course</text>
+                        <text x="525" y="65" text-anchor="middle" font-size="10">course_id (PK)</text>
+                        <text x="525" y="80" text-anchor="middle" font-size="10">org_id (FK), title</text>
+                        <text x="525" y="95" text-anchor="middle" font-size="10">status, created_by</text>
+
+                        <!-- Enrollments -->
+                        <rect x="650" y="20" width="150" height="100" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="725" y="45" text-anchor="middle" font-size="12" font-weight="bold">Enrollment</text>
+                        <text x="725" y="65" text-anchor="middle" font-size="10">enrollment_id (PK)</text>
+                        <text x="725" y="80" text-anchor="middle" font-size="10">user_id (FK), course_id (FK)</text>
+                        <text x="725" y="95" text-anchor="middle" font-size="10">status, progress %</text>
+
+                        <!-- Assessments -->
+                        <rect x="850" y="20" width="150" height="100" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="925" y="45" text-anchor="middle" font-size="12" font-weight="bold">Assessment</text>
+                        <text x="925" y="65" text-anchor="middle" font-size="10">assessment_id (PK)</text>
+                        <text x="925" y="80" text-anchor="middle" font-size="10">course_id (FK), title</text>
+                        <text x="925" y="95" text-anchor="middle" font-size="10">type, pass_score</text>
+
+                        <!-- Questions -->
+                        <rect x="1050" y="20" width="130" height="100" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="1115" y="45" text-anchor="middle" font-size="12" font-weight="bold">Question</text>
+                        <text x="1115" y="65" text-anchor="middle" font-size="10">question_id (PK)</text>
+                        <text x="1115" y="80" text-anchor="middle" font-size="10">assessment_id (FK)</text>
+                        <text x="1115" y="95" text-anchor="middle" font-size="10">type, text, points</text>
+
+                        <!-- Submissions -->
+                        <rect x="50" y="200" width="150" height="100" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="125" y="225" text-anchor="middle" font-size="12" font-weight="bold">Submission</text>
+                        <text x="125" y="245" text-anchor="middle" font-size="10">submission_id (PK)</text>
+                        <text x="125" y="260" text-anchor="middle" font-size="10">assessment_id (FK)</text>
+                        <text x="125" y="275" text-anchor="middle" font-size="10">user_id (FK), score</text>
+
+                        <!-- Grades -->
+                        <rect x="250" y="200" width="150" height="100" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="325" y="225" text-anchor="middle" font-size="12" font-weight="bold">Grade</text>
+                        <text x="325" y="245" text-anchor="middle" font-size="10">grade_id (PK)</text>
+                        <text x="325" y="260" text-anchor="middle" font-size="10">submission_id (FK)</text>
+                        <text x="325" y="275" text-anchor="middle" font-size="10">score, feedback</text>
+
+                        <!-- Progress -->
+                        <rect x="450" y="200" width="150" height="100" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="525" y="225" text-anchor="middle" font-size="12" font-weight="bold">Progress</text>
+                        <text x="525" y="245" text-anchor="middle" font-size="10">progress_id (PK)</text>
+                        <text x="525" y="260" text-anchor="middle" font-size="10">user_id (FK), course_id (FK)</text>
+                        <text x="525" y="275" text-anchor="middle" font-size="10">completion %, last_accessed</text>
+
+                        <!-- Certificates -->
+                        <rect x="650" y="200" width="150" height="100" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="725" y="225" text-anchor="middle" font-size="12" font-weight="bold">Certificate</text>
+                        <text x="725" y="245" text-anchor="middle" font-size="10">certificate_id (PK)</text>
+                        <text x="725" y="260" text-anchor="middle" font-size="10">user_id (FK), course_id (FK)</text>
+                        <text x="725" y="275" text-anchor="middle" font-size="10">issued_date, expiry_date</text>
+
+                        <!-- Activity Log -->
+                        <rect x="850" y="200" width="150" height="100" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="925" y="225" text-anchor="middle" font-size="12" font-weight="bold">Activity Log</text>
+                        <text x="925" y="245" text-anchor="middle" font-size="10">log_id (PK)</text>
+                        <text x="925" y="260" text-anchor="middle" font-size="10">user_id (FK), action_type</text>
+                        <text x="925" y="275" text-anchor="middle" font-size="10">timestamp, details</text>
+
+                        <!-- Relationships -->
+                        <line x1="200" y1="70" x2="250" y2="70" stroke="#999" stroke-width="2"/>
+                        <line x1="400" y1="70" x2="450" y2="70" stroke="#999" stroke-width="2"/>
+                        <line x1="600" y1="70" x2="650" y2="70" stroke="#999" stroke-width="2"/>
+                        <line x1="800" y1="70" x2="850" y2="70" stroke="#999" stroke-width="2"/>
+                        <line x1="1000" y1="70" x2="1050" y2="70" stroke="#999" stroke-width="2"/>
+
+                        <!-- Many to Many -->
+                        <line x1="725" y1="120" x2="725" y2="200" stroke="#999" stroke-width="2" stroke-dasharray="5,5"/>
+                        <line x1="525" y1="120" x2="525" y2="200" stroke="#999" stroke-width="2" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+
+                <h3 class="subsection-title">Data Storage by Tier</h3>
+                <table>
+                    <tr>
+                        <th>Data Category</th>
+                        <th>Primary Store</th>
+                        <th>Cache Layer</th>
+                        <th>Backup Strategy</th>
+                    </tr>
+                    <tr>
+                        <td>User & Auth</td>
+                        <td>PostgreSQL</td>
+                        <td>Redis (sessions)</td>
+                        <td>Encrypted backup daily</td>
+                    </tr>
+                    <tr>
+                        <td>Course Content</td>
+                        <td>PostgreSQL + S3</td>
+                        <td>CDN + Redis</td>
+                        <td>Geo-redundant S3</td>
+                    </tr>
+                    <tr>
+                        <td>Submissions</td>
+                        <td>PostgreSQL + S3</td>
+                        <td>None (immutable)</td>
+                        <td>7-year retention</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics</td>
+                        <td>TimescaleDB/ClickHouse</td>
+                        <td>Redis (aggregations)</td>
+                        <td>Snapshot weekly</td>
+                    </tr>
+                    <tr>
+                        <td>Search Index</td>
+                        <td>Elasticsearch</td>
+                        <td>N/A</td>
+                        <td>Snapshot daily</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- AI & Agents -->
+            <div id="ai-agents" class="diagram-section">
+                <h2 class="section-header">AI & Agent Architecture</h2>
+
+                <h3 class="subsection-title">Agent Orchestration Framework</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Request -->
+                        <rect x="450" y="20" width="200" height="50" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="550" y="50" text-anchor="middle" font-size="12" font-weight="bold" fill="white">User Request / AI Task</text>
+
+                        <!-- Orchestrator -->
+                        <rect x="400" y="120" width="300" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="550" y="145" text-anchor="middle" font-size="12" font-weight="bold">LangGraph Orchestrator</text>
+                        <text x="550" y="165" text-anchor="middle" font-size="10" fill="#666">State Management</text>
+                        <text x="550" y="180" text-anchor="middle" font-size="10" fill="#666">Routing & Coordination</text>
+
+                        <!-- Agent 1: Content Generation -->
+                        <rect x="50" y="280" width="160" height="120" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="130" y="305" text-anchor="middle" font-size="11" font-weight="bold">Content Generator</text>
+                        <text x="130" y="325" text-anchor="middle" font-size="9" fill="#666">• Generate Outline</text>
+                        <text x="130" y="340" text-anchor="middle" font-size="9" fill="#666">• Create Lessons</text>
+                        <text x="130" y="355" text-anchor="middle" font-size="9" fill="#666">• Draft Content</text>
+                        <text x="130" y="370" text-anchor="middle" font-size="9" fill="#666">LLM: Claude 3.5</text>
+
+                        <!-- Agent 2: Validator -->
+                        <rect x="250" y="280" width="160" height="120" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="330" y="305" text-anchor="middle" font-size="11" font-weight="bold">Content Validator</text>
+                        <text x="330" y="325" text-anchor="middle" font-size="9" fill="#666">• Fact-Check</text>
+                        <text x="330" y="340" text-anchor="middle" font-size="9" fill="#666">• Plagiarism Scan</text>
+                        <text x="330" y="355" text-anchor="middle" font-size="9" fill="#666">• Quality Score</text>
+                        <text x="330" y="370" text-anchor="middle" font-size="9" fill="#666">LLM: Claude 3</text>
+
+                        <!-- Agent 3: Grader -->
+                        <rect x="450" y="280" width="160" height="120" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="530" y="305" text-anchor="middle" font-size="11" font-weight="bold">Smart Grader</text>
+                        <text x="530" y="325" text-anchor="middle" font-size="9" fill="#666">• Parse Answer</text>
+                        <text x="530" y="340" text-anchor="middle" font-size="9" fill="#666">• Apply Rubric</text>
+                        <text x="530" y="355" text-anchor="middle" font-size="9" fill="#666">• Generate Feedback</text>
+                        <text x="530" y="370" text-anchor="middle" font-size="9" fill="#666">LLM: Claude 3.5</text>
+
+                        <!-- Agent 4: Recommender -->
+                        <rect x="650" y="280" width="160" height="120" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="730" y="305" text-anchor="middle" font-size="11" font-weight="bold">Recommender</text>
+                        <text x="730" y="325" text-anchor="middle" font-size="9" fill="#666">• Analyze Profile</text>
+                        <text x="730" y="340" text-anchor="middle" font-size="9" fill="#666">• Suggest Courses</text>
+                        <text x="730" y="355" text-anchor="middle" font-size="9" fill="#666">• Personalize Path</text>
+                        <text x="730" y="370" text-anchor="middle" font-size="9" fill="#666">ML Model</text>
+
+                        <!-- Agent 5: Predictor -->
+                        <rect x="850" y="280" width="160" height="120" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="930" y="305" text-anchor="middle" font-size="11" font-weight="bold">Success Predictor</text>
+                        <text x="930" y="325" text-anchor="middle" font-size="9" fill="#666">• Analyze Signals</text>
+                        <text x="930" y="340" text-anchor="middle" font-size="9" fill="#666">• Predict Risk</text>
+                        <text x="930" y="355" text-anchor="middle" font-size="9" fill="#666">• Recommend Help</text>
+                        <text x="930" y="370" text-anchor="middle" font-size="9" fill="#666">ML Model</text>
+
+                        <!-- Tools -->
+                        <rect x="50" y="480" width="140" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="120" y="505" text-anchor="middle" font-size="11" font-weight="bold">Content Store</text>
+                        <text x="120" y="525" text-anchor="middle" font-size="9" fill="#666">Read/Write Content</text>
+                        <text x="120" y="540" text-anchor="middle" font-size="9" fill="#666">Vector Search</text>
+
+                        <rect x="220" y="480" width="140" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="290" y="505" text-anchor="middle" font-size="11" font-weight="bold">Plagiarism API</text>
+                        <text x="290" y="525" text-anchor="middle" font-size="9" fill="#666">External API</text>
+                        <text x="290" y="540" text-anchor="middle" font-size="9" fill="#666">Turnitin, Copyscape</text>
+
+                        <rect x="390" y="480" width="140" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="460" y="505" text-anchor="middle" font-size="11" font-weight="bold">Rubric Engine</text>
+                        <text x="460" y="525" text-anchor="middle" font-size="9" fill="#666">Apply Scoring</text>
+                        <text x="460" y="540" text-anchor="middle" font-size="9" fill="#666">Calculate Grades</text>
+
+                        <rect x="560" y="480" width="140" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="630" y="505" text-anchor="middle" font-size="11" font-weight="bold">User Analytics</text>
+                        <text x="630" y="525" text-anchor="middle" font-size="9" fill="#666">Query DB</text>
+                        <text x="630" y="540" text-anchor="middle" font-size="9" fill="#666">ML Embeddings</text>
+
+                        <rect x="730" y="480" width="140" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="800" y="505" text-anchor="middle" font-size="11" font-weight="bold">ML Models</text>
+                        <text x="800" y="525" text-anchor="middle" font-size="9" fill="#666">Recommendation</text>
+                        <text x="800" y="540" text-anchor="middle" font-size="9" fill="#666">Prediction Models</text>
+
+                        <!-- Workflow -->
+                        <rect x="350" y="640" width="400" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="550" y="665" text-anchor="middle" font-size="10" font-weight="bold">Workflow: Sequential Chain → Validation Loop → Final Approval</text>
+
+                        <!-- Arrows -->
+                        <line x1="550" y1="200" x2="130" y2="280" stroke="#999" stroke-width="1.5" stroke-dasharray="5,5"/>
+                        <line x1="550" y1="200" x2="330" y2="280" stroke="#999" stroke-width="1.5" stroke-dasharray="5,5"/>
+                        <line x1="550" y1="200" x2="530" y2="280" stroke="#999" stroke-width="1.5" stroke-dasharray="5,5"/>
+                        <line x1="550" y1="200" x2="730" y2="280" stroke="#999" stroke-width="1.5" stroke-dasharray="5,5"/>
+                        <line x1="550" y1="200" x2="930" y2="280" stroke="#999" stroke-width="1.5" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+
+                <h3 class="subsection-title">Agent Types & LLM Models</h3>
+                <table>
+                    <tr>
+                        <th>Agent Type</th>
+                        <th>LLM Model</th>
+                        <th>Primary Task</th>
+                        <th>Tools Available</th>
+                        <th>Decision Logic</th>
+                    </tr>
+                    <tr>
+                        <td>Content Generator</td>
+                        <td>Claude 3.5 Sonnet</td>
+                        <td>Course outline, lesson content</td>
+                        <td>Content store, templates</td>
+                        <td>Sequential chain</td>
+                    </tr>
+                    <tr>
+                        <td>Validator</td>
+                        <td>Claude 3 Opus</td>
+                        <td>Fact-check, quality assess</td>
+                        <td>Web search, plagiarism API</td>
+                        <td>Agentic loop with feedback</td>
+                    </tr>
+                    <tr>
+                        <td>Smart Grader</td>
+                        <td>Claude 3.5 Sonnet</td>
+                        <td>Grade essays, code review</td>
+                        <td>Rubric engine, code executor</td>
+                        <td>Template + reasoning</td>
+                    </tr>
+                    <tr>
+                        <td>Recommender</td>
+                        <td>Fine-tuned Embedding Model</td>
+                        <td>Suggest learning paths</td>
+                        <td>User analytics, vector DB</td>
+                        <td>Collaborative filtering</td>
+                    </tr>
+                    <tr>
+                        <td>Success Predictor</td>
+                        <td>XGBoost / Neural Net</td>
+                        <td>Predict learner success</td>
+                        <td>Analytics DB, alerts</td>
+                        <td>Classification + threshold</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Message Queue -->
+            <div id="message-queue" class="diagram-section">
+                <h2 class="section-header">Message Queue & Event Architecture</h2>
+
+                <h3 class="subsection-title">Kafka Event Flow</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Producers -->
+                        <text x="50" y="30" font-size="12" font-weight="bold">PRODUCERS</text>
+
+                        <rect x="50" y="50" width="120" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="110" y="85" text-anchor="middle" font-size="10" font-weight="bold">LMS Service</text>
+
+                        <rect x="200" y="50" width="120" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="260" y="85" text-anchor="middle" font-size="10" font-weight="bold">Assessment Service</text>
+
+                        <rect x="350" y="50" width="120" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="410" y="85" text-anchor="middle" font-size="10" font-weight="bold">User Service</text>
+
+                        <rect x="500" y="50" width="120" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="560" y="85" text-anchor="middle" font-size="10" font-weight="bold">AI Service</text>
+
+                        <!-- Kafka Topics -->
+                        <text x="50" y="170" font-size="12" font-weight="bold">KAFKA TOPICS (Event Bus)</text>
+
+                        <rect x="50" y="190" width="100" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="100" y="220" text-anchor="middle" font-size="10" font-weight="bold">course.events</text>
+
+                        <rect x="180" y="190" width="100" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="230" y="220" text-anchor="middle" font-size="10" font-weight="bold">assessment.events</text>
+
+                        <rect x="310" y="190" width="100" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="360" y="220" text-anchor="middle" font-size="10" font-weight="bold">user.events</text>
+
+                        <rect x="440" y="190" width="100" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="490" y="220" text-anchor="middle" font-size="10" font-weight="bold">grading.jobs</text>
+
+                        <rect x="570" y="190" width="100" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="620" y="220" text-anchor="middle" font-size="10" font-weight="bold">analytics.stream</text>
+
+                        <rect x="700" y="190" width="100" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="750" y="220" text-anchor="middle" font-size="10" font-weight="bold">notifications</text>
+
+                        <!-- Consumers -->
+                        <text x="50" y="310" font-size="12" font-weight="bold">CONSUMERS</text>
+
+                        <rect x="50" y="330" width="120" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="110" y="355" text-anchor="middle" font-size="10" font-weight="bold">Analytics</text>
+                        <text x="110" y="375" text-anchor="middle" font-size="9" fill="#666">Process all events</text>
+                        <text x="110" y="390" text-anchor="middle" font-size="9" fill="#666">Group: analytics-svc</text>
+
+                        <rect x="200" y="330" width="120" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="260" y="355" text-anchor="middle" font-size="10" font-weight="bold">Notification</text>
+                        <text x="260" y="375" text-anchor="middle" font-size="9" fill="#666">Send email/alerts</text>
+                        <text x="260" y="390" text-anchor="middle" font-size="9" fill="#666">Group: notif-svc</text>
+
+                        <rect x="350" y="330" width="120" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="410" y="355" text-anchor="middle" font-size="10" font-weight="bold">Grading Worker</text>
+                        <text x="410" y="375" text-anchor="middle" font-size="9" fill="#666">Grade submissions</text>
+                        <text x="410" y="390" text-anchor="middle" font-size="9" fill="#666">Group: grader-pool</text>
+
+                        <rect x="500" y="330" width="120" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="560" y="355" text-anchor="middle" font-size="10" font-weight="bold">Search Indexer</text>
+                        <text x="560" y="375" text-anchor="middle" font-size="9" fill="#666">Update ES index</text>
+                        <text x="560" y="390" text-anchor="middle" font-size="9" fill="#666">Group: indexer</text>
+
+                        <!-- Connections -->
+                        <line x1="110" y1="110" x2="100" y2="190" stroke="#667eea" stroke-width="1.5"/>
+                        <line x1="260" y1="110" x2="230" y2="190" stroke="#667eea" stroke-width="1.5"/>
+                        <line x1="410" y1="110" x2="360" y2="190" stroke="#667eea" stroke-width="1.5"/>
+                        <line x1="560" y1="110" x2="490" y2="190" stroke="#667eea" stroke-width="1.5"/>
+
+                        <!-- Consumer connections -->
+                        <path d="M 100 240 Q 100 280 110 330" stroke="#4caf50" stroke-width="1.5" fill="none" stroke-dasharray="5,5"/>
+                        <path d="M 230 240 Q 230 280 260 330" stroke="#4caf50" stroke-width="1.5" fill="none" stroke-dasharray="5,5"/>
+                        <path d="M 490 240 Q 490 280 410 330" stroke="#4caf50" stroke-width="1.5" fill="none" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+
+                <h3 class="subsection-title">Event Topics & Schemas</h3>
+                <table>
+                    <tr>
+                        <th>Topic</th>
+                        <th>Producer</th>
+                        <th>Consumers</th>
+                        <th>Key Events</th>
+                        <th>Retention</th>
+                    </tr>
+                    <tr>
+                        <td>course.events</td>
+                        <td>LMS Service</td>
+                        <td>Analytics, Search Indexer</td>
+                        <td>course.created, course.updated, content.added</td>
+                        <td>30 days</td>
+                    </tr>
+                    <tr>
+                        <td>assessment.events</td>
+                        <td>Assessment Service</td>
+                        <td>Analytics, Notification</td>
+                        <td>exam.started, exam.submitted</td>
+                        <td>30 days</td>
+                    </tr>
+                    <tr>
+                        <td>grading.jobs</td>
+                        <td>Assessment Service</td>
+                        <td>Grading Workers (Pool)</td>
+                        <td>job.submitted, job.completed</td>
+                        <td>7 days</td>
+                    </tr>
+                    <tr>
+                        <td>analytics.stream</td>
+                        <td>All Services</td>
+                        <td>Analytics Service, Real-time Dashboard</td>
+                        <td>User activity, performance metrics</td>
+                        <td>90 days</td>
+                    </tr>
+                    <tr>
+                        <td>notifications</td>
+                        <td>Multiple Services</td>
+                        <td>Notification Service</td>
+                        <td>email.send, sms.send, alert.create</td>
+                        <td>7 days</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Cache Strategy -->
+            <div id="cache" class="diagram-section">
+                <h2 class="section-header">Caching Strategy & Multi-Layer Cache</h2>
+
+                <h3 class="subsection-title">Cache Layer Architecture</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Browser -->
+                        <rect x="50" y="20" width="150" height="60" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="125" y="55" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Browser Cache</text>
+                        <text x="125" y="75" text-anchor="middle" font-size="9" fill="white">1-7 days</text>
+
+                        <!-- CDN -->
+                        <rect x="250" y="20" width="150" height="60" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="325" y="55" text-anchor="middle" font-size="12" font-weight="bold" fill="white">CDN Cache</text>
+                        <text x="325" y="75" text-anchor="middle" font-size="9" fill="white">(Cloudflare, CloudFront)</text>
+
+                        <!-- API Gateway Cache -->
+                        <rect x="450" y="20" width="150" height="60" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="525" y="55" text-anchor="middle" font-size="12" font-weight="bold" fill="white">API Gateway Cache</text>
+                        <text x="525" y="75" text-anchor="middle" font-size="9" fill="white">1-5 minutes</text>
+
+                        <!-- Application Cache -->
+                        <rect x="650" y="20" width="150" height="60" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="725" y="55" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Redis (In-Memory)</text>
+                        <text x="725" y="75" text-anchor="middle" font-size="9" fill="white">30s - 24hrs</text>
+
+                        <!-- Database Query Cache -->
+                        <rect x="850" y="20" width="150" height="60" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="925" y="55" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Query Cache</text>
+                        <text x="925" y="75" text-anchor="middle" font-size="9" fill="white">5-60 seconds</text>
+
+                        <!-- Request Flow -->
+                        <text x="50" y="140" font-size="13" font-weight="bold">Request Flow (L1 → L2 → L3 → Database)</text>
+
+                        <!-- User Request -->
+                        <rect x="50" y="170" width="900" height="40" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="500" y="195" text-anchor="middle" font-size="11">User Request (e.g., Get Course Content)</text>
+
+                        <!-- Cache Levels -->
+                        <rect x="50" y="250" width="180" height="100" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="140" y="275" text-anchor="middle" font-size="11" font-weight="bold">L1: Browser</text>
+                        <text x="140" y="295" text-anchor="middle" font-size="9">Static assets, pages</text>
+                        <text x="140" y="310" text-anchor="middle" font-size="9">localStorage, sessionStorage</text>
+                        <text x="140" y="330" text-anchor="middle" font-size="10" font-weight="bold">Hit: 40%</text>
+
+                        <rect x="280" y="250" width="180" height="100" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="370" y="275" text-anchor="middle" font-size="11" font-weight="bold">L2: CDN</text>
+                        <text x="370" y="295" text-anchor="middle" font-size="9">Static files, videos</text>
+                        <text x="370" y="310" text-anchor="middle" font-size="9">Global edge locations</text>
+                        <text x="370" y="330" text-anchor="middle" font-size="10" font-weight="bold">Hit: 25%</text>
+
+                        <rect x="510" y="250" width="180" height="100" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="600" y="275" text-anchor="middle" font-size="11" font-weight="bold">L3: Redis</text>
+                        <text x="600" y="295" text-anchor="middle" font-size="9">Courses, user profiles</text>
+                        <text x="600" y="310" text-anchor="middle" font-size="9">Sessions, hot data</text>
+                        <text x="600" y="330" text-anchor="middle" font-size="10" font-weight="bold">Hit: 80%</text>
+
+                        <rect x="740" y="250" width="180" height="100" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="830" y="275" text-anchor="middle" font-size="11" font-weight="bold">L4: Database</text>
+                        <text x="830" y="295" text-anchor="middle" font-size="9">PostgreSQL primary</text>
+                        <text x="830" y="310" text-anchor="middle" font-size="9">Queries, inserts</text>
+                        <text x="830" y="330" text-anchor="middle" font-size="10" font-weight="bold">100%</text>
+
+                        <!-- Cache Patterns -->
+                        <text x="50" y="420" font-size="13" font-weight="bold">Caching Patterns</text>
+
+                        <rect x="50" y="450" width="200" height="120" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="150" y="470" text-anchor="middle" font-size="11" font-weight="bold">Cache-Aside</text>
+                        <text x="150" y="490" text-anchor="middle" font-size="9">1. Check cache</text>
+                        <text x="150" y="505" text-anchor="middle" font-size="9">2. If miss, query DB</text>
+                        <text x="150" y="520" text-anchor="middle" font-size="9">3. Store in cache</text>
+                        <text x="150" y="540" text-anchor="middle" font-size="9">Use: Course content</text>
+
+                        <rect x="300" y="450" width="200" height="120" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="400" y="470" text-anchor="middle" font-size="11" font-weight="bold">Write-Through</text>
+                        <text x="400" y="490" text-anchor="middle" font-size="9">1. Write to cache</text>
+                        <text x="400" y="505" text-anchor="middle" font-size="9">2. Write to DB</text>
+                        <text x="400" y="520" text-anchor="middle" font-size="9">3. Return response</text>
+                        <text x="400" y="540" text-anchor="middle" font-size="9">Use: User sessions</text>
+
+                        <rect x="550" y="450" width="200" height="120" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="650" y="470" text-anchor="middle" font-size="11" font-weight="bold">Write-Behind</text>
+                        <text x="650" y="490" text-anchor="middle" font-size="9">1. Write to cache</text>
+                        <text x="650" y="505" text-anchor="middle" font-size="9">2. Async write DB</text>
+                        <text x="650" y="520" text-anchor="middle" font-size="9">3. Return immediately</text>
+                        <text x="650" y="540" text-anchor="middle" font-size="9">Use: Analytics events</text>
+                    </svg>
+                </div>
+
+                <h3 class="subsection-title">Cache Key Strategy</h3>
+                <table>
+                    <tr>
+                        <th>Data Type</th>
+                        <th>Cache Key Pattern</th>
+                        <th>TTL</th>
+                        <th>Invalidation</th>
+                    </tr>
+                    <tr>
+                        <td>Course Content</td>
+                        <td>course:{course_id}:content:{version}</td>
+                        <td>24 hours</td>
+                        <td>On course update</td>
+                    </tr>
+                    <tr>
+                        <td>User Profile</td>
+                        <td>user:{user_id}:profile</td>
+                        <td>1 hour</td>
+                        <td>On user update</td>
+                    </tr>
+                    <tr>
+                        <td>Enrollment</td>
+                        <td>user:{user_id}:enrollments</td>
+                        <td>30 minutes</td>
+                        <td>On enroll/unenroll</td>
+                    </tr>
+                    <tr>
+                        <td>Assessment Results</td>
+                        <td>assessment:{id}:results</td>
+                        <td>Permanent</td>
+                        <td>Never (immutable)</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics Aggregates</td>
+                        <td>analytics:{metric}:{period}</td>
+                        <td>5 minutes</td>
+                        <td>Time-based expiry</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Database -->
+            <div id="database" class="diagram-section">
+                <h2 class="section-header">Database Architecture & Replication</h2>
+
+                <h3 class="subsection-title">Primary-Replica Replication Setup</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Primary -->
+                        <rect x="350" y="30" width="300" height="100" fill="#e3f2fd" stroke="#667eea" stroke-width="3" rx="5"/>
+                        <text x="500" y="60" text-anchor="middle" font-size="14" font-weight="bold">Primary Database</text>
+                        <text x="500" y="85" text-anchor="middle" font-size="11">Reads + Writes</text>
+                        <text x="500" y="105" text-anchor="middle" font-size="10" fill="#666">Write-Ahead Log (WAL)</text>
+
+                        <!-- Replica 1 -->
+                        <rect x="50" y="200" width="220" height="120" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="160" y="230" text-anchor="middle" font-size="12" font-weight="bold">Read Replica 1</text>
+                        <text x="160" y="255" text-anchor="middle" font-size="10">Same AZ as Primary</text>
+                        <text x="160" y="275" text-anchor="middle" font-size="10" fill="#666">Replication Lag: &lt;100ms</text>
+                        <text x="160" y="295" text-anchor="middle" font-size="10" fill="#666">Read-heavy queries</text>
+
+                        <!-- Replica 2 -->
+                        <rect x="330" y="200" width="220" height="120" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="440" y="230" text-anchor="middle" font-size="12" font-weight="bold">Read Replica 2</text>
+                        <text x="440" y="255" text-anchor="middle" font-size="10">Different AZ</text>
+                        <text x="440" y="275" text-anchor="middle" font-size="10" fill="#666">Replication Lag: 200ms</text>
+                        <text x="440" y="295" text-anchor="middle" font-size="10" fill="#666">Analytics queries</text>
+
+                        <!-- Replica 3 -->
+                        <rect x="610" y="200" width="220" height="120" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="720" y="230" text-anchor="middle" font-size="12" font-weight="bold">Read Replica 3</text>
+                        <text x="720" y="255" text-anchor="middle" font-size="10">Different region (DR)</text>
+                        <text x="720" y="275" text-anchor="middle" font-size="10" fill="#666">Replication Lag: 1-5s</text>
+                        <text x="720" y="295" text-anchor="middle" font-size="10" fill="#666">Backup replication</text>
+
+                        <!-- Replication Stream -->
+                        <path d="M 500 130 L 160 200" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+                        <path d="M 500 130 L 440 200" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+                        <path d="M 500 130 L 720 200" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+
+                        <!-- Backup -->
+                        <rect x="200" y="400" width="250" height="100" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="325" y="430" text-anchor="middle" font-size="12" font-weight="bold">Daily Backup</text>
+                        <text x="325" y="455" text-anchor="middle" font-size="10">Snapshots to S3</text>
+                        <text x="325" y="475" text-anchor="middle" font-size="10" fill="#666">Retention: 30 days hot</text>
+                        <text x="325" y="495" text-anchor="middle" font-size="10" fill="#666">7 years cold archive</text>
+
+                        <!-- Failover -->
+                        <rect x="550" y="400" width="250" height="100" fill="#ffcdd2" stroke="#c62828" stroke-width="2" rx="5"/>
+                        <text x="675" y="430" text-anchor="middle" font-size="12" font-weight="bold">Failover Mechanism</text>
+                        <text x="675" y="455" text-anchor="middle" font-size="10">Auto-promotion of Replica</text>
+                        <text x="675" y="475" text-anchor="middle" font-size="10" fill="#666">RTO: &lt; 5 minutes</text>
+                        <text x="675" y="495" text-anchor="middle" font-size="10" fill="#666">RPO: &lt; 1 minute</text>
+
+                        <!-- Backup arrow -->
+                        <line x1="500" y1="130" x2="325" y2="400" stroke="#ff9800" stroke-width="2" stroke-dasharray="5,5"/>
+
+                        <!-- Recovery arrow -->
+                        <line x1="720" y1="320" x2="675" y2="400" stroke="#c62828" stroke-width="2" stroke-dasharray="5,5"/>
+
+                        <!-- Legend -->
+                        <text x="50" y="550" font-size="10" fill="#666">Write Scaling: Primary handles 100% writes</text>
+                        <text x="50" y="570" font-size="10" fill="#666">Read Scaling: Distribute reads across 3 replicas (3x read capacity)</text>
+                    </svg>
+                </div>
+
+                <h3 class="subsection-title">Database Sharding Strategy (Future Scaling)</h3>
+                <table>
+                    <tr>
+                        <th>Shard Key</th>
+                        <th>Distribution</th>
+                        <th>Use Case</th>
+                        <th>Expected Shards</th>
+                    </tr>
+                    <tr>
+                        <td>organization_id</td>
+                        <td>Hash-based (Consistent Hash)</td>
+                        <td>Tenant isolation, compliance</td>
+                        <td>1-10 (per tier)</td>
+                    </tr>
+                    <tr>
+                        <td>user_id</td>
+                        <td>Range-based (ID ranges)</td>
+                        <td>User activity, scaling</td>
+                        <td>10-100</td>
+                    </tr>
+                    <tr>
+                        <td>created_at</td>
+                        <td>Time-based (monthly/quarterly)</td>
+                        <td>Historical data archival</td>
+                        <td>1 per time period</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- DevOps/CI-CD -->
+            <div id="devops" class="diagram-section">
+                <h2 class="section-header">DevOps, CI/CD Pipeline & Infrastructure</h2>
+
+                <h3 class="subsection-title">Continuous Integration & Deployment Pipeline</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Code Push -->
+                        <rect x="50" y="30" width="120" height="60" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="110" y="65" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Git Push</text>
+
+                        <!-- Build -->
+                        <rect x="220" y="30" width="120" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="280" y="50" text-anchor="middle" font-size="11" font-weight="bold">Build</text>
+                        <text x="280" y="70" text-anchor="middle" font-size="9">Docker Image</text>
+
+                        <!-- Test -->
+                        <rect x="390" y="30" width="120" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="450" y="50" text-anchor="middle" font-size="11" font-weight="bold">Test</text>
+                        <text x="450" y="70" text-anchor="middle" font-size="9">Unit, Integration</text>
+
+                        <!-- Security Scan -->
+                        <rect x="560" y="30" width="120" height="60" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="620" y="50" text-anchor="middle" font-size="11" font-weight="bold">Security</text>
+                        <text x="620" y="70" text-anchor="middle" font-size="9">SAST, Dependencies</text>
+
+                        <!-- Container Registry -->
+                        <rect x="730" y="30" width="130" height="60" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="795" y="50" text-anchor="middle" font-size="11" font-weight="bold">Container</text>
+                        <text x="795" y="70" text-anchor="middle" font-size="9">Registry (ECR)</text>
+
+                        <!-- Deploy Path -->
+                        <text x="50" y="130" font-size="12" font-weight="bold">DEPLOYMENT PATH</text>
+
+                        <!-- Dev -->
+                        <rect x="50" y="160" width="140" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="120" y="185" text-anchor="middle" font-size="11" font-weight="bold">Dev Environment</text>
+                        <text x="120" y="210" text-anchor="middle" font-size="9" fill="#666">Continuous deploy</text>
+                        <text x="120" y="230" text-anchor="middle" font-size="9" fill="#666">5 min - 1 hour</text>
+
+                        <!-- Staging -->
+                        <rect x="260" y="160" width="140" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="330" y="185" text-anchor="middle" font-size="11" font-weight="bold">Staging</text>
+                        <text x="330" y="210" text-anchor="middle" font-size="9" fill="#666">Smoke tests</text>
+                        <text x="330" y="230" text-anchor="middle" font-size="9" fill="#666">1-4 hours</text>
+
+                        <!-- Performance -->
+                        <rect x="470" y="160" width="140" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="540" y="185" text-anchor="middle" font-size="11" font-weight="bold">Load Testing</text>
+                        <text x="540" y="210" text-anchor="middle" font-size="9" fill="#666">1000+ RPS</text>
+                        <text x="540" y="230" text-anchor="middle" font-size="9" fill="#666">30 minutes</text>
+
+                        <!-- Production -->
+                        <rect x="680" y="160" width="140" height="80" fill="#c8e6c9" stroke="#2e7d32" stroke-width="3" rx="5"/>
+                        <text x="750" y="185" text-anchor="middle" font-size="11" font-weight="bold">Production</text>
+                        <text x="750" y="210" text-anchor="middle" font-size="9" fill="#666">Blue-Green Deploy</text>
+                        <text x="750" y="230" text-anchor="middle" font-size="9" fill="#666">0 downtime</text>
+
+                        <!-- Monitoring & Rollback -->
+                        <rect x="50" y="320" width="770" height="120" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="435" y="345" text-anchor="middle" font-size="12" font-weight="bold">Post-Deployment Monitoring</text>
+
+                        <rect x="70" y="365" width="140" height="50" fill="white" stroke="#999" stroke-width="1" rx="3"/>
+                        <text x="140" y="390" text-anchor="middle" font-size="10">Error Rate Baseline</text>
+                        <text x="140" y="405" text-anchor="middle" font-size="9">&lt; 0.5%</text>
+
+                        <rect x="240" y="365" width="140" height="50" fill="white" stroke="#999" stroke-width="1" rx="3"/>
+                        <text x="310" y="390" text-anchor="middle" font-size="10">Latency P95</text>
+                        <text x="310" y="405" text-anchor="middle" font-size="9">&lt; 500ms</text>
+
+                        <rect x="410" y="365" width="140" height="50" fill="white" stroke="#999" stroke-width="1" rx="3"/>
+                        <text x="480" y="390" text-anchor="middle" font-size="10">CPU Utilization</text>
+                        <text x="480" y="405" text-anchor="middle" font-size="9">&lt; 70%</text>
+
+                        <rect x="580" y="365" width="140" height="50" fill="white" stroke="#999" stroke-width="1" rx="3"/>
+                        <text x="650" y="390" text-anchor="middle" font-size="10">Auto-Rollback</text>
+                        <text x="650" y="405" text-anchor="middle" font-size="9">If failed (5min)</text>
+
+                        <!-- Infrastructure -->
+                        <text x="50" y="510" font-size="12" font-weight="bold">INFRASTRUCTURE AS CODE</text>
+
+                        <rect x="50" y="540" width="200" height="130" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="150" y="565" text-anchor="middle" font-size="11" font-weight="bold">Terraform</text>
+                        <text x="150" y="585" text-anchor="middle" font-size="9">• VPC & Networks</text>
+                        <text x="150" y="600" text-anchor="middle" font-size="9">• Databases</text>
+                        <text x="150" y="615" text-anchor="middle" font-size="9">• Load Balancers</text>
+                        <text x="150" y="630" text-anchor="middle" font-size="9">• Auto-scaling groups</text>
+                        <text x="150" y="645" text-anchor="middle" font-size="9">• IAM roles</text>
+
+                        <rect x="310" y="540" width="200" height="130" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="410" y="565" text-anchor="middle" font-size="11" font-weight="bold">Kubernetes</text>
+                        <text x="410" y="585" text-anchor="middle" font-size="9">• Container Orchestration</text>
+                        <text x="410" y="600" text-anchor="middle" font-size="9">• Auto-scaling (HPA)</text>
+                        <text x="410" y="615" text-anchor="middle" font-size="9">• Service Mesh (Istio)</text>
+                        <text x="410" y="630" text-anchor="middle" font-size="9">• Persistent Volumes</text>
+                        <text x="410" y="645" text-anchor="middle" font-size="9">• Network Policies</text>
+
+                        <rect x="570" y="540" width="200" height="130" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="670" y="565" text-anchor="middle" font-size="11" font-weight="bold">Helm & ArgoCD</text>
+                        <text x="670" y="585" text-anchor="middle" font-size="9">• Package Management</text>
+                        <text x="670" y="600" text-anchor="middle" font-size="9">• GitOps Workflow</text>
+                        <text x="670" y="615" text-anchor="middle" font-size="9">• Declarative Deploy</text>
+                        <text x="670" y="630" text-anchor="middle" font-size="9">• Version Control</text>
+                        <text x="670" y="645" text-anchor="middle" font-size="9">• Rollback Capability</text>
+
+                        <!-- Connections -->
+                        <line x1="170" y1="60" x2="220" y2="60" stroke="#333" stroke-width="1.5"/>
+                        <line x1="340" y1="60" x2="390" y2="60" stroke="#333" stroke-width="1.5"/>
+                        <line x1="510" y1="60" x2="560" y2="60" stroke="#333" stroke-width="1.5"/>
+                        <line x1="680" y1="60" x2="730" y2="60" stroke="#333" stroke-width="1.5"/>
+                    </svg>
+                </div>
+
+                <div class="note">
+                    <strong>Deployment Strategy:</strong> Blue-Green for zero-downtime; Rolling update for services; Canary for high-risk changes (5% traffic → 25% → 100%)
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🔧 Detailed Component Architectures • Version 1.0 • Last Updated: 2026-09-28</p>
+        </footer>
+    </div>
+
+    <script>
+        function openDiagram(evt, diagramName) {
+            document.querySelectorAll('.diagram-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(diagramName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

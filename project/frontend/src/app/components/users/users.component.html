@@ -1,0 +1,48 @@
+<div class="users-container">
+  <div class="header">
+    <h1>Users</h1>
+    <button class="btn-primary">Add User</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading users...</p>
+  </div>
+
+  <div *ngIf="!loading && users.length === 0" class="no-data">
+    <p>No users found</p>
+  </div>
+
+  <div *ngIf="!loading && users.length > 0" class="users-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.first_name }} {{ user.last_name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <span class="role-badge" [class]="user.role">
+              {{ user.role }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [class]="user.is_active ? 'active' : 'inactive'">
+              {{ user.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn-sm">Edit</button>
+            <button class="btn-sm-danger">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

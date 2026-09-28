@@ -1,0 +1,29 @@
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <div *ngIf="!loading" class="stats-grid">
+    <div class="stat-card">
+      <h2>{{ courseCount }}</h2>
+      <p>Total Courses</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>{{ userCount }}</h2>
+      <p>Total Users</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>{{ activeEnrollments }}</h2>
+      <p>Active Enrollments</p>
+    </div>
+  </div>
+
+  <section class="recent-activity">
+    <h2>Recent Activity</h2>
+    <p>No recent activity</p>
+  </section>
+</div>

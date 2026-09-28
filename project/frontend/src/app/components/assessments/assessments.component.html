@@ -1,0 +1,41 @@
+<div class="assessments-container">
+  <h1>Assessments</h1>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading assessments...</p>
+  </div>
+
+  <div *ngIf="!loading && assessments.length === 0" class="no-data">
+    <p>No assessments found</p>
+  </div>
+
+  <div *ngIf="!loading && assessments.length > 0" class="assessments-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Type</th>
+          <th>Total Questions</th>
+          <th>Pass Score</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assessment of assessments">
+          <td>{{ assessment.title }}</td>
+          <td>
+            <span class="type-badge" [class]="assessment.type">
+              {{ assessment.type }}
+            </span>
+          </td>
+          <td>{{ assessment.total_questions || 'N/A' }}</td>
+          <td>{{ assessment.pass_score || 'N/A' }}</td>
+          <td>
+            <button class="btn-sm">View</button>
+            <button class="btn-sm">Edit</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

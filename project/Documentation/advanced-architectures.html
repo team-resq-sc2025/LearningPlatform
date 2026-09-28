@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Architectures - Security, Monitoring, Storage</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); overflow: hidden; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .tabs { display: flex; background: #f5f5f5; border-bottom: 2px solid #ddd; flex-wrap: wrap; overflow-x: auto; }
+        .tabs button { flex: 1; min-width: 130px; padding: 12px 15px; border: none; background: #f5f5f5; color: #333; font-size: 12px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; }
+        .tabs button:hover { background: #eee; }
+        .tabs button.active { background: white; color: #667eea; border-bottom-color: #667eea; }
+        .content { padding: 40px; max-height: 80vh; overflow-y: auto; }
+        .diagram-section { display: none; }
+        .diagram-section.active { display: block; }
+        .diagram-container { background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; }
+        .section-header { font-size: 2em; color: #667eea; margin-bottom: 20px; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        .subsection-title { font-size: 1.3em; color: #764ba2; margin-top: 30px; margin-bottom: 15px; font-weight: 600; }
+        svg { max-width: 100%; height: auto; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #667eea; color: white; font-weight: 600; }
+        tr:hover { background: #f5f5f5; }
+        .note { background: #fffde7; border-left: 4px solid #fbc02d; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        footer { background: #f5f5f5; padding: 20px; text-align: center; color: #666; border-top: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Advanced Architectures</h1>
+            <p>Security, Monitoring, Storage, and Real-Time Communication</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openDiagram(event, 'security')">Security Layers</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'monitoring')">Monitoring & Observability</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'storage')">Storage & CDN</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'realtime')">Real-Time Architecture</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'integration')">External Integrations</button>
+        </div>
+
+        <div class="content">
+            <!-- Security -->
+            <div id="security" class="diagram-section active">
+                <h2 class="section-header">Security Architecture Layers</h2>
+
+                <h3 class="subsection-title">Defense-in-Depth Security Model</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#333"/>
+                            </marker>
+                        </defs>
+
+                        <!-- Layer 1: Perimeter -->
+                        <rect x="50" y="30" width="1000" height="90" fill="none" stroke="#c62828" stroke-width="3" rx="5"/>
+                        <text x="60" y="55" font-size="12" font-weight="bold" fill="#c62828">LAYER 1: Perimeter Security</text>
+                        <text x="80" y="80" font-size="10">DDoS Protection (AWS Shield)</text>
+                        <text x="400" y="80" font-size="10">WAF (Web Application Firewall)</text>
+                        <text x="750" y="80" font-size="10">IP Whitelisting</text>
+
+                        <!-- Layer 2: Network -->
+                        <rect x="50" y="140" width="1000" height="90" fill="none" stroke="#f57c00" stroke-width="3" rx="5"/>
+                        <text x="60" y="165" font-size="12" font-weight="bold" fill="#f57c00">LAYER 2: Network Security</text>
+                        <text x="80" y="190" font-size="10">VPC with Security Groups</text>
+                        <text x="400" y="190" font-size="10">Network ACLs</text>
+                        <text x="750" y="190" font-size="10">TLS 1.2+ for all traffic</text>
+
+                        <!-- Layer 3: API -->
+                        <rect x="50" y="250" width="1000" height="90" fill="none" stroke="#fbc02d" stroke-width="3" rx="5"/>
+                        <text x="60" y="275" font-size="12" font-weight="bold" fill="#fbc02d">LAYER 3: API Security</text>
+                        <text x="80" y="300" font-size="10">API Key + JWT Tokens</text>
+                        <text x="400" y="300" font-size="10">Rate Limiting (per user/IP)</text>
+                        <text x="750" y="300" font-size="10">Request Signing</text>
+
+                        <!-- Layer 4: Authentication -->
+                        <rect x="50" y="360" width="1000" height="90" fill="none" stroke="#558b2f" stroke-width="3" rx="5"/>
+                        <text x="60" y="385" font-size="12" font-weight="bold" fill="#558b2f">LAYER 4: Authentication & MFA</text>
+                        <text x="80" y="410" font-size="10">MFA (TOTP, SMS)</text>
+                        <text x="400" y="410" font-size="10">Password policies</text>
+                        <text x="750" y="410" font-size="10">Session management</text>
+
+                        <!-- Layer 5: Authorization -->
+                        <rect x="50" y="470" width="1000" height="90" fill="none" stroke="#00796b" stroke-width="3" rx="5"/>
+                        <text x="60" y="495" font-size="12" font-weight="bold" fill="#00796b">LAYER 5: Authorization (RBAC)</text>
+                        <text x="80" y="520" font-size="10">Role-based access control</text>
+                        <text x="400" y="520" font-size="10">Attribute-based access (ABAC)</text>
+                        <text x="750" y="520" font-size="10">Resource-level permissions</text>
+
+                        <!-- Layer 6: Data -->
+                        <rect x="50" y="580" width="1000" height="90" fill="none" stroke="#1565c0" stroke-width="3" rx="5"/>
+                        <text x="60" y="605" font-size="12" font-weight="bold" fill="#1565c0">LAYER 6: Data Security</text>
+                        <text x="80" y="630" font-size="10">Encryption at rest (AES-256)</text>
+                        <text x="400" y="630" font-size="10">Field-level encryption (PII)</text>
+                        <text x="750" y="630" font-size="10">Data masking in logs</text>
+                    </svg>
+                </div>
+
+                <h3 class="subsection-title">Key Management & Secret Rotation</h3>
+                <table>
+                    <tr>
+                        <th>Secret Type</th>
+                        <th>Storage</th>
+                        <th>Rotation Policy</th>
+                        <th>Access Control</th>
+                    </tr>
+                    <tr>
+                        <td>API Keys</td>
+                        <td>AWS Secrets Manager</td>
+                        <td>Every 90 days</td>
+                        <td>RBAC per secret</td>
+                    </tr>
+                    <tr>
+                        <td>Database Credentials</td>
+                        <td>AWS Secrets Manager</td>
+                        <td>Every 30 days (auto)</td>
+                        <td>Service account only</td>
+                    </tr>
+                    <tr>
+                        <td>Encryption Keys (CMK)</td>
+                        <td>AWS KMS</td>
+                        <td>Annual rotation</td>
+                        <td>Audit logging enabled</td>
+                    </tr>
+                    <tr>
+                        <td>SSL/TLS Certificates</td>
+                        <td>AWS Certificate Manager</td>
+                        <td>Auto-renewal (365 days)</td>
+                        <td>Auto provisioning</td>
+                    </tr>
+                    <tr>
+                        <td>OAuth2 Client Secrets</td>
+                        <td>AWS Secrets Manager</td>
+                        <td>Every 60 days</td>
+                        <td>Integration team</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Monitoring -->
+            <div id="monitoring" class="diagram-section">
+                <h2 class="section-header">Monitoring & Observability Stack</h2>
+
+                <h3 class="subsection-title">Complete Monitoring Architecture</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1100 750" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Data Sources -->
+                        <text x="50" y="30" font-size="12" font-weight="bold">DATA SOURCES</text>
+
+                        <rect x="50" y="50" width="150" height="70" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="125" y="75" text-anchor="middle" font-size="11" font-weight="bold">Application Logs</text>
+                        <text x="125" y="95" text-anchor="middle" font-size="9" fill="#666">JSON format, trace IDs</text>
+
+                        <rect x="230" y="50" width="150" height="70" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="305" y="75" text-anchor="middle" font-size="11" font-weight="bold">Metrics</text>
+                        <text x="305" y="95" text-anchor="middle" font-size="9" fill="#666">Prometheus format</text>
+
+                        <rect x="410" y="50" width="150" height="70" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="485" y="75" text-anchor="middle" font-size="11" font-weight="bold">Traces</text>
+                        <text x="485" y="95" text-anchor="middle" font-size="9" fill="#666">OpenTelemetry</text>
+
+                        <rect x="590" y="50" width="150" height="70" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="665" y="75" text-anchor="middle" font-size="11" font-weight="bold">Events</text>
+                        <text x="665" y="95" text-anchor="middle" font-size="9" fill="#666">Structured events</text>
+
+                        <rect x="770" y="50" width="150" height="70" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="845" y="75" text-anchor="middle" font-size="11" font-weight="bold">Security Events</text>
+                        <text x="845" y="95" text-anchor="middle" font-size="9" fill="#666">SIEM format</text>
+
+                        <rect x="950" y="50" width="130" height="70" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="1015" y="75" text-anchor="middle" font-size="11" font-weight="bold">Health Checks</text>
+                        <text x="1015" y="95" text-anchor="middle" font-size="9" fill="#666">Synthetic monitors</text>
+
+                        <!-- Collection Layer -->
+                        <text x="50" y="160" font-size="12" font-weight="bold">COLLECTION & AGGREGATION</text>
+
+                        <rect x="50" y="180" width="200" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="150" y="205" text-anchor="middle" font-size="11" font-weight="bold">Fluentd / Logstash</text>
+                        <text x="150" y="225" text-anchor="middle" font-size="9" fill="#666">Log aggregation</text>
+                        <text x="150" y="240" text-anchor="middle" font-size="9" fill="#666">Parsing & filtering</text>
+
+                        <rect x="300" y="180" width="200" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="400" y="205" text-anchor="middle" font-size="11" font-weight="bold">Prometheus</text>
+                        <text x="400" y="225" text-anchor="middle" font-size="9" fill="#666">Metrics collection</text>
+                        <text x="400" y="240" text-anchor="middle" font-size="9" fill="#666">Pull-based model</text>
+
+                        <rect x="550" y="180" width="200" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="650" y="205" text-anchor="middle" font-size="11" font-weight="bold">Jaeger / Tempo</text>
+                        <text x="650" y="225" text-anchor="middle" font-size="9" fill="#666">Distributed tracing</text>
+                        <text x="650" y="240" text-anchor="middle" font-size="9" fill="#666">Request flow analysis</text>
+
+                        <rect x="800" y="180" width="280" height="80" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="940" y="205" text-anchor="middle" font-size="11" font-weight="bold">OpenTelemetry Collector</text>
+                        <text x="940" y="225" text-anchor="middle" font-size="9" fill="#666">Multi-protocol support</text>
+                        <text x="940" y="240" text-anchor="middle" font-size="9" fill="#666">Sampling & filtering</text>
+
+                        <!-- Storage Layer -->
+                        <text x="50" y="310" font-size="12" font-weight="bold">STORAGE & INDEXING</text>
+
+                        <rect x="50" y="330" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="140" y="355" text-anchor="middle" font-size="11" font-weight="bold">Elasticsearch</text>
+                        <text x="140" y="375" text-anchor="middle" font-size="9" fill="#666">Log storage & search</text>
+                        <text x="140" y="390" text-anchor="middle" font-size="9" fill="#666">90 days hot</text>
+
+                        <rect x="280" y="330" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="370" y="355" text-anchor="middle" font-size="11" font-weight="bold">TimescaleDB</text>
+                        <text x="370" y="375" text-anchor="middle" font-size="9" fill="#666">Time-series metrics</text>
+                        <text x="370" y="390" text-anchor="middle" font-size="9" fill="#666">12 months retention</text>
+
+                        <rect x="510" y="330" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="600" y="355" text-anchor="middle" font-size="11" font-weight="bold">S3 / Object Store</text>
+                        <text x="600" y="375" text-anchor="middle" font-size="9" fill="#666">Log archives</text>
+                        <text x="600" y="390" text-anchor="middle" font-size="9" fill="#666">7 years cold</text>
+
+                        <rect x="740" y="330" width="180" height="80" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="830" y="355" text-anchor="middle" font-size="11" font-weight="bold">Trace Backend</text>
+                        <text x="830" y="375" text-anchor="middle" font-size="9" fill="#666">Jaeger / Tempo</text>
+                        <text x="830" y="390" text-anchor="middle" font-size="9" fill="#666">14 days retention</text>
+
+                        <!-- Analysis & Visualization -->
+                        <text x="50" y="460" font-size="12" font-weight="bold">ANALYSIS, ALERTING & VISUALIZATION</text>
+
+                        <rect x="50" y="480" width="150" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="125" y="505" text-anchor="middle" font-size="11" font-weight="bold">Grafana</text>
+                        <text x="125" y="525" text-anchor="middle" font-size="9" fill="#666">Dashboards</text>
+                        <text x="125" y="540" text-anchor="middle" font-size="9" fill="#666">Real-time visualization</text>
+
+                        <rect x="230" y="480" width="150" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="305" y="505" text-anchor="middle" font-size="11" font-weight="bold">Alertmanager</text>
+                        <text x="305" y="525" text-anchor="middle" font-size="9" fill="#666">Alert routing</text>
+                        <text x="305" y="540" text-anchor="middle" font-size="9" fill="#666">Grouping & dedup</text>
+
+                        <rect x="410" y="480" width="150" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="485" y="505" text-anchor="middle" font-size="11" font-weight="bold">PagerDuty</text>
+                        <text x="485" y="525" text-anchor="middle" font-size="9" fill="#666">On-call management</text>
+                        <text x="485" y="540" text-anchor="middle" font-size="9" fill="#666">Incident response</text>
+
+                        <rect x="590" y="480" width="150" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="665" y="505" text-anchor="middle" font-size="11" font-weight="bold">Splunk / ELK</text>
+                        <text x="665" y="525" text-anchor="middle" font-size="9" fill="#666">Log analysis</text>
+                        <text x="665" y="540" text-anchor="middle" font-size="9" fill="#666">Security analytics</text>
+
+                        <rect x="770" y="480" width="310" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+                        <text x="925" y="505" text-anchor="middle" font-size="11" font-weight="bold">Custom Analytics & AIOps</text>
+                        <text x="925" y="525" text-anchor="middle" font-size="9" fill="#666">ML-based anomaly detection</text>
+                        <text x="925" y="540" text-anchor="middle" font-size="9" fill="#666">Predictive alerting</text>
+
+                        <!-- Key Metrics -->
+                        <text x="50" y="620" font-size="12" font-weight="bold">KEY METRICS TO MONITOR (SLO Tracking)</text>
+
+                        <rect x="50" y="640" width="1080" height="100" fill="#e3f2fd" stroke="#667eea" stroke-width="1" rx="5"/>
+                        <text x="60" y="660" font-size="10" font-weight="bold">Availability:</text>
+                        <text x="150" y="660" font-size="10">Uptime %, Error Rate</text>
+                        <text x="400" y="660" font-size="10">Latency:</text>
+                        <text x="480" y="660" font-size="10">P50, P95, P99 response times</text>
+                        <text x="800" y="660" font-size="10">Saturation:</text>
+                        <text x="920" y="660" font-size="10">CPU, Memory, Disk</text>
+
+                        <text x="60" y="685" font-size="10">Traffic:</text>
+                        <text x="150" y="685" font-size="10">RPS, Bandwidth</text>
+                        <text x="400" y="685" font-size="10">Errors:</text>
+                        <text x="480" y="685" font-size="10">4xx, 5xx rates by endpoint</text>
+                        <text x="800" y="685" font-size="10">Dependencies:</text>
+                        <text x="920" y="685" font-size="10">Service latency, error rates</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Storage -->
+            <div id="storage" class="diagram-section">
+                <h2 class="section-header">Content Delivery & Storage Architecture</h2>
+
+                <h3 class="subsection-title">Global CDN & Storage Strategy</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1100 600" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Origin -->
+                        <rect x="450" y="20" width="200" height="70" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="550" y="50" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Origin (Primary S3)</text>
+                        <text x="550" y="68" text-anchor="middle" font-size="9" fill="white">us-east-1</text>
+
+                        <!-- CDN Layer -->
+                        <text x="50" y="140" font-size="12" font-weight="bold">CDN EDGE LOCATIONS (Cloudflare, CloudFront)</text>
+
+                        <g>
+                            <!-- NAM -->
+                            <rect x="50" y="160" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                            <text x="140" y="185" text-anchor="middle" font-size="11" font-weight="bold">North America</text>
+                            <text x="140" y="205" text-anchor="middle" font-size="9" fill="#666">us-west, us-east</text>
+                            <text x="140" y="220" text-anchor="middle" font-size="9" fill="#666">ca-central</text>
+
+                            <!-- EUR -->
+                            <rect x="280" y="160" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                            <text x="370" y="185" text-anchor="middle" font-size="11" font-weight="bold">Europe</text>
+                            <text x="370" y="205" text-anchor="middle" font-size="9" fill="#666">eu-west, eu-central</text>
+                            <text x="370" y="220" text-anchor="middle" font-size="9" fill="#666">eu-north</text>
+
+                            <!-- APAC -->
+                            <rect x="510" y="160" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                            <text x="600" y="185" text-anchor="middle" font-size="11" font-weight="bold">Asia Pacific</text>
+                            <text x="600" y="205" text-anchor="middle" font-size="9" fill="#666">ap-southeast, ap-south</text>
+                            <text x="600" y="220" text-anchor="middle" font-size="9" fill="#666">ap-northeast</text>
+
+                            <!-- LATAM -->
+                            <rect x="740" y="160" width="180" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                            <text x="830" y="185" text-anchor="middle" font-size="11" font-weight="bold">Latin America</text>
+                            <text x="830" y="205" text-anchor="middle" font-size="9" fill="#666">sa-east (Brazil)</text>
+                            <text x="830" y="220" text-anchor="middle" font-size="9" fill="#666">mx-central</text>
+
+                            <!-- MENA -->
+                            <rect x="970" y="160" width="130" height="80" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                            <text x="1035" y="185" text-anchor="middle" font-size="11" font-weight="bold">MENA</text>
+                            <text x="1035" y="205" text-anchor="middle" font-size="9" fill="#666">ae-central</text>
+                            <text x="1035" y="220" text-anchor="middle" font-size="9" fill="#666">sa-west</text>
+                        </g>
+
+                        <!-- Storage Tiers -->
+                        <text x="50" y="300" font-size="12" font-weight="bold">STORAGE TIERS & LIFECYCLE</text>
+
+                        <rect x="50" y="320" width="210" height="130" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="155" y="345" text-anchor="middle" font-size="11" font-weight="bold">Hot Storage</text>
+                        <text x="155" y="365" text-anchor="middle" font-size="9">• S3 Standard</text>
+                        <text x="155" y="380" text-anchor="middle" font-size="9">• Cross-region replicated</text>
+                        <text x="155" y="395" text-anchor="middle" font-size="9">• 30-90 days</text>
+                        <text x="155" y="410" text-anchor="middle" font-size="9">• Immediate access</text>
+                        <text x="155" y="430" text-anchor="middle" font-size="10" font-weight="bold">Cost: $$</text>
+
+                        <rect x="300" y="320" width="210" height="130" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="405" y="345" text-anchor="middle" font-size="11" font-weight="bold">Warm Storage</text>
+                        <text x="405" y="365" text-anchor="middle" font-size="9">• S3 Intelligent-Tiering</text>
+                        <text x="405" y="380" text-anchor="middle" font-size="9">• Async cross-region</text>
+                        <text x="405" y="395" text-anchor="middle" font-size="9">• 3-12 months</text>
+                        <text x="405" y="410" text-anchor="middle" font-size="9">• 24hr access time</text>
+                        <text x="405" y="430" text-anchor="middle" font-size="10" font-weight="bold">Cost: $</text>
+
+                        <rect x="550" y="320" width="210" height="130" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="655" y="345" text-anchor="middle" font-size="11" font-weight="bold">Cold Storage</text>
+                        <text x="655" y="365" text-anchor="middle" font-size="9">• S3 Glacier</text>
+                        <text x="655" y="380" text-anchor="middle" font-size="9">• Single region</text>
+                        <text x="655" y="395" text-anchor="middle" font-size="9">• 1-7 years</text>
+                        <text x="655" y="410" text-anchor="middle" font-size="9">• Hours/days access</text>
+                        <text x="655" y="430" text-anchor="middle" font-size="10" font-weight="bold">Cost: $</text>
+
+                        <rect x="800" y="320" width="280" height="130" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+                        <text x="940" y="345" text-anchor="middle" font-size="11" font-weight="bold">Archive</text>
+                        <text x="940" y="365" text-anchor="middle" font-size="9">• Glacier Deep Archive</text>
+                        <text x="940" y="380" text-anchor="middle" font-size="9">• Separate vault region</text>
+                        <text x="940" y="395" text-anchor="middle" font-size="9">• 7+ years (legal hold)</text>
+                        <text x="940" y="410" text-anchor="middle" font-size="9">• Audit/compliance only</text>
+                        <text x="940" y="430" text-anchor="middle" font-size="10" font-weight="bold">Cost: $</text>
+                    </svg>
+                </div>
+
+                <h3 class="subsection-title">Content Types & Delivery Strategy</h3>
+                <table>
+                    <tr>
+                        <th>Content Type</th>
+                        <th>Primary Storage</th>
+                        <th>CDN Strategy</th>
+                        <th>Cache TTL</th>
+                        <th>Replication</th>
+                    </tr>
+                    <tr>
+                        <td>Course Videos</td>
+                        <td>S3 (Hot)</td>
+                        <td>Edge location + HLS streaming</td>
+                        <td>30 days</td>
+                        <td>Cross-region daily</td>
+                    </tr>
+                    <tr>
+                        <td>Course Materials (PDF, DOCX)</td>
+                        <td>S3 (Hot)</td>
+                        <td>Edge location, versioned</td>
+                        <td>90 days</td>
+                        <td>Cross-region weekly</td>
+                    </tr>
+                    <tr>
+                        <td>Student Submissions</td>
+                        <td>S3 (Warm after 90d)</td>
+                        <td>None (direct S3)</td>
+                        <td>N/A</td>
+                        <td>Immutable, audit trail</td>
+                    </tr>
+                    <tr>
+                        <td>Static Assets (CSS, JS, IMG)</td>
+                        <td>S3 + CDN</td>
+                        <td>Global edge, gzip, minified</td>
+                        <td>1 year (versioned)</td>
+                        <td>Global distribution</td>
+                    </tr>
+                    <tr>
+                        <td>User Data Backups</td>
+                        <td>S3 (Cold after 1m)</td>
+                        <td>None</td>
+                        <td>N/A</td>
+                        <td>Geo-redundant 2x region</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Real-Time -->
+            <div id="realtime" class="diagram-section">
+                <h2 class="section-header">Real-Time Communication Architecture</h2>
+
+                <h3 class="subsection-title">WebSocket & Server-Sent Events (SSE) Strategy</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Client -->
+                        <rect x="50" y="50" width="150" height="80" fill="#667eea" stroke="#333" stroke-width="2" rx="5"/>
+                        <text x="125" y="80" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Web Browser</text>
+                        <text x="125" y="100" text-anchor="middle" font-size="9" fill="white">Real-time Dashboard</text>
+
+                        <!-- Connection Types -->
+                        <text x="50" y="170" font-size="12" font-weight="bold">CONNECTION OPTIONS</text>
+
+                        <!-- WebSocket -->
+                        <rect x="50" y="200" width="220" height="120" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="160" y="225" text-anchor="middle" font-size="11" font-weight="bold">WebSocket</text>
+                        <text x="160" y="245" text-anchor="middle" font-size="9">• Bidirectional</text>
+                        <text x="160" y="260" text-anchor="middle" font-size="9">• Low latency (&lt;100ms)</text>
+                        <text x="160" y="275" text-anchor="middle" font-size="9">• Full duplex</text>
+                        <text x="160" y="290" text-anchor="middle" font-size="9">Use: Live grades, notifications</text>
+
+                        <!-- SSE -->
+                        <rect x="330" y="200" width="220" height="120" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="440" y="225" text-anchor="middle" font-size="11" font-weight="bold">Server-Sent Events (SSE)</text>
+                        <text x="440" y="245" text-anchor="middle" font-size="9">• One-way (server → client)</text>
+                        <text x="440" y="260" text-anchor="middle" font-size="9">• Lower overhead</text>
+                        <text x="440" y="275" text-anchor="middle" font-size="9">• Auto-reconnect</text>
+                        <text x="440" y="290" text-anchor="middle" font-size="9">Use: Analytics, user activity</text>
+
+                        <!-- Polling -->
+                        <rect x="610" y="200" width="220" height="120" fill="#e3f2fd" stroke="#667eea" stroke-width="2" rx="5"/>
+                        <text x="720" y="225" text-anchor="middle" font-size="11" font-weight="bold">Long Polling</text>
+                        <text x="720" y="245" text-anchor="middle" font-size="9">• Client initiated</text>
+                        <text x="720" y="260" text-anchor="middle" font-size="9">• Fallback for old browsers</text>
+                        <text x="720" y="275" text-anchor="middle" font-size="9">• Higher latency</text>
+                        <text x="720" y="290" text-anchor="middle" font-size="9">Use: Legacy browser support</text>
+
+                        <!-- Server Architecture -->
+                        <text x="50" y="380" font-size="12" font-weight="bold">SERVER-SIDE ARCHITECTURE</text>
+
+                        <rect x="50" y="410" width="900" height="70" fill="#f3e5f5" stroke="#764ba2" stroke-width="2" rx="5"/>
+                        <text x="60" y="435" font-size="10" font-weight="bold">WebSocket Servers (Node.js/Go):</text>
+                        <text x="300" y="435" font-size="10">Socket.io, ws library</text>
+                        <text x="550" y="435" font-size="10">Connection pooling</text>
+                        <text x="750" y="435" font-size="10">Horizontal scaling with Redis Pub/Sub</text>
+                        <text x="60" y="460" font-size="10" font-weight="bold">Message Broadcasting:</text>
+                        <text x="300" y="460" font-size="10">Redis channels for multi-server</text>
+                        <text x="550" y="460" font-size="10">Event listeners on server</text>
+                        <text x="750" y="460" font-size="10">Publish to all connected clients</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Integration -->
+            <div id="integration" class="diagram-section">
+                <h2 class="section-header">External Integration Architecture</h2>
+
+                <h3 class="subsection-title">Third-Party Integration Patterns</h3>
+                <table>
+                    <tr>
+                        <th>Integration Type</th>
+                        <th>Service Examples</th>
+                        <th>Protocol</th>
+                        <th>Auth Method</th>
+                        <th>Frequency</th>
+                        <th>Sync Strategy</th>
+                    </tr>
+                    <tr>
+                        <td>Identity & Access</td>
+                        <td>Okta, Azure AD, Google Workspace</td>
+                        <td>OAuth2, SAML, SCIM</td>
+                        <td>Bearer token / Certificate</td>
+                        <td>Real-time + daily sync</td>
+                        <td>Webhook + polling</td>
+                    </tr>
+                    <tr>
+                        <td>Email & Communication</td>
+                        <td>SendGrid, Twilio, Slack</td>
+                        <td>REST API + Webhooks</td>
+                        <td>API Key + Signature verification</td>
+                        <td>On-demand + queued</td>
+                        <td>Async job queue</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Processing</td>
+                        <td>Stripe, PayPal</td>
+                        <td>REST + Webhooks</td>
+                        <td>Bearer token + Secret</td>
+                        <td>On transaction</td>
+                        <td>Idempotent requests</td>
+                    </tr>
+                    <tr>
+                        <td>HRIS/Payroll</td>
+                        <td>Workday, SuccessFactors</td>
+                        <td>REST API + SFTP</td>
+                        <td>OAuth2 or mTLS</td>
+                        <td>Daily batch</td>
+                        <td>Reconciliation loop</td>
+                    </tr>
+                    <tr>
+                        <td>Video Hosting</td>
+                        <td>Vimeo, Wistia, Brightcove</td>
+                        <td>REST API + Webhooks</td>
+                        <td>API Key</td>
+                        <td>Async upload</td>
+                        <td>Callback on completion</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics</td>
+                        <td>Mixpanel, Amplitude</td>
+                        <td>REST API + SDK</td>
+                        <td>API Key</td>
+                        <td>Batched (hourly)</td>
+                        <td>Async event stream</td>
+                    </tr>
+                </table>
+
+                <h3 class="subsection-title">Integration Failure Handling</h3>
+                <div class="note">
+                    <strong>Resilience Patterns:</strong>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Retry with exponential backoff (3-5 attempts, max 30 mins)</li>
+                        <li>Circuit breaker: Auto-disable failing integration after 5 consecutive failures</li>
+                        <li>Fallback: Use cached/stale data if integration unavailable</li>
+                        <li>Alerting: Notify ops if integration down > 30 mins</li>
+                        <li>Queue: Store events in DLQ for manual review and retry</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🔐 Advanced Architectures • Version 1.0 • Last Updated: 2026-09-28</p>
+        </footer>
+    </div>
+
+    <script>
+        function openDiagram(evt, diagramName) {
+            document.querySelectorAll('.diagram-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(diagramName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AI Prompt Evaluation App Design</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #f9f9fb;
+  --bg-alt: #ffffff;
+  --text: #1a1a2e;
+  --text-secondary: #6b7280;
+  --border: #e5e7eb;
+  --accent: #4f46e5;
+  --accent-light: #eef2ff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f172a;
+    --bg-alt: #1e293b;
+    --text: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --border: #334155;
+    --accent: #6366f1;
+    --accent-light: #312e81;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-alt: #1e293b;
+  --text: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --border: #334155;
+  --accent: #6366f1;
+  --accent-light: #312e81;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: env(safe-area-inset-top, 0) 16px env(safe-area-inset-bottom, 0) 16px;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem 0;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 0.5rem;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+  color: var(--accent);
+}
+
+p {
+  margin: 0 0 1rem 0;
+  color: var(--text-secondary);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  padding-block: 2rem;
+  margin-bottom: 2rem;
+  position: sticky;
+  top: env(safe-area-inset-top, 0);
+  z-index: 10;
+}
+
+.header h1 {
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+
+.header p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: pointer;
+  user-select: none;
+}
+
+.card-header:hover {
+  opacity: 0.8;
+}
+
+.card-toggle {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1.25rem;
+  transition: transform 0.2s;
+}
+
+.card.collapsed .card-toggle {
+  transform: rotate(-90deg);
+}
+
+.card-content {
+  margin-top: 1rem;
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s, opacity 0.3s;
+  opacity: 1;
+}
+
+.card.collapsed .card-content {
+  max-height: 0;
+  opacity: 0;
+}
+
+.tag {
+  display: inline-block;
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.code-block {
+  background: rgba(0, 0, 0, 0.05);
+  border-left: 3px solid var(--accent);
+  padding: 1rem;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .code-block {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.example-box {
+  background: var(--accent-light);
+  border-left: 4px solid var(--accent);
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .example-box {
+    background: rgba(99, 102, 241, 0.1);
+  }
+}
+
+.technique-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.technique-item:last-child {
+  border-bottom: none;
+}
+
+.technique-item strong {
+  display: block;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.assignment-row {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.assignment-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.assignment-content {
+  flex: 1;
+}
+
+.assignment-content p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.template-box {
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  padding: 1.25rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+}
+
+.template-box strong {
+  color: var(--accent);
+}
+
+.structure-block {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
+
+.structure-block h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--accent);
+  font-size: 1rem;
+}
+
+.structure-block ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.structure-block li {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.nav-section {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.nav-link {
+  padding: 0.5rem 1rem;
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <h1>🤖 AI Prompt Evaluation App Design</h1>
+  <p>Comprehensive guide for evaluating, rating, and improving AI prompts</p>
+</div>
+
+<div class="section">
+  <h2>1. Prompting Techniques</h2>
+  <p>Understanding different prompting approaches helps you evaluate prompt quality and teach best practices.</p>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Zero-Shot Prompting</h3>
+        <p style="margin: 0.5rem 0 0;">Direct instruction without examples</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Asking the AI to perform a task without providing any examples first.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">Translate "Hello, world" to Spanish.</div>
+      </div>
+      <strong>Best for:</strong> Simple tasks, straightforward questions, general knowledge queries
+      <br><strong>Strengths:</strong> Fast, efficient, no training data needed
+      <br><strong>Weaknesses:</strong> Can lack precision on complex tasks
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Few-Shot Prompting</h3>
+        <p style="margin: 0.5rem 0 0;">Providing examples before the actual task</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Providing 2-5 examples of input-output pairs before asking the AI to solve the target task.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">Example 1: "Gato" → Cat
+Example 2: "Perro" → Dog
+Example 3: "Pájaro" → ?
+
+Translate "Pájaro" to English.</div>
+      </div>
+      <strong>Best for:</strong> Complex tasks, specific formats, specialized domains
+      <br><strong>Strengths:</strong> Improves accuracy, demonstrates pattern, reduces ambiguity
+      <br><strong>Weaknesses:</strong> Requires curating good examples, longer prompts
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Chain-of-Thought (CoT)</h3>
+        <p style="margin: 0.5rem 0 0;">Asking for step-by-step reasoning</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Explicitly requesting the model to break down reasoning into intermediate steps.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">Solve this step by step:
+If Sarah has 3 apples and buys 5 more, then gives 2 to her friend, how many does she have?
+
+Think through each step before giving your answer.</div>
+      </div>
+      <strong>Best for:</strong> Math problems, logic puzzles, multi-step reasoning
+      <br><strong>Strengths:</strong> Significantly improves accuracy on complex reasoning, shows work
+      <br><strong>Weaknesses:</strong> Longer responses, can sometimes add confusion
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Role-Based / Persona Prompting</h3>
+        <p style="margin: 0.5rem 0 0;">Assigning a character or expertise level</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Instructing the AI to adopt a specific role, expertise, or perspective.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">You are an expert software architect with 20 years of experience.
+Recommend the best database for a real-time analytics platform.</div>
+      </div>
+      <strong>Best for:</strong> Specialized expertise, tone/style control, simulating perspectives
+      <br><strong>Strengths:</strong> Tailors response style and depth, leverages AI role-play
+      <br><strong>Weaknesses:</strong> Over-promising expertise, can be inconsistent
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Structured Output Prompting</h3>
+        <p style="margin: 0.5rem 0 0;">Requesting specific format (JSON, XML, tables)</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Explicitly specifying the output format to ensure consistency and machine-readability.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">Extract names and ages. Return as JSON:
+{"people": [{"name": "...", "age": 25}, ...]}</div>
+      </div>
+      <strong>Best for:</strong> Data extraction, API integration, programmatic processing
+      <br><strong>Strengths:</strong> Predictable output, easy to parse, integrates with tools
+      <br><strong>Weaknesses:</strong> Rigid structure may limit nuance, requires clear schema
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Retrieval-Augmented Generation (RAG)</h3>
+        <p style="margin: 0.5rem 0 0;">Providing context/knowledge before the task</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Including relevant documents, data, or context to ground the AI's response in factual information.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">Context: "Company X was founded in 2020 and specializes in AI solutions."
+Question: When was Company X founded?</div>
+      </div>
+      <strong>Best for:</strong> Knowledge-heavy tasks, custom knowledge, reducing hallucinations
+      <br><strong>Strengths:</strong> Factually grounded, integrates external data, verifiable
+      <br><strong>Weaknesses:</strong> Requires quality knowledge base, adds latency
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Tree-of-Thought (ToT)</h3>
+        <p style="margin: 0.5rem 0 0;">Exploring multiple reasoning paths</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Asking the AI to explore multiple solution paths and evaluate each before deciding.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">Consider 3 different approaches to this problem.
+For each approach, list pros and cons.
+Then recommend the best approach with reasoning.</div>
+      </div>
+      <strong>Best for:</strong> Complex decision-making, strategy, comparing alternatives
+      <br><strong>Strengths:</strong> Explores trade-offs, thorough analysis, better decisions
+      <br><strong>Weaknesses:</strong> Longer responses, higher token usage
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Prompt Chaining / Multi-Turn</h3>
+        <p style="margin: 0.5rem 0 0;">Breaking complex tasks into sequential prompts</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Breaking a large task into smaller sequential prompts, using outputs as inputs to the next.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">Step 1: Summarize this article
+Step 2: Extract key facts from the summary
+Step 3: Create 3 quiz questions based on the facts</div>
+      </div>
+      <strong>Best for:</strong> Multi-stage workflows, refining outputs, building complexity gradually
+      <br><strong>Strengths:</strong> Better control, error recovery, clearer workflow
+      <br><strong>Weaknesses:</strong> Multiple API calls, latency, context management
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">Negative Prompting</h3>
+        <p style="margin: 0.5rem 0 0;">Specifying what NOT to do</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p>Explicitly telling the AI what to avoid, in addition to what to do.</p>
+      <div class="example-box">
+        <strong>Example:</strong>
+        <div class="code-block">Write a product description.
+DO NOT use superlatives like "best" or "amazing".
+DO NOT make unsupported claims.</div>
+      </div>
+      <strong>Best for:</strong> Preventing common mistakes, brand guidelines, compliance
+      <br><strong>Strengths:</strong> Avoids pitfalls, clearer boundaries, reduces revision cycles
+      <br><strong>Weaknesses:</strong> Can be verbose, doesn't always prevent errors
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>2. Prompt Templates</h2>
+  <p>Reusable templates for common prompting scenarios.</p>
+
+  <h3>Template: Simple Q&A</h3>
+  <div class="template-box">
+    <strong>Context:</strong> [Optional background information]<br>
+    <strong>Question:</strong> [Your specific question]<br>
+    <strong>Format:</strong> [Desired output format, e.g., bullet points, paragraph]
+  </div>
+
+  <h3>Template: Text Classification</h3>
+  <div class="template-box">
+    <strong>Task:</strong> Classify the following text into one of these categories: [list categories]<br>
+    <strong>Text:</strong> [The text to classify]<br>
+    <strong>Output:</strong> Provide the category and a confidence score (0-100).
+  </div>
+
+  <h3>Template: Code Generation</h3>
+  <div class="template-box">
+    <strong>Language:</strong> [Programming language]<br>
+    <strong>Requirements:</strong> [What the code should do]<br>
+    <strong>Constraints:</strong> [Specific constraints, libraries, patterns]<br>
+    <strong>Example Input/Output:</strong> [If applicable]
+  </div>
+
+  <h3>Template: Content Creation</h3>
+  <div class="template-box">
+    <strong>Purpose:</strong> [What this content is for]<br>
+    <strong>Audience:</strong> [Who will read this]<br>
+    <strong>Tone:</strong> [Desired tone/style]<br>
+    <strong>Length:</strong> [Word count or approximate length]<br>
+    <strong>Key Points:</strong> [Important topics to cover]
+  </div>
+
+  <h3>Template: Analysis & Research</h3>
+  <div class="template-box">
+    <strong>Topic:</strong> [What to analyze]<br>
+    <strong>Scope:</strong> [Time period, geography, specific aspects]<br>
+    <strong>Focus Areas:</strong> [What aspects matter most]<br>
+    <strong>Sources:</strong> [If providing research material]<br>
+    <strong>Output Format:</strong> [Structured analysis, comparison, recommendations]
+  </div>
+
+  <h3>Template: Few-Shot Learning</h3>
+  <div class="template-box">
+    <strong>Example 1:</strong><br>
+    Input: [Example input 1]<br>
+    Output: [Example output 1]<br><br>
+
+    <strong>Example 2:</strong><br>
+    Input: [Example input 2]<br>
+    Output: [Example output 2]<br><br>
+
+    <strong>New Task:</strong><br>
+    Input: [Your actual input]<br>
+    Output: [User provides or asks for output]
+  </div>
+
+  <h3>Template: Step-by-Step Instructions</h3>
+  <div class="template-box">
+    <strong>Goal:</strong> [What you want to achieve]<br>
+    <strong>Constraints:</strong> [Any limitations or requirements]<br>
+    <strong>Instruction:</strong> Walk through this process step by step. Be specific about each step.
+  </div>
+</div>
+
+<div class="section">
+  <h2>3. Prompt Writing Assignments</h2>
+  <p>Practical exercises to develop prompt engineering skills. Each assignment targets specific techniques or challenges.</p>
+
+  <div class="assignment-row">
+    <div class="assignment-num">1</div>
+    <div class="assignment-content">
+      <p><strong>Clarity Challenge:</strong> Take a vague prompt and rewrite it with specific context, constraints, and examples. Measure improvement by testing both versions.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">2</div>
+    <div class="assignment-content">
+      <p><strong>Few-Shot Mastery:</strong> Write 3 high-quality examples for a task, then create a few-shot prompt. Test if fewer/more examples change output quality.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">3</div>
+    <div class="assignment-content">
+      <p><strong>Chain-of-Thought Design:</strong> Take a complex reasoning task. Write two prompts: one direct, one with CoT. Compare reasoning quality and accuracy.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">4</div>
+    <div class="assignment-content">
+      <p><strong>Persona Experimentation:</strong> Rewrite a prompt with 3 different personas (beginner, expert, skeptic). Analyze how tone and depth change.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">5</div>
+    <div class="assignment-content">
+      <p><strong>Structured Output Design:</strong> Create a prompt that requests JSON, XML, or table output. Verify parsing works without errors.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">6</div>
+    <div class="assignment-content">
+      <p><strong>Constraint Writing:</strong> Write a prompt with 5+ constraints and test if the AI respects all of them. Identify which constraints are ignored.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">7</div>
+    <div class="assignment-content">
+      <p><strong>Context Injection:</strong> Create two versions of a prompt: one without context, one with relevant background info. Measure factual accuracy improvement.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">8</div>
+    <div class="assignment-content">
+      <p><strong>Negative Prompting:</strong> Identify common mistakes for a task. Rewrite the prompt to explicitly prevent those mistakes.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">9</div>
+    <div class="assignment-content">
+      <p><strong>Token Optimization:</strong> Write a prompt. Then write a more concise version that achieves the same result with 30% fewer tokens.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">10</div>
+    <div class="assignment-content">
+      <p><strong>Edge Case Testing:</strong> Write a prompt for a general task. Test it with 5+ edge cases. Identify where it fails and refine.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">11</div>
+    <div class="assignment-content">
+      <p><strong>Multi-Turn Workflow:</strong> Design a prompt chain (3-5 sequential prompts) for a complex task. Document the flow and dependencies.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">12</div>
+    <div class="assignment-content">
+      <p><strong>Tone & Style Tuning:</strong> Write one prompt that produces outputs in 5 different tones (formal, casual, technical, creative, humorous).</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">13</div>
+    <div class="assignment-content">
+      <p><strong>Ambiguity Detection:</strong> Write a prompt intentionally with ambiguities. Test outputs and document how the AI interprets each ambiguous part.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">14</div>
+    <div class="assignment-content">
+      <p><strong>Prompt Adaptation:</strong> Take an existing prompt and adapt it for 3 different domains/audiences. Compare what changes and what stays consistent.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">15</div>
+    <div class="assignment-content">
+      <p><strong>Comparative Analysis:</strong> Find 3 prompts that achieve similar goals. Compare clarity, specificity, and output quality. Identify best practices.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">16</div>
+    <div class="assignment-content">
+      <p><strong>Error Recovery:</strong> Write a prompt that fails. Then write recovery prompts to clarify, provide examples, or reframe the task.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">17</div>
+    <div class="assignment-content">
+      <p><strong>System Prompt Design:</strong> Design a system prompt that enforces brand voice, values, and constraints for a chat application.</p>
+    </div>
+  </div>
+
+  <div class="assignment-row">
+    <div class="assignment-num">18</div>
+    <div class="assignment-content">
+      <p><strong>Evaluation Rubric:</strong> Create a detailed rubric to evaluate prompts in a specific domain (e.g., customer service, coding, content).</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>4. Recommended App Structure</h2>
+  <p>Architecture for building a comprehensive prompt evaluation platform.</p>
+
+  <div class="structure-block">
+    <h4>📝 Core Modules</h4>
+    <ul>
+      <li><strong>Prompt Editor:</strong> Rich text editor with syntax highlighting, character/token counters, real-time validation</li>
+      <li><strong>Evaluation Engine:</strong> Automated scoring on clarity, specificity, completeness, ambiguity</li>
+      <li><strong>Testing Console:</strong> Execute prompts against multiple models/APIs, compare outputs side-by-side</li>
+      <li><strong>Feedback Generator:</strong> AI-powered suggestions for improvement with actionable recommendations</li>
+      <li><strong>Version Control:</strong> Track prompt iterations, diff views, rollback capability</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🎓 Learning & Reference</h4>
+    <ul>
+      <li><strong>Technique Library:</strong> Interactive guide to prompting techniques with examples</li>
+      <li><strong>Template Marketplace:</strong> Pre-built templates by category (Q&A, Code, Content, etc.)</li>
+      <li><strong>Best Practices Guide:</strong> Curated rules, do's and don'ts, common pitfalls</li>
+      <li><strong>Assignment Module:</strong> Structured exercises with auto-grading and progress tracking</li>
+      <li><strong>Case Studies:</strong> Real prompt examples with analysis, scores, and lessons learned</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>⭐ Rating & Feedback</h4>
+    <ul>
+      <li><strong>Multi-Dimensional Scoring:</strong> Rate on clarity, specificity, creativity, effectiveness, etc.</li>
+      <li><strong>Peer Review:</strong> Community voting, comments, and constructive feedback on prompts</li>
+      <li><strong>Automated Metrics:</strong> Clarity score, specificity index, ambiguity detection, token efficiency</li>
+      <li><strong>Improvement Suggestions:</strong> AI-generated recommendations with examples</li>
+      <li><strong>Feedback History:</strong> Track how a prompt improves over iterations</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🔍 Discovery & Organization</h4>
+    <ul>
+      <li><strong>Advanced Search:</strong> Filter by technique, domain, rating, difficulty, model compatibility</li>
+      <li><strong>Collections:</strong> Curated groups (by use case, team, project, learning path)</li>
+      <li><strong>Trending:</strong> Popular prompts, highest-rated, most-improved, newest</li>
+      <li><strong>Tagging System:</strong> User-generated and system tags for categorization</li>
+      <li><strong>Similar Prompts:</strong> Semantic search to find related prompts</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>📊 Analytics & Insights</h4>
+    <ul>
+      <li><strong>Personal Dashboard:</strong> Writing stats, improvement trends, skill badges</li>
+      <li><strong>Quality Benchmarks:</strong> Compare your prompts against category averages</li>
+      <li><strong>Performance Metrics:</strong> Which techniques work best for your use cases</li>
+      <li><strong>Model Comparison:</strong> How prompts perform across different models</li>
+      <li><strong>Reports:</strong> Export evaluations, analytics, and documentation</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🛠️ Technical Features</h4>
+    <ul>
+      <li><strong>API Integration:</strong> Support for OpenAI, Claude, Gemini, local models</li>
+      <li><strong>Rate Limiting:</strong> Fair usage, quota management, cost tracking</li>
+      <li><strong>Batch Testing:</strong> Run multiple prompts against multiple models at scale</li>
+      <li><strong>Export/Import:</strong> JSON, YAML, CSV formats for workflows and backups</li>
+      <li><strong>Webhooks & Integrations:</strong> Slack, GitHub, Notion, custom tools</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>👥 Collaboration</h4>
+    <ul>
+      <li><strong>Shared Projects:</strong> Team workspaces with permission levels</li>
+      <li><strong>Comments & Discussions:</strong> Threaded feedback on specific prompts</li>
+      <li><strong>Review Workflow:</strong> Approval gates, version freeze, release management</li>
+      <li><strong>Knowledge Base:</strong> Shared learnings, decision logs, documentation</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🎯 User Flows</h4>
+    <ul>
+      <li><strong>Beginner Path:</strong> Onboarding → Tutorials → Simple exercises → Template usage</li>
+      <li><strong>Developer Path:</strong> Template library → Custom prompt creation → API testing → Batch operations</li>
+      <li><strong>Educator Path:</strong> Assignment creation → Student progress tracking → Feedback management</li>
+      <li><strong>Advanced Path:</strong> Prompt optimization → A/B testing → Model benchmarking → Custom workflows</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>5. Evaluation Criteria Framework</h2>
+
+  <div class="structure-block">
+    <h4>Clarity (0-25 points)</h4>
+    <ul>
+      <li>Is the main objective immediately clear? (Yes/No/Partial)</li>
+      <li>Are instructions unambiguous? (Yes/No/Partial)</li>
+      <li>Is the language simple and direct? (Yes/No/Partial)</li>
+      <li>Could a first-time reader understand what's asked? (Yes/No/Partial)</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>Specificity (0-25 points)</h4>
+    <ul>
+      <li>Are constraints clearly defined? (Yes/No/Partial)</li>
+      <li>Is context provided? (Yes/No/Partial)</li>
+      <li>Are output expectations explicit? (Yes/No/Partial)</li>
+      <li>Are edge cases mentioned? (Yes/No/Partial)</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>Structure (0-20 points)</h4>
+    <ul>
+      <li>Is the prompt logically organized? (Yes/No/Partial)</li>
+      <li>Does it follow a clear sequence? (Yes/No/Partial)</li>
+      <li>Are sections clearly separated? (Yes/No/Partial)</li>
+      <li>Is the format consistent? (Yes/No/Partial)</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>Completeness (0-15 points)</h4>
+    <ul>
+      <li>Are all necessary details included?</li>
+      <li>Is there sufficient context?</li>
+      <li>Are examples provided when needed?</li>
+      <li>Are success criteria defined?</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>Efficiency (0-15 points)</h4>
+    <ul>
+      <li>Is the prompt concise? (No unnecessary words)</li>
+      <li>Does it avoid redundancy?</li>
+      <li>Is the token count reasonable?</li>
+      <li>Could any part be removed without loss?</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>6. Assessment & Exam Module</h2>
+  <p>Transform the platform into a comprehensive testing and certification system for evaluating prompt engineering skills.</p>
+
+  <div class="structure-block">
+    <h4>📋 Quiz/Exam Question Types</h4>
+    <ul>
+      <li><strong>Multiple Choice:</strong> Evaluate theoretical knowledge (technique selection, best practices)</li>
+      <li><strong>Multiple Select:</strong> Select all correct techniques/practices from a list</li>
+      <li><strong>Free-Form Prompt:</strong> Candidates write a prompt for a given scenario, scored by rubric</li>
+      <li><strong>Prompt Improvement:</strong> Improve a flawed prompt and explain changes</li>
+      <li><strong>Comparative Analysis:</strong> Compare two prompts and select the better one with reasoning</li>
+      <li><strong>Short Answer:</strong> Text-based questions (technique definitions, explanations)</li>
+      <li><strong>Matching:</strong> Match techniques to use cases or examples</li>
+      <li><strong>Practical Task:</strong> Write a prompt that achieves specific measurable results</li>
+      <li><strong>Code/Config:</strong> Configure a system prompt or prompt chain</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🎯 Quiz Creation & Configuration</h4>
+    <ul>
+      <li><strong>Quiz Builder:</strong> Drag-and-drop interface for creating questions</li>
+      <li><strong>Question Banks:</strong> Pre-built question library by difficulty and topic</li>
+      <li><strong>Randomization:</strong> Shuffle questions, options, or question selection (e.g., pick 10 of 20)</li>
+      <li><strong>Time Limits:</strong> Set overall quiz time or per-question time limits</li>
+      <li><strong>Difficulty Levels:</strong> Beginner, Intermediate, Advanced, Expert</li>
+      <li><strong>Scoring Settings:</strong> Points per question, negative marking, partial credit</li>
+      <li><strong>Pass Threshold:</strong> Define minimum score to pass (e.g., 70%)</li>
+      <li><strong>Retake Policy:</strong> Number of allowed attempts, wait time between attempts</li>
+      <li><strong>Question Pools:</strong> Create variants of quizzes from a question bank</li>
+      <li><strong>Preview Mode:</strong> Test quiz before publishing</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🔗 Candidate Invitation & Registration</h4>
+    <ul>
+      <li><strong>One-Time-Use Invite Links:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Generate unique, expiring links (7-30 day expiration configurable)</li>
+          <li>Link usage tracking (used/unused, timestamp, IP address)</li>
+          <li>Bulk invite generation for batch distribution</li>
+          <li>Email integration to send invites automatically</li>
+          <li>Link can't be reused after first attempt</li>
+        </ul>
+      </li>
+      <li><strong>Self-Registration Option:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Public quiz registration with email verification</li>
+          <li>Optional registration code/password for gated access</li>
+          <li>Accept terms & code of conduct before starting</li>
+          <li>Capture candidate metadata (name, email, organization, role)</li>
+        </ul>
+      </li>
+      <li><strong>Anonymous Mode:</strong> Option to take quiz without registration (for practice)</li>
+      <li><strong>Candidate Portal:</strong> Dashboard showing available quizzes and eligibility</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>⏱️ Quiz Taking Experience</h4>
+    <ul>
+      <li><strong>Progress Indicator:</strong> Show current question number and total</li>
+      <li><strong>Timer Display:</strong> Countdown timer (color changes as time runs out)</li>
+      <li><strong>Navigation:</strong> Previous/Next buttons, question navigator sidebar</li>
+      <li><strong>Flagging:</strong> Mark questions to review later</li>
+      <li><strong>Save Draft:</strong> Auto-save answers (resume if interrupted)</li>
+      <li><strong>Answer Review:</strong> Review all answers before submitting</li>
+      <li><strong>Submit Confirmation:</strong> Confirm submission before finalizing</li>
+      <li><strong>Immediate Feedback:</strong> Optional real-time feedback (show/hide correct answers)</li>
+      <li><strong>Browser Lock:</strong> Prevent tab switching (optional proctoring)</li>
+      <li><strong>Window Resize Detection:</strong> Alert if candidate resizes or leaves window</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🏆 Results & Scoring</h4>
+    <ul>
+      <li><strong>Instant Results:</strong> Show score immediately after submission</li>
+      <li><strong>Score Breakdown:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Section-wise scores (if quiz has sections)</li>
+          <li>Skill-wise breakdown (which techniques/topics passed/failed)</li>
+          <li>Correct vs incorrect per question type</li>
+          <li>Percentile ranking (how candidate compares to others)</li>
+        </ul>
+      </li>
+      <li><strong>Detailed Feedback:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Explanation for each question</li>
+          <li>Why correct answers are correct</li>
+          <li>Common mistakes in wrong answers</li>
+          <li>Links to learning resources</li>
+        </ul>
+      </li>
+      <li><strong>Rubric Scoring:</strong> For free-form prompts, use multi-criteria rubric with weighted scoring</li>
+      <li><strong>AI-Powered Grading:</strong> Auto-evaluate free-form responses using trained models</li>
+      <li><strong>Manual Grading Queue:</strong> Route responses to educators for manual review</li>
+      <li><strong>Score Export:</strong> PDF/CSV export of results</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>📊 Candidate Dashboard & Historical Performance</h4>
+    <ul>
+      <li><strong>Performance Timeline:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Line graph showing score progression over time</li>
+          <li>Hover tooltips with quiz details (date, score, time taken)</li>
+          <li>Color-coded: Passed (green), Failed (red), In Progress (blue)</li>
+          <li>Filter by quiz type or time period</li>
+        </ul>
+      </li>
+      <li><strong>Statistics Card:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Total quizzes taken / completed</li>
+          <li>Average score, highest score, improvement rate</li>
+          <li>Completion rate percentage</li>
+          <li>Time spent learning vs attempting</li>
+        </ul>
+      </li>
+      <li><strong>Skill Badges:</strong> Earn badges for passing quizzes or achieving milestones</li>
+      <li><strong>Comparison View:</strong> Compare personal performance vs cohort average</li>
+      <li><strong>Attempt History:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>List of all attempts with score, date, time taken</li>
+          <li>Clickable to view detailed results</li>
+          <li>Show improvement between attempts</li>
+        </ul>
+      </li>
+      <li><strong>Weak Areas Identification:</strong> Highlight topics/techniques where candidate struggles</li>
+      <li><strong>Learning Recommendations:</strong> Suggest assignments or resources based on weak areas</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>📈 Educator/Admin Dashboard</h4>
+    <ul>
+      <li><strong>Candidate Management:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>List all invited/registered candidates</li>
+          <li>View candidate status (invited, started, completed, passed, failed)</li>
+          <li>Send reminders to non-starters</li>
+          <li>Bulk update candidate details</li>
+        </ul>
+      </li>
+      <li><strong>Class/Cohort Analytics:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Average score and score distribution (histogram)</li>
+          <li>Pass rate percentage</li>
+          <li>Question-wise analysis (which questions are most missed)</li>
+          <li>Time statistics (average time taken, speeders, struggling candidates)</li>
+        </ul>
+      </li>
+      <li><strong>Report Generation:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Individual result reports (PDF with score breakdown and feedback)</li>
+          <li>Cohort report (aggregate statistics)</li>
+          <li>Skill mastery report (proficiency by topic)</li>
+          <li>Scheduled reports (email daily/weekly digest)</li>
+        </ul>
+      </li>
+      <li><strong>Item Analysis:</strong> Difficulty index and discrimination index for questions</li>
+      <li><strong>Candidate Management:</strong> Download results as CSV, bulk export</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🎖️ Certifications & Credentials</h4>
+    <ul>
+      <li><strong>Certificate Generation:</strong> Automatic PDF certificates for passing scores</li>
+      <li><strong>Certificate Customization:</strong> Upload logo, choose template, add credentials</li>
+      <li><strong>Digital Badges:</strong> Shareable badges for LinkedIn/portfolio</li>
+      <li><strong>Verification Links:</strong> QR code on certificate for verification</li>
+      <li><strong>Expiry Dates:</strong> Optional certificate validity period with renewal option</li>
+      <li><strong>Credential Portal:</strong> Public page where candidates can showcase earned badges</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🔐 Security & Proctoring</h4>
+    <ul>
+      <li><strong>Basic Proctoring:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Detect tab switching and alert</li>
+          <li>IP address monitoring (flag unusual locations)</li>
+          <li>Device fingerprinting (detect test sharing)</li>
+        </ul>
+      </li>
+      <li><strong>Answer Review Prevention:</strong> Lock/hide answers until quiz closes (if configured)</li>
+      <li><strong>Plagiarism Detection:</strong> Compare free-form answers against common patterns</li>
+      <li><strong>Session Management:</strong> One active session per user at a time</li>
+      <li><strong>Audit Trail:</strong> Log all candidate actions (submit, flag, navigate, etc.)</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>📲 Additional Features</h4>
+    <ul>
+      <li><strong>Leaderboard:</strong> Optional public/private leaderboards (top scorers)</li>
+      <li><strong>Peer Comparison:</strong> Benchmark against similar candidates in same cohort</li>
+      <li><strong>Spaced Repetition:</strong> Suggest retaking at optimal intervals (1 day, 7 days, 30 days)</li>
+      <li><strong>Adaptive Difficulty:</strong> Adjust question difficulty based on performance (optional)</li>
+      <li><strong>Notifications:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Quiz availability alerts</li>
+          <li>Deadline reminders (3 days, 1 day before deadline)</li>
+          <li>Results notification with score</li>
+          <li>Feedback ready notification</li>
+        </ul>
+      </li>
+      <li><strong>Integration:</strong> Send results to external systems (HR, LMS, Slack)</li>
+      <li><strong>API Endpoints:</strong> Programmatic quiz creation, result retrieval, candidate management</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>7. Complete Feature Summary by User Role</h2>
+
+  <div class="structure-block">
+    <h4>👤 Student/Candidate</h4>
+    <ul>
+      <li>Register or use one-time invite link</li>
+      <li>Browse available quizzes</li>
+      <li>Take quizzes with auto-save and progress tracking</li>
+      <li>View results immediately with detailed feedback</li>
+      <li>Access performance timeline and improvement tracking</li>
+      <li>View weak areas and get learning recommendations</li>
+      <li>Earn and display badges and certificates</li>
+      <li>Compare performance with cohort average</li>
+      <li>Download certificates and share credentials</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>👨‍🏫 Educator/Instructor</h4>
+    <ul>
+      <li>Create quizzes with multiple question types</li>
+      <li>Use question banks and templates</li>
+      <li>Configure scoring, randomization, time limits</li>
+      <li>Generate and manage invite links</li>
+      <li>Monitor candidate progress in real-time</li>
+      <li>View cohort analytics and performance trends</li>
+      <li>Review free-form answers and provide manual grading</li>
+      <li>Generate comprehensive reports</li>
+      <li>Create certificates and manage credentials</li>
+      <li>Send reminders and notifications</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🏢 Admin/Organization</h4>
+    <ul>
+      <li>Manage users, educators, and candidates</li>
+      <li>Create organization-wide question banks</li>
+      <li>Set organization policies (retake rules, pass thresholds)</li>
+      <li>View organization-wide analytics and reports</li>
+      <li>Manage API keys and integrations</li>
+      <li>Configure certification templates</li>
+      <li>Manage billing and subscription</li>
+      <li>Access audit logs and compliance reports</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>8. Platform Personas & Access Roles</h2>
+  <p>Comprehensive user personas tailored for learning, training, upskilling, and certification scenarios. Each persona has specific features, dashboards, and workflows.</p>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">🔐 Superadmin</h3>
+        <p style="margin: 0.5rem 0 0;">Platform-level management and governance</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> Overall platform management, system configuration, user management, compliance.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li>Manage all organizations and sub-organizations</li>
+          <li>Create and manage user roles and permissions</li>
+          <li>Configure system-wide settings and policies</li>
+          <li>Manage billing, subscriptions, and licensing</li>
+          <li>View platform-wide analytics and reports</li>
+          <li>Access audit logs and compliance reports (GDPR, SOC2, etc.)</li>
+          <li>Manage integrations and API keys</li>
+          <li>Monitor system health and performance</li>
+          <li>Manage support tickets and escalations</li>
+          <li>Bulk actions (user import/export, data migration)</li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> System overview, organization management, billing, security & compliance
+      <br><strong>Permissions:</strong> Full access to all features and data across all organizations
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">📋 Exam Coordinator</h3>
+        <p style="margin: 0.5rem 0 0;">Manage exams, scheduling, candidate logistics</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> End-to-end exam management, candidate coordination, exam scheduling, and logistics.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Exam Management:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Create and configure exam types (certification, screening, training assessment)</li>
+              <li>Set exam start and end dates with timezones</li>
+              <li>Define exam windows (specific dates or open window)</li>
+              <li>Configure retake rules, pass thresholds, score release timing</li>
+              <li>Link exam to questions and scoring rubrics</li>
+            </ul>
+          </li>
+          <li><strong>Link Generation & Expiry:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Generate one-time-use exam invite links</li>
+              <li>Set link expiry dates (custom per batch)</li>
+              <li>Generate bulk links with CSV download</li>
+              <li>Track link usage (sent, opened, used, expired)</li>
+              <li>Regenerate/resend expired links</li>
+            </ul>
+          </li>
+          <li><strong>Candidate Management:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Bulk import candidate emails from CSV/Excel</li>
+              <li>Auto-send exam invitation emails with personalized links</li>
+              <li>Set reminders (3 days, 1 day before deadline)</li>
+              <li>Track candidate registration status</li>
+              <li>Identify no-shows and send follow-ups</li>
+            </ul>
+          </li>
+          <li><strong>Exam Monitoring:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Real-time exam progress dashboard</li>
+              <li>View candidates currently taking exam</li>
+              <li>Monitor for suspicious activity (multiple logins, unusual locations)</li>
+              <li>Flag or stop suspicious attempts</li>
+            </ul>
+          </li>
+          <li><strong>Results & Reporting:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Release scores on scheduled date</li>
+              <li>Generate bulk result reports (CSV/PDF)</li>
+              <li>View pass/fail statistics by cohort</li>
+              <li>Identify candidates requiring remediation</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> Exam calendar, candidate status tracker, link management, results overview
+      <br><strong>Permissions:</strong> Full control over assigned exams; can view/manage candidates but cannot modify question content
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">👨‍🏫 Trainer / Instructor / Content Creator</h3>
+        <p style="margin: 0.5rem 0 0;">Create courses, materials, assignments, and assessment content</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> Design curriculum, create learning content, develop assessments, provide feedback.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Course Creation:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Create courses with modules and lessons</li>
+              <li>Set course duration and prerequisites</li>
+              <li>Organize curriculum by difficulty levels</li>
+              <li>Publish/archive courses</li>
+            </ul>
+          </li>
+          <li><strong>Learning Materials:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Upload coaching materials (PDFs, videos, slides, documentation)</li>
+              <li>Organize materials into logical sections</li>
+              <li>Link materials to lessons or topics</li>
+              <li>Manage version control for materials</li>
+            </ul>
+          </li>
+          <li><strong>Assignment Creation:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Create practical assignments and projects</li>
+              <li>Set submission requirements and deadlines</li>
+              <li>Define grading rubrics and criteria</li>
+              <li>Create assignment templates for reuse</li>
+            </ul>
+          </li>
+          <li><strong>Exam & Quiz Development:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Create exam questions with multiple types</li>
+              <li>Provide answer keys and explanations</li>
+              <li>Set difficulty levels and topic tags</li>
+              <li>Build question banks and pools</li>
+              <li>Create rubrics for free-form responses</li>
+              <li>Preview questions before publishing</li>
+            </ul>
+          </li>
+          <li><strong>Feedback & Grading:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Review free-form submissions and assignments</li>
+              <li>Provide detailed written feedback</li>
+              <li>Grade using predefined rubrics</li>
+              <li>Bulk download submissions for offline grading</li>
+              <li>Provide recommended resources for improvement</li>
+            </ul>
+          </li>
+          <li><strong>Analytics & Insights:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>View student learning progress</li>
+              <li>Identify struggling learners</li>
+              <li>See question effectiveness metrics</li>
+              <li>Adjust content based on performance</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> Course management, content library, student progress, submission queue
+      <br><strong>Permissions:</strong> Full control over created content; view student progress on assigned courses
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">👔 Manager / Team Lead / Supervisor</h3>
+        <p style="margin: 0.5rem 0 0;">Monitor team progress and performance</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> Track team member learning progress, identify skill gaps, promote upskilling.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Team Dashboard:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>View all direct reports' learning progress</li>
+              <li>Track course completion rates</li>
+              <li>Monitor certification status</li>
+              <li>See team average scores and trends</li>
+            </ul>
+          </li>
+          <li><strong>Performance Tracking:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Individual learner progress timelines</li>
+              <li>Completion status (in progress, completed, failed)</li>
+              <li>Comparison against team benchmarks</li>
+              <li>Skill proficiency matrix by team member</li>
+            </ul>
+          </li>
+          <li><strong>Notifications & Alerts:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Alerts for missed deadlines</li>
+              <li>Notification when team member completes certification</li>
+              <li>Flag for repeatedly failing candidates</li>
+            </ul>
+          </li>
+          <li><strong>Reporting:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Team performance reports (monthly, quarterly)</li>
+              <li>Skill gap analysis</li>
+              <li>Recommendation for personalized learning paths</li>
+              <li>Export team metrics for HR</li>
+            </ul>
+          </li>
+          <li><strong>Interventions:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Send encouraging messages or course recommendations</li>
+              <li>Request HR review for non-performers</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> Team overview, progress tracker, performance metrics, alerts
+      <br><strong>Permissions:</strong> View-only access to team members' learning data; cannot modify content or scores
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">💼 HR / Talent Development Manager</h3>
+        <p style="margin: 0.5rem 0 0;">Manage hiring assessments, upskilling programs, and talent development</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> Use platform for recruitment screening, employee development, and skill gap management.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Recruitment Assessments:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Create job-specific screening tests</li>
+              <li>Generate bulk candidate invite links</li>
+              <li>Track candidate submissions and scores</li>
+              <li>Compare candidates side-by-side</li>
+              <li>Export hiring reports</li>
+            </ul>
+          </li>
+          <li><strong>Employee Development Programs:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Assign learning paths to employees</li>
+              <li>Track onboarding course completion</li>
+              <li>Monitor upskilling program progress</li>
+              <li>Manage mandatory compliance training</li>
+            </ul>
+          </li>
+          <li><strong>Skill Gap Analysis:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Identify organization-wide skill gaps</li>
+              <li>Compare actual vs required skills</li>
+              <li>Recommend training programs</li>
+            </ul>
+          </li>
+          <li><strong>Certification & Credentials:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Track employee certifications and expiry dates</li>
+              <li>Manage renewal schedules</li>
+              <li>Generate compliance reports</li>
+            </ul>
+          </li>
+          <li><strong>Reporting & Analytics:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Workforce learning analytics</li>
+              <li>Training ROI reports</li>
+              <li>Compliance certification dashboard</li>
+              <li>Export data to HR systems (SAP, Workday, etc.)</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> Recruitment pipeline, employee development, skill matrix, certification tracking
+      <br><strong>Permissions:</strong> Manage recruitment and development programs; view aggregated employee data
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">🛠️ Support / Customer Success / Help Desk</h3>
+        <p style="margin: 0.5rem 0 0;">Provide technical support and troubleshooting</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> Technical support, issue resolution, user assistance.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Support Ticket Management:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>View and manage support tickets</li>
+              <li>Prioritize and assign tickets</li>
+              <li>Track resolution time and status</li>
+            </ul>
+          </li>
+          <li><strong>User Assistance:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Reset user passwords</li>
+              <li>Troubleshoot login issues</li>
+              <li>Assist with platform navigation</li>
+              <li>Provide technical documentation and FAQs</li>
+            </ul>
+          </li>
+          <li><strong>Candidate Support:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Re-send exam links to candidates</li>
+              <li>Verify candidate eligibility</li>
+              <li>Address technical issues during exam</li>
+              <li>Manage accommodations (extended time, etc.)</li>
+            </ul>
+          </li>
+          <li><strong>Data Issues:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Investigate data discrepancies</li>
+              <li>Restore archived content</li>
+              <li>Verify audit logs</li>
+            </ul>
+          </li>
+          <li><strong>Knowledge Base:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Create and maintain help articles</li>
+              <li>Document common issues and solutions</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> Ticket queue, user list, support tools, knowledge base
+      <br><strong>Permissions:</strong> View user data for troubleshooting; can reset passwords and re-send links
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">📊 Analytics / Quality Assurance Officer</h3>
+        <p style="margin: 0.5rem 0 0;">Monitor and improve content and test quality</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> Ensure question quality, analyze test effectiveness, recommend improvements.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Question Analysis:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Item difficulty index (how hard is each question?)</li>
+              <li>Discrimination index (separates strong from weak candidates?)</li>
+              <li>Option effectiveness (are distractors working?)</li>
+              <li>Flag questions with poor metrics</li>
+            </ul>
+          </li>
+          <li><strong>Test Quality Metrics:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Exam reliability (Cronbach's alpha)</li>
+              <li>Validity analysis</li>
+              <li>Score distribution analysis</li>
+              <li>Bias detection (question fairness)</li>
+            </ul>
+          </li>
+          <li><strong>Content Audit:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Review questions for clarity and accuracy</li>
+              <li>Check for outdated content</li>
+              <li>Verify consistency with learning objectives</li>
+              <li>Ensure rubrics are applied consistently</li>
+            </ul>
+          </li>
+          <li><strong>Recommendations:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Flag questions for revision or removal</li>
+              <li>Suggest improvements to passing standards</li>
+              <li>Recommend question bank updates</li>
+            </ul>
+          </li>
+          <li><strong>Compliance Reports:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Verify exam security and integrity</li>
+              <li>Generate compliance audit reports</li>
+              <li>Track question usage and copyright</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> Question metrics, test quality analytics, audit results, recommendations
+      <br><strong>Permissions:</strong> View all content and performance data; cannot modify scores
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">🎯 Director / Organization Lead</h3>
+        <p style="margin: 0.5rem 0 0;">Strategic oversight and high-level reporting</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> Organization-wide strategy, executive reporting, program effectiveness.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Executive Dashboard:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Organization-wide learning metrics</li>
+              <li>Employee certification status overview</li>
+              <li>Training program effectiveness</li>
+              <li>Compliance status at a glance</li>
+            </ul>
+          </li>
+          <li><strong>Strategic Reports:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>ROI analysis (cost per trained employee)</li>
+              <li>Skill development trends over time</li>
+              <li>Department comparison (which teams are upskilling faster)</li>
+              <li>Retention impact of learning programs</li>
+            </ul>
+          </li>
+          <li><strong>Program Management:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Approve new training programs</li>
+              <li>Allocate budgets to learning initiatives</li>
+              <li>Monitor program completion rates</li>
+              <li>Review certification deadlines</li>
+            </ul>
+          </li>
+          <li><strong>Organizational Policies:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Set pass/fail thresholds</li>
+              <li>Define retake policies</li>
+              <li>Approve certification templates</li>
+              <li>Configure brand and branding</li>
+            </ul>
+          </li>
+          <li><strong>Stakeholder Communication:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Download executive summary reports</li>
+              <li>Schedule automated reporting</li>
+              <li>Export data for board presentations</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> Executive summary, KPIs, organization metrics, strategic reports
+      <br><strong>Permissions:</strong> View all organization data; can configure org policies
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="this.closest('.card').classList.toggle('collapsed')">
+      <div>
+        <h3 style="margin-top: 0;">👤 Learner / Student / Candidate</h3>
+        <p style="margin: 0.5rem 0 0;">Learn, train, and earn certifications</p>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-content">
+      <p><strong>Primary Responsibilities:</strong> Complete learning paths, take assessments, improve skills.</p>
+      <div style="margin-top: 1rem;">
+        <strong>Key Features:</strong>
+        <ul>
+          <li><strong>Learning Dashboard:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>View assigned courses and learning paths</li>
+              <li>Track course progress (% complete)</li>
+              <li>See upcoming deadlines</li>
+              <li>Access bookmarks and saved materials</li>
+            </ul>
+          </li>
+          <li><strong>Course Consumption:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>View lessons and learning materials</li>
+              <li>Download coaching materials (PDFs, slides, videos)</li>
+              <li>Mark lessons as complete</li>
+              <li>Track learning time</li>
+            </ul>
+          </li>
+          <li><strong>Assessments & Exams:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Access exams via one-time invite link</li>
+              <li>Take quizzes and assignments</li>
+              <li>Submit free-form responses</li>
+              <li>View results and feedback</li>
+            </ul>
+          </li>
+          <li><strong>Performance Tracking:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Personal performance timeline</li>
+              <li>Score history for each exam</li>
+              <li>Weak areas and improvement recommendations</li>
+              <li>Comparison with cohort average</li>
+            </ul>
+          </li>
+          <li><strong>Credentials:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>View earned badges and certificates</li>
+              <li>Download certificates</li>
+              <li>Share credentials on LinkedIn</li>
+              <li>Track certification expiry dates</li>
+            </ul>
+          </li>
+          <li><strong>Support:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Access FAQ and help resources</li>
+              <li>Submit support requests</li>
+              <li>Receive notifications and reminders</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <strong>Dashboard:</strong> My Learning, Courses, Progress, Credentials, Performance Timeline
+      <br><strong>Permissions:</strong> Access assigned content only; view own performance data
+    </div>
+  </div>
+
+  <div class="structure-block" style="margin-top: 2rem;">
+    <h4>🔄 Cross-Cutting Concerns (All Roles)</h4>
+    <ul>
+      <li><strong>Access Control:</strong> Role-based access control (RBAC) defines what each persona can see and do</li>
+      <li><strong>Notifications:</strong> Personalized alerts based on role (exam deadline, submission received, results ready)</li>
+      <li><strong>Audit Trail:</strong> All actions logged with timestamp and user ID for compliance</li>
+      <li><strong>Data Privacy:</strong> GDPR/CCPA compliant - each role sees only what they need to</li>
+      <li><strong>API Access:</strong> Advanced users can access REST APIs for integration and automation</li>
+      <li><strong>Mobile Access:</strong> Key features available on mobile (view progress, take short quizzes, view certificates)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>9. Metadata & Tagging System</h2>
+  <p>Comprehensive tagging and metadata framework for courses, exams, and learning materials to enable discovery, filtering, and intelligent recommendations.</p>
+
+  <div class="structure-block">
+    <h4>🏷️ Course Metadata Fields</h4>
+    <ul>
+      <li><strong>Basic Information:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Course Title & Description</li>
+          <li>Version (v1.0, v2.1, etc.)</li>
+          <li>Release Date & Last Updated Date</li>
+          <li>Author/Creator</li>
+          <li>Course Status (Draft, Published, Archived, Retired)</li>
+        </ul>
+      </li>
+      <li><strong>Classification Tags:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Category:</strong> Technical, Soft Skills, Compliance, Leadership, Sales, Customer Service, Finance, etc.</li>
+          <li><strong>Domain/Subject:</strong> AI/ML, Cloud Computing, Cybersecurity, Python, JavaScript, Project Management, Communication, etc.</li>
+          <li><strong>Skill Level:</strong> Beginner, Intermediate, Advanced, Expert, Executive</li>
+          <li><strong>Industry:</strong> Banking, Healthcare, Manufacturing, IT Services, Retail, Education, Government, etc.</li>
+        </ul>
+      </li>
+      <li><strong>Target Audience:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Occupation/Role:</strong> Software Engineer, Data Scientist, Product Manager, HR Manager, Sales Executive, Compliance Officer, etc.</li>
+          <li><strong>Experience Level:</strong> Entry-Level, Mid-Career, Senior, Executive</li>
+          <li><strong>Department:</strong> Engineering, Sales, HR, Finance, Operations, Marketing, Legal</li>
+          <li><strong>Geographic Location/Region:</strong> North America, Europe, Asia-Pacific, EMEA</li>
+        </ul>
+      </li>
+      <li><strong>Learning Characteristics:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Duration:</strong> 2 hours, 8 hours, 2 days, 4 weeks (estimated learning time)</li>
+          <li><strong>Delivery Method:</strong> Self-Paced, Instructor-Led, Blended, Synchronous, Asynchronous</li>
+          <li><strong>Language:</strong> English, Spanish, French, German, Mandarin, Japanese, etc.</li>
+          <li><strong>Format:</strong> Video, Interactive, Text-Based, Lab, Simulation, Hands-On Project</li>
+          <li><strong>Accessibility:</strong> Subtitles, Transcripts, Screen Reader Compatible, Keyboard Navigable</li>
+        </ul>
+      </li>
+      <li><strong>Learning Objectives & Skills:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>List specific skills/competencies gained (e.g., "Python Programming", "Agile Methodology")</li>
+          <li>Bloom's Taxonomy level (Remember, Understand, Apply, Analyze, Evaluate, Create)</li>
+          <li>Skills Framework alignment (if applicable)</li>
+        </ul>
+      </li>
+      <li><strong>Prerequisites & Pathways:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Prerequisite Courses (must complete before enrolling)</li>
+          <li>Suggested Predecessor Courses (recommended)</li>
+          <li>Recommended Next Courses (progression path)</li>
+          <li>Learning Pathways (group related courses, e.g., "AWS Certification Path")</li>
+        </ul>
+      </li>
+      <li><strong>Certification & Credentials:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Certification Type:</strong> Professional Certificate, Badge, CPD Points, Academic Credit</li>
+          <li><strong>Certification Value:</strong> Number of credits/points earned upon completion</li>
+          <li><strong>Certification Validity:</strong> Lifetime, 1 year, 2 years (expiry period)</li>
+          <li><strong>Renewal Requirements:</strong> Can it be renewed? How frequently?</li>
+          <li><strong>Associated Standards:</strong> IISC, SCORM, AICC, xAPI/Tin Can</li>
+        </ul>
+      </li>
+      <li><strong>Compliance & Regulations:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Is Mandatory:</strong> Yes/No (for compliance/regulatory requirement)</li>
+          <li><strong>Compliance Requirement:</strong> GDPR, SOX, HIPAA, PCI-DSS, AML/KYC, OSHA, ISO 27001</li>
+          <li><strong>Renewal Frequency:</strong> Annual, Bi-annual, Three years</li>
+          <li><strong>Completion Deadline:</strong> Date by which employees must complete</li>
+        </ul>
+      </li>
+      <li><strong>Organizational Tags:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Department/Team Ownership</li>
+          <li>Cost Center / Project Code</li>
+          <li>Sponsored By (Executive or Department)</li>
+          <li>Custom Tags (organization-specific labels)</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>📝 Exam / Quiz Metadata Fields</h4>
+    <ul>
+      <li><strong>Basic Information:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Exam Title & Description</li>
+          <li>Exam Code (e.g., "ACP-100", "AWS-SAA")</li>
+          <li>Version & Release Date</li>
+          <li>Associated Course (if part of a course)</li>
+        </ul>
+      </li>
+      <li><strong>Classification (Same as Courses):</strong> Category, Domain, Skill Level, Industry, Role, Target Audience</li>
+      <li><strong>Exam Specifications:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Duration:</strong> 1 hour, 2 hours, 3 hours, etc.</li>
+          <li><strong>Total Questions:</strong> Number of questions in exam</li>
+          <li><strong>Passing Score:</strong> Percentage or absolute score (e.g., 70%, 140/200 points)</li>
+          <li><strong>Question Types:</strong> Multiple Choice, Multiple Select, Free-Form, Coding, Matching, etc.</li>
+          <li><strong>Difficulty Distribution:</strong> 30% Easy, 50% Medium, 20% Hard</li>
+          <li><strong>Question Randomization:</strong> Yes/No (randomize question order)</li>
+          <li><strong>Answer Shuffling:</strong> Yes/No (randomize answer options)</li>
+        </ul>
+      </li>
+      <li><strong>Attempt & Retry Policy:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Maximum Attempts:</strong> Unlimited, 1, 2, 3, 5 (configure per exam or per link)</li>
+          <li><strong>Minimum Wait Between Attempts:</strong> 24 hours, 7 days, 30 days</li>
+          <li><strong>Score Calculation Method:</strong> Best Score, Last Score, Average Score</li>
+          <li><strong>Validity Period:</strong> When does the exam become invalid? (e.g., after certification expires)</li>
+        </ul>
+      </li>
+      <li><strong>Proctoring & Security:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Proctoring Level:</strong> None, Basic (browser lock), Advanced (webcam monitoring), Full (live proctor)</li>
+          <li><strong>Browser Lock:</strong> Yes/No (prevent tab switching)</li>
+          <li><strong>IP Monitoring:</strong> Yes/No (flag unusual locations)</li>
+          <li><strong>Device Lock:</strong> Yes/No (prevent multiple devices)</li>
+          <li><strong>Recording Required:</strong> Yes/No (record exam session)</li>
+        </ul>
+      </li>
+      <li><strong>Certification & Credentials:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Certificate Template (which design to use)</li>
+          <li>Certification Value (e.g., "AWS Certified Solutions Architect")</li>
+          <li>Certificate Expiry (same as course validity)</li>
+          <li>Badge Eligibility (can user earn badge for passing?)</li>
+        </ul>
+      </li>
+      <li><strong>Alignment & Standards:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Learning Objectives Covered (link to course objectives)</li>
+          <li>Competency Framework Alignment (which skills assessed)</li>
+          <li>Industry Standards (IISC, SCORM, NCEES, CompTIA, etc.)</li>
+          <li>Exam Board/Issuer (e.g., "AWS", "Microsoft", "Internal Exam Board")</li>
+        </ul>
+      </li>
+      <li><strong>Regulatory & Compliance:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Is Mandatory: Yes/No</li>
+          <li>Compliance Area: GDPR, Data Privacy, Anti-Money Laundering, etc.</li>
+          <li>Regulatory Body: Which organization requires this exam (internal policy, external)</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>📊 Attempt Tracking & Management</h4>
+    <ul>
+      <li><strong>Per-User Attempt Tracking:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Total attempts made (lifetime)</li>
+          <li>Attempt history with timestamps</li>
+          <li>Score for each attempt (chronological)</li>
+          <li>Best score achieved</li>
+          <li>Latest score</li>
+          <li>Time spent on each attempt</li>
+          <li>Status for each attempt (Passed, Failed, Incomplete, In Progress)</li>
+          <li>Device & IP address for each attempt (for fraud detection)</li>
+          <li>Answers submitted & auto-saved drafts</li>
+        </ul>
+      </li>
+      <li><strong>Private Link Attempt Configuration:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Max Attempts Per Link:</strong> 1-time use, 2, 3, 5, unlimited</li>
+          <li><strong>Attempts Remaining:</strong> Display to user before starting</li>
+          <li><strong>Link Expiry Date:</strong> Link becomes unusable after expiration</li>
+          <li><strong>Link Status Tracking:</strong>
+            <ul style="margin-top: 0.5rem;">
+              <li>Unused (link sent but not used)</li>
+              <li>In Progress (candidate started exam)</li>
+              <li>Completed (candidate finished, attempts remaining)</li>
+              <li>Expired (link validity period ended)</li>
+              <li>Exhausted (all attempts used)</li>
+            </ul>
+          </li>
+          <li><strong>Resend/Regenerate Link:</strong> Create new link if previous expired</li>
+        </ul>
+      </li>
+      <li><strong>Attempt Limiting Rules:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li><strong>Global Max Attempts:</strong> Set at exam level (e.g., max 3 attempts across all candidates)</li>
+          <li><strong>Link-Specific Max Attempts:</strong> Override per link (e.g., this link allows 2 attempts)</li>
+          <li><strong>Time-Based Limits:</strong> Allow 1 attempt per 24 hours / per week / per month</li>
+          <li><strong>Score-Based Unlock:</strong> Only allow retake if previous score < 60%</li>
+          <li><strong>Cooldown Period:</strong> Must wait X days before next attempt</li>
+        </ul>
+      </li>
+      <li><strong>Attempt Dashboard (for Exam Coordinators):</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>View all candidates and their attempt counts</li>
+          <li>Identify candidates who haven't started exam</li>
+          <li>See candidates approaching attempt limit</li>
+          <li>Candidates who have exhausted attempts</li>
+          <li>Option to grant additional attempts to specific candidates</li>
+          <li>Bulk actions (reset attempts for cohort, extend deadline)</li>
+        </ul>
+      </li>
+      <li><strong>Candidate Dashboard (Personal Attempts):</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Attempts remaining on private link</li>
+          <li>Attempt history (scores, dates, time spent)</li>
+          <li>Progress indicator (Attempt 1 of 3)</li>
+          <li>Days until next attempt allowed</li>
+          <li>Best score vs. latest score</li>
+          <li>Feedback from each attempt (if released)</li>
+        </ul>
+      </li>
+      <li><strong>Reporting on Attempts:</strong>
+        <ul style="margin-top: 0.5rem;">
+          <li>Attempt analytics (average attempts per candidate)</li>
+          <li>Pass rate on first attempt vs. retry attempts</li>
+          <li>Time-to-pass (how many attempts until passing)</li>
+          <li>Attempt rate trend (are candidates retaking frequently?)</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>🔍 Discovery & Filtering Features</h4>
+    <ul>
+      <li><strong>Advanced Search:</strong> Filter by any metadata field (category, domain, role, skill level, language, industry)</li>
+      <li><strong>Smart Recommendations:</strong> Show similar courses/exams based on user's role and skill level</li>
+      <li><strong>Learning Path Navigation:</strong> "Next Steps" suggestions based on prerequisites and progression</li>
+      <li><strong>Role-Based Learning:</strong> Personalized content based on user's job title and department</li>
+      <li><strong>Compliance Dashboard:</strong> Show mandatory training by compliance requirement (GDPR, etc.)</li>
+      <li><strong>Trending & New:</strong> Filter by recently added or popular courses in your role/industry</li>
+      <li><strong>Curated Collections:</strong> "AWS Cloud Path", "Leadership Track", "2024 Mandatory Training"</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>💾 Data Capture & Export</h4>
+    <ul>
+      <li><strong>Attempt Data Export:</strong> CSV with candidate name, exam, attempt number, score, date, time spent, status</li>
+      <li><strong>Bulk Attempt Reports:</strong> "How many candidates passed on first attempt?"</li>
+      <li><strong>LMS Integration:</strong> Send attempt data to external LMS (Moodle, Blackboard, Canvas)</li>
+      <li><strong>HR System Sync:</strong> Export certification records to SAP SuccessFactors, Workday, BambooHR</li>
+      <li><strong>API Endpoints:</strong> Programmatic access to attempt data and link configuration</li>
+    </ul>
+  </div>
+
+  <div class="structure-block">
+    <h4>📋 Implementation Example: Metadata Form for Exam Creation</h4>
+    <div class="template-box" style="background: var(--bg); border-left: 4px solid var(--accent);">
+      <strong>Step 1: Basic Info</strong><br>
+      Exam Title, Description, Code, Author<br><br>
+
+      <strong>Step 2: Classification</strong><br>
+      Category (Technical), Domain (Python), Skill Level (Intermediate), Target Role (Data Scientist)<br><br>
+
+      <strong>Step 3: Specifications</strong><br>
+      Duration: 90 min | Total Questions: 50 | Passing Score: 70%<br>
+      Question Types: 30 Multiple Choice, 20 Multiple Select<br>
+      Difficulty: 20% Easy, 60% Medium, 20% Hard<br><br>
+
+      <strong>Step 4: Attempt Policy</strong><br>
+      Max Attempts: 3 | Wait Between Attempts: 7 days | Score Calc: Best Score<br>
+      Link Expiry: 30 days | Max Attempts Per Link: 1<br><br>
+
+      <strong>Step 5: Security & Proctoring</strong><br>
+      Proctoring Level: Basic | Browser Lock: Yes | IP Monitoring: Yes<br><br>
+
+      <strong>Step 6: Compliance</strong><br>
+      Is Mandatory: Yes | Compliance: Internal Policy | Validity: 2 years
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>This comprehensive design covers a full-featured learning and certification platform with 8+ distinct personas, each with tailored features, dashboards, and workflows. Implement role-based access control to ensure each user sees only relevant features and data.</p>
+  <p>Last updated: 2026-09-28</p>
+</div>
+</div>
+
+<script>
+document.querySelectorAll('.card').forEach(card => {
+  if (card.querySelector('h3')?.textContent?.includes('Zero-Shot')) {
+    card.classList.add('collapsed');
+  }
+});
+</script>
+</body>
+</html>

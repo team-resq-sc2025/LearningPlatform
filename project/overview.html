@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Training Platform - Project Overview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .nav a {
+            display: inline-block;
+            margin: 0 15px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .nav a:hover {
+            color: #764ba2;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            margin: 40px 0;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 5px solid #667eea;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        h2:before {
+            content: "→";
+            margin-right: 15px;
+            font-size: 1.5em;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+            line-height: 1.8;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .highlight strong {
+            color: #d39e00;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .card p {
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .list-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .list-item-icon {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-right: 15px;
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-content strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .list-item-content p {
+            margin: 0;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .metrics-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .metrics-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .metrics-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            padding: 20px;
+            margin: 15px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: -12px;
+            top: 30px;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #667eea;
+        }
+
+        .timeline-item-title {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .timeline-item-desc {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .benefit-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .benefit-box strong {
+            display: block;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .benefit-box p {
+            margin: 0;
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: #e7f3ff;
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9em;
+            border: 1px solid #667eea;
+        }
+
+        .success-metric {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #10b981;
+            text-align: center;
+        }
+
+        .success-metric strong {
+            display: block;
+            font-size: 1.8em;
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+
+        .success-metric p {
+            margin: 0;
+            color: #666;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .video-section {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .diagram {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px dashed #667eea;
+        }
+
+        .diagram img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav a {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🎓 AI-Powered Training Platform</h1>
+            <p>Making Professional Learning Faster, Smarter, and More Effective</p>
+        </header>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <a href="#concept">Concept</a>
+            <a href="#problems">Problems Solved</a>
+            <a href="#features">Features</a>
+            <a href="#benefits">Benefits</a>
+            <a href="#metrics">Success Metrics</a>
+            <a href="#technical">Technical Info</a>
+            <a href="#timeline">Timeline</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+
+            <!-- Concept Section -->
+            <section id="concept">
+                <h2>What Is This Project?</h2>
+
+                <p>Imagine a <strong>smart online school for adults</strong> that:</p>
+
+                <ul style="margin: 20px 0 20px 40px;">
+                    <li>💡 <strong>Creates courses automatically</strong> using AI (saving weeks of work)</li>
+                    <li>📝 <strong>Grades tests automatically</strong> (even essays!) giving instant feedback</li>
+                    <li>🎯 <strong>Personalizes learning</strong> for each person (like Netflix for training)</li>
+                    <li>📊 <strong>Shows powerful reports</strong> so managers can see who's learning and who's struggling</li>
+                    <li>🏅 <strong>Awards certificates</strong> that prove someone has learned a skill</li>
+                </ul>
+
+                <div class="highlight">
+                    <strong>In Simple Terms:</strong> This is a platform for companies to train their employees faster and cheaper, while giving each employee a personalized learning experience.
+                </div>
+
+                <h3>Who Uses It?</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>🏢 Companies</h4>
+                        <p>Train employees, ensure compliance, track certifications</p>
+                    </div>
+                    <div class="card">
+                        <h4>👨‍🏫 Trainers & Teachers</h4>
+                        <p>Create courses easily with AI help, spend less time grading</p>
+                    </div>
+                    <div class="card">
+                        <h4>📚 Students & Employees</h4>
+                        <p>Learn at their own pace, get personalized guidance</p>
+                    </div>
+                    <div class="card">
+                        <h4>👔 Managers</h4>
+                        <p>See team progress, identify who needs help</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Problems Section -->
+            <section id="problems">
+                <h2>Problems This Solves</h2>
+
+                <h3>❌ Today's Problems:</h3>
+
+                <div class="list-item">
+                    <div class="list-item-icon">1</div>
+                    <div class="list-item-content">
+                        <strong>Creating courses takes FOREVER</strong>
+                        <p>A single course takes 100+ hours to create. Companies waste time and money.</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-icon">2</div>
+                    <div class="list-item-content">
+                        <strong>Testing and grading is exhausting</strong>
+                        <p>Trainers spend 40+ hours per month grading. Students wait days for feedback.</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-icon">3</div>
+                    <div class="list-item-content">
+                        <strong>One-size-fits-all learning doesn't work</strong>
+                        <p>Everyone learns at different speeds. No personalization means low completion rates (only 60%).</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-icon">4</div>
+                    <div class="list-item-content">
+                        <strong>No visibility into learning progress</strong>
+                        <p>Managers can't see who's learning what. Training ROI is impossible to measure.</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-icon">5</div>
+                    <div class="list-item-content">
+                        <strong>Training is expensive</strong>
+                        <p>Companies spend $500+ per trained employee. They need better ROI.</p>
+                    </div>
+                </div>
+
+                <h3>✅ Our Solution Delivers:</h3>
+
+                <div class="benefit-box">
+                    <strong>50-70% faster</strong>
+                    <p>Create courses in 40 hours instead of 100+</p>
+                </div>
+
+                <div class="benefit-box">
+                    <strong>60% less grading</strong>
+                    <p>AI grades automatically, humans review complex answers</p>
+                </div>
+
+                <div class="benefit-box">
+                    <strong>30-40% better outcomes</strong>
+                    <p>Personalized learning increases completion rates to 80%+</p>
+                </div>
+
+                <div class="benefit-box">
+                    <strong>Full visibility</strong>
+                    <p>Real-time dashboards show exactly who's learning what</p>
+                </div>
+
+                <div class="benefit-box">
+                    <strong>Lower costs</strong>
+                    <p>Reduce cost per employee to $350+ (30% savings)</p>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features">
+                <h2>What Can It Do? (Features)</h2>
+
+                <h3>📚 For Course Creators</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Create Courses</h4>
+                        <p>Build online courses with lessons and materials easily</p>
+                    </div>
+                    <div class="card">
+                        <h4>AI Content Helper</h4>
+                        <p>AI writes course content, generates examples</p>
+                    </div>
+                    <div class="card">
+                        <h4>Generate Tests</h4>
+                        <p>AI creates quiz questions automatically from course content</p>
+                    </div>
+                    <div class="card">
+                        <h4>Set Up Rubrics</h4>
+                        <p>Define how to grade essays and assignments fairly</p>
+                    </div>
+                </div>
+
+                <h3>✍️ For Taking Tests</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Multiple Question Types</h4>
+                        <p>Multiple choice, true/false, essays, code challenges, and more</p>
+                    </div>
+                    <div class="card">
+                        <h4>Instant Grading</h4>
+                        <p>Get scores immediately on most questions</p>
+                    </div>
+                    <div class="card">
+                        <h4>Detailed Feedback</h4>
+                        <p>AI explains why answers are right or wrong</p>
+                    </div>
+                    <div class="card">
+                        <h4>Retake Tests</h4>
+                        <p>Practice multiple times with different questions each time</p>
+                    </div>
+                </div>
+
+                <h3>🎯 For Personalization</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Recommended Courses</h4>
+                        <p>AI suggests what to learn next based on your job and skills</p>
+                    </div>
+                    <div class="card">
+                        <h4>Adaptive Learning</h4>
+                        <p>Difficulty adjusts as you get questions right or wrong</p>
+                    </div>
+                    <div class="card">
+                        <h4>Predict Success</h4>
+                        <p>AI predicts who will pass and who needs help</p>
+                    </div>
+                    <div class="card">
+                        <h4>Custom Learning Paths</h4>
+                        <p>Your learning journey is unique to your goals</p>
+                    </div>
+                </div>
+
+                <h3>📊 For Managers & Reports</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Team Dashboard</h4>
+                        <p>See all employees' training progress at a glance</p>
+                    </div>
+                    <div class="card">
+                        <h4>Performance Reports</h4>
+                        <p>Export detailed reports on who learned what</p>
+                    </div>
+                    <div class="card">
+                        <h4>Spot Problems</h4>
+                        <p>Identify topics where most people struggle</p>
+                    </div>
+                    <div class="card">
+                        <h4>ROI Tracking</h4>
+                        <p>See training's impact on employee performance</p>
+                    </div>
+                </div>
+
+                <h3>🏅 For Certificates</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Auto-Generate</h4>
+                        <p>Create certificates automatically when someone passes</p>
+                    </div>
+                    <div class="card">
+                        <h4>Digital Badges</h4>
+                        <p>Share achievements on LinkedIn and social media</p>
+                    </div>
+                    <div class="card">
+                        <h4>Verify Credentials</h4>
+                        <p>Let employers verify someone really earned the certificate</p>
+                    </div>
+                    <div class="card">
+                        <h4>Track Expiry</h4>
+                        <p>Know when certifications expire and need renewal</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Benefits Section -->
+            <section id="benefits">
+                <h2>Key Benefits</h2>
+
+                <h3>💰 For Companies</h3>
+                <ul style="margin: 20px 0 20px 40px;">
+                    <li><strong>Save 60% on course creation time</strong> - Reduce 100 hours to 40</li>
+                    <li><strong>Reduce training costs by 30%</strong> - From $500 to $350 per employee</li>
+                    <li><strong>Improve employee skills faster</strong> - 25%+ reduction in time-to-competency</li>
+                    <li><strong>Ensure compliance</strong> - Track mandatory training automatically</li>
+                    <li><strong>Measure training ROI</strong> - See how training impacts performance</li>
+                </ul>
+
+                <h3>👨‍💼 For Trainers & Teachers</h3>
+                <ul style="margin: 20px 0 20px 40px;">
+                    <li><strong>Spend 70% less time grading</strong> - From 40 hours to 12 hours/month</li>
+                    <li><strong>Create courses 60% faster</strong> - AI helps write content and generate questions</li>
+                    <li><strong>Better quality teaching</strong> - Spend time on instruction, not paperwork</li>
+                    <li><strong>See what works</strong> - Analytics show which lessons are most effective</li>
+                    <li><strong>Help struggling students</strong> - System alerts you to who needs support</li>
+                </ul>
+
+                <h3>📚 For Learners</h3>
+                <ul style="margin: 20px 0 20px 40px;">
+                    <li><strong>Learn at your pace</strong> - No pressure, go as fast or slow as you need</li>
+                    <li><strong>Get instant feedback</strong> - Know your score immediately, not days later</li>
+                    <li><strong>Personalized guidance</strong> - AI recommends what to learn next</li>
+                    <li><strong>Earn credentials</strong> - Get certificates that help your career</li>
+                    <li><strong>Share achievements</strong> - Put certificates on LinkedIn</li>
+                </ul>
+
+                <h3>👔 For Managers</h3>
+                <ul style="margin: 20px 0 20px 40px;">
+                    <li><strong>See team progress</strong> - Real-time visibility into who's learning</li>
+                    <li><strong>Identify skill gaps</strong> - See where your team needs more training</li>
+                    <li><strong>Quick reports</strong> - Export data for your boss in seconds</li>
+                    <li><strong>Act on data</strong> - Get alerts about who's falling behind</li>
+                    <li><strong>Drive performance</strong> - Training investments show ROI</li>
+                </ul>
+            </section>
+
+            <!-- Metrics Section -->
+            <section id="metrics">
+                <h2>Success Metrics & Reports</h2>
+
+                <h3>What Gets Measured?</h3>
+
+                <p>The platform tracks everything important for understanding training effectiveness:</p>
+
+                <h3>📈 Learning Metrics</h3>
+                <table class="metrics-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>What It Means</th>
+                        <th>Current</th>
+                        <th>Target</th>
+                    </tr>
+                    <tr>
+                        <td>Course Completion Rate</td>
+                        <td>% of people who finish courses</td>
+                        <td>60%</td>
+                        <td>80%+</td>
+                    </tr>
+                    <tr>
+                        <td>Assessment Pass Rate</td>
+                        <td>% of people who pass tests</td>
+                        <td>75%</td>
+                        <td>85%+</td>
+                    </tr>
+                    <tr>
+                        <td>Time to Learn</td>
+                        <td>How long it takes to master a skill</td>
+                        <td>10+ weeks</td>
+                        <td>6-8 weeks</td>
+                    </tr>
+                    <tr>
+                        <td>Learner Satisfaction</td>
+                        <td>How much people like the platform</td>
+                        <td>3.5/5</td>
+                        <td>4.3/5</td>
+                    </tr>
+                    <tr>
+                        <td>Skill Improvement</td>
+                        <td>Average score improvement</td>
+                        <td>20%</td>
+                        <td>30%+</td>
+                    </tr>
+                </table>
+
+                <h3>💰 Business Metrics</h3>
+                <table class="metrics-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>What It Means</th>
+                        <th>6 Months</th>
+                        <th>12 Months</th>
+                    </tr>
+                    <tr>
+                        <td>Active Users</td>
+                        <td>People using the platform</td>
+                        <td>1,000+</td>
+                        <td>10,000+</td>
+                    </tr>
+                    <tr>
+                        <td>Revenue (ARR)</td>
+                        <td>Money coming in yearly</td>
+                        <td>$100K</td>
+                        <td>$500K</td>
+                    </tr>
+                    <tr>
+                        <td>Cost per User</td>
+                        <td>How much we spend to train each person</td>
+                        <td>$400</td>
+                        <td>$350 (30% savings)</td>
+                    </tr>
+                    <tr>
+                        <td>Customer Satisfaction (NPS)</td>
+                        <td>How happy are customers? (0-100)</td>
+                        <td>45+</td>
+                        <td>60+</td>
+                    </tr>
+                    <tr>
+                        <td>Platform Uptime</td>
+                        <td>How often is it available? (100% is perfect)</td>
+                        <td>99.5%</td>
+                        <td>99.9%</td>
+                    </tr>
+                </table>
+
+                <h3>📊 Reports Available</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Individual Progress</h4>
+                        <p>One person's learning journey - courses taken, tests passed, certificates earned</p>
+                    </div>
+                    <div class="card">
+                        <h4>Team Performance</h4>
+                        <p>Manager's view - all team members' progress in one dashboard</p>
+                    </div>
+                    <div class="card">
+                        <h4>Course Effectiveness</h4>
+                        <p>Which courses work best - pass rates, completion rates, learner feedback</p>
+                    </div>
+                    <div class="card">
+                        <h4>Skills Gap Analysis</h4>
+                        <p>What skills the team is missing vs what's needed</p>
+                    </div>
+                    <div class="card">
+                        <h4>Compliance Report</h4>
+                        <p>Who has completed mandatory training - important for legal/safety</p>
+                    </div>
+                    <div class="card">
+                        <h4>ROI Analysis</h4>
+                        <p>Money saved and performance improved from training</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Section -->
+            <section id="technical">
+                <h2>Technical Information (The Boring But Important Stuff)</h2>
+
+                <p>Don't worry if you don't understand all of this - it's for the engineers. But here's the basic idea:</p>
+
+                <h3>🏗️ How Is It Built? (Architecture)</h3>
+
+                <div class="diagram">
+                    <h4>Simple Picture of How It Works:</h4>
+                    <p style="margin: 20px 0;">
+                        <strong>Users (Web Browser) → Internet → Our Servers → Database (Stores Data) → AI Engines (Smart Processing)</strong>
+                    </p>
+                </div>
+
+                <h3>🛠️ Technology Stack (Tools Used)</h3>
+                <p>The platform is built using modern, reliable technology:</p>
+
+                <div class="tech-badge">Backend: Node.js / Python</div>
+                <div class="tech-badge">Frontend: React.js</div>
+                <div class="tech-badge">Database: PostgreSQL</div>
+                <div class="tech-badge">Cloud: AWS / Google Cloud</div>
+                <div class="tech-badge">AI: Claude API / OpenAI</div>
+                <div class="tech-badge">Security: SSL/TLS Encryption</div>
+                <div class="tech-badge">Hosting: Kubernetes (scalable)</div>
+
+                <h3>⚙️ Technical Requirements (What We Need)</h3>
+
+                <table class="metrics-table">
+                    <tr>
+                        <th>Requirement</th>
+                        <th>What It Means</th>
+                        <th>Our Target</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Speed (Performance)</strong></td>
+                        <td>How fast the site loads for users</td>
+                        <td>&lt; 2 seconds</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Uptime (Availability)</strong></td>
+                        <td>How often the platform is working</td>
+                        <td>99.9% (almost always available)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Users Supported</strong></td>
+                        <td>How many people can use it at same time</td>
+                        <td>100,000 concurrent</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Security (Encryption)</strong></td>
+                        <td>How protected is user data?</td>
+                        <td>Military-grade (AES-256)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Response Time</strong></td>
+                        <td>How fast backend answers requests</td>
+                        <td>&lt; 500 milliseconds</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Storage</strong></td>
+                        <td>How much data we can store</td>
+                        <td>Unlimited (cloud-based)</td>
+                    </tr>
+                </table>
+
+                <h3>🔐 Security & Privacy (Keeping Data Safe)</h3>
+
+                <div class="list-item">
+                    <div class="list-item-icon">🔒</div>
+                    <div class="list-item-content">
+                        <strong>Encryption</strong>
+                        <p>All data is scrambled (encrypted) so hackers can't read it</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-icon">👁️</div>
+                    <div class="list-item-content">
+                        <strong>Privacy</strong>
+                        <p>Student data is private and protected by law (GDPR, CCPA)</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-icon">🛡️</div>
+                    <div class="list-item-content">
+                        <strong>Compliance</strong>
+                        <p>We follow strict rules to keep data safe (SOC 2, HIPAA ready)</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-icon">🔑</div>
+                    <div class="list-item-content">
+                        <strong>Authentication</strong>
+                        <p>Only authorized people can login (supports single sign-on)</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-icon">📋</div>
+                    <div class="list-item-content">
+                        <strong>Audit Logging</strong>
+                        <p>Every action is logged so we can track what happened</p>
+                    </div>
+                </div>
+
+                <h3>🌐 Integration (Playing Nice With Other Systems)</h3>
+
+                <p>The platform can connect to (integrate with) other systems companies use:</p>
+
+                <div class="grid">
+                    <div class="card">
+                        <h4>Single Sign-On (SSO)</h4>
+                        <p>Login using your company email, not separate passwords</p>
+                    </div>
+                    <div class="card">
+                        <h4>HR Systems</h4>
+                        <p>Connect to systems like Workday for employee data</p>
+                    </div>
+                    <div class="card">
+                        <h4>Learning Systems</h4>
+                        <p>Connect to Moodle, Canvas, Blackboard for seamless integration</p>
+                    </div>
+                    <div class="card">
+                        <h4>APIs (Custom Connections)</h4>
+                        <p>Technical teams can build custom connections to any system</p>
+                    </div>
+                </div>
+
+                <h3>📱 Supported Devices</h3>
+                <div style="margin: 20px 0;">
+                    <p>✅ <strong>Desktop Computers</strong> (Windows, Mac, Linux)</p>
+                    <p>✅ <strong>Tablets</strong> (iPad, Android tablets)</p>
+                    <p>✅ <strong>Smartphones</strong> (iPhone, Android)</p>
+                    <p>✅ <strong>Any Web Browser</strong> (Chrome, Firefox, Safari, Edge)</p>
+                </div>
+            </section>
+
+            <!-- Timeline Section -->
+            <section id="timeline">
+                <h2>Project Timeline (12-Month Plan)</h2>
+
+                <p>The project is divided into 4 phases over 12 months:</p>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-item-title">Phase 1: MVP (Months 1-3) - October to December 2026</div>
+                        <div class="timeline-item-desc">
+                            <strong>Launch a working basic version</strong><br>
+                            Features: Basic courses, simple tests, user accounts, certificates<br>
+                            Goal: 100+ users<br>
+                            Success: Platform is live and stable
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-item-title">Phase 2: Advanced Features (Months 4-6) - January to March 2027</div>
+                        <div class="timeline-item-desc">
+                            <strong>Add powerful features</strong><br>
+                            Features: AI content generation, auto-grading, company integrations<br>
+                            Goal: 1,000+ users<br>
+                            Success: Time to create courses cut by 50%
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-item-title">Phase 3: Smart Features (Months 7-9) - April to June 2027</div>
+                        <div class="timeline-item-desc">
+                            <strong>Add AI-powered intelligence</strong><br>
+                            Features: Personalization, predictions, AI chatbot, advanced analytics<br>
+                            Goal: 5,000+ users<br>
+                            Success: Learning outcomes improve by 30%
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-item-title">Phase 4: Enterprise Ready (Months 10-12) - July to September 2027</div>
+                        <div class="timeline-item-desc">
+                            <strong>Make it enterprise-ready</strong><br>
+                            Features: Mobile apps, white-label, compliance certifications<br>
+                            Goal: 10,000+ users, $500K revenue<br>
+                            Success: Platform is ready for large enterprises
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Key Milestones</h3>
+                <div class="grid">
+                    <div class="success-metric">
+                        <strong>Month 3</strong>
+                        <p>🎉 First version live with 100+ beta users</p>
+                    </div>
+                    <div class="success-metric">
+                        <strong>Month 6</strong>
+                        <p>📈 1,000+ customers, $100K revenue</p>
+                    </div>
+                    <div class="success-metric">
+                        <strong>Month 9</strong>
+                        <p>🚀 Major features complete, 5,000+ users</p>
+                    </div>
+                    <div class="success-metric">
+                        <strong>Month 12</strong>
+                        <p>🏆 Full release, 10,000+ users, $500K revenue</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary Section -->
+            <section>
+                <h2>The Bottom Line</h2>
+
+                <p>This AI-powered training platform is designed to solve real problems in corporate training:</p>
+
+                <div class="grid">
+                    <div class="card">
+                        <h4>💡 Problem</h4>
+                        <p>Creating courses and grading takes too long</p>
+                    </div>
+                    <div class="card">
+                        <h4>✨ Solution</h4>
+                        <p>AI automates content creation and grading</p>
+                    </div>
+                    <div class="card">
+                        <h4>📊 Result</h4>
+                        <p>Companies save 50% time and 30% cost</p>
+                    </div>
+                </div>
+
+                <h3>Why This Matters</h3>
+                <ul style="margin: 20px 0 20px 40px;">
+                    <li>🌍 <strong>Market Opportunity:</strong> $250 billion spent on training yearly globally</li>
+                    <li>💼 <strong>Business Need:</strong> Companies desperately want faster, cheaper training</li>
+                    <li>👥 <strong>User Base:</strong> Everyone who learns (students, employees, trainers)</li>
+                    <li>📈 <strong>Growth Potential:</strong> Start with 100 users, scale to 10,000+ in 12 months</li>
+                    <li>💰 <strong>Revenue Model:</strong> Subscription per employee per year</li>
+                </ul>
+
+                <div class="highlight">
+                    <strong>In summary:</strong> We're building a smarter way to train people - saving time, money, and making learning better for everyone involved.
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2026 AI-Powered Training Platform Project</p>
+            <p>Making professional learning faster, smarter, and more effective for everyone</p>
+        </footer>
+    </div>
+</body>
+</html>

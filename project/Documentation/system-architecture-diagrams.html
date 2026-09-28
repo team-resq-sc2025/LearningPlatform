@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Training Platform - System Architecture & Workflows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+            padding: 0;
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+
+        .tabs button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 20px;
+            border: none;
+            background: #f5f5f5;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tabs button:hover {
+            background: #eee;
+        }
+
+        .tabs button.active {
+            background: white;
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .diagram-section {
+            display: none;
+        }
+
+        .diagram-section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .diagram-container {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .diagram-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .diagram-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .section-header {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            border: 2px solid #ccc;
+        }
+
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .box-component {
+            fill: #e3f2fd;
+            stroke: #667eea;
+            stroke-width: 2;
+        }
+
+        .box-service {
+            fill: #f3e5f5;
+            stroke: #764ba2;
+            stroke-width: 2;
+        }
+
+        .box-storage {
+            fill: #e8f5e9;
+            stroke: #4caf50;
+            stroke-width: 2;
+        }
+
+        .box-external {
+            fill: #fff3e0;
+            stroke: #ff9800;
+            stroke-width: 2;
+        }
+
+        .text-label {
+            font-size: 13px;
+            font-weight: 500;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .arrow {
+            stroke: #666;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+
+        .arrow-label {
+            font-size: 11px;
+            fill: #666;
+        }
+
+        .note {
+            background: #fffde7;
+            border-left: 4px solid #fbc02d;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .note strong {
+            color: #f57f17;
+        }
+
+        footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs button {
+                min-width: 120px;
+                padding: 12px 15px;
+                font-size: 12px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .key-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏗️ System Architecture & Workflows</h1>
+            <p>AI-Powered Training & Assessment Platform</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openDiagram(event, 'overview')">Overview</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'layered')">Layered Architecture</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'data-flow')">Data Flow</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'deployment')">Deployment</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'workflows')">Workflows</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'auth')">Auth & Security</button>
+            <button class="tab-btn" onclick="openDiagram(event, 'tenancy')">Multi-Tenancy</button>
+        </div>
+
+        <div class="content">
+            <!-- Overview Section -->
+            <div id="overview" class="diagram-section active">
+                <h2 class="section-header">System Architecture Overview</h2>
+
+                <div class="diagram-description">
+                    The platform follows a scalable, cloud-native microservices architecture with clear separation of concerns across presentation, application, data, and integration layers.
+                </div>
+
+                <div class="key-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">Target Uptime</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">&lt;500ms</div>
+                        <div class="metric-label">API Response Time</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">10,000+</div>
+                        <div class="metric-label">Concurrent Users</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">1TB+</div>
+                        <div class="metric-label">Database Capacity</div>
+                    </div>
+                </div>
+
+                <h3 class="diagram-title">High-Level Architecture</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+                            </marker>
+                        </defs>
+
+                        <!-- Presentation Layer -->
+                        <rect class="box-component" x="50" y="20" width="150" height="60" rx="5"/>
+                        <text class="text-label" x="125" y="50">Web UI</text>
+
+                        <rect class="box-component" x="250" y="20" width="150" height="60" rx="5"/>
+                        <text class="text-label" x="325" y="50">Mobile App</text>
+
+                        <rect class="box-component" x="450" y="20" width="150" height="60" rx="5"/>
+                        <text class="text-label" x="525" y="50">Third-party API</text>
+
+                        <!-- API Gateway -->
+                        <rect class="box-component" x="150" y="120" width="300" height="60" rx="5"/>
+                        <text class="text-label" x="300" y="150">API Gateway & Load Balancer</text>
+
+                        <!-- Application Layer -->
+                        <rect class="box-service" x="50" y="220" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="115" y="250">LMS Service</text>
+
+                        <rect class="box-service" x="210" y="220" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="275" y="250">Assessment</text>
+
+                        <rect class="box-service" x="370" y="220" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="435" y="250">Analytics</text>
+
+                        <rect class="box-service" x="530" y="220" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="595" y="250">AI & Grading</text>
+
+                        <!-- Data Layer -->
+                        <rect class="box-storage" x="100" y="340" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="160" y="370">Database</text>
+
+                        <rect class="box-storage" x="280" y="340" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="340" y="370">Cache</text>
+
+                        <rect class="box-storage" x="460" y="340" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="520" y="370">Queue</text>
+
+                        <rect class="box-storage" x="640" y="340" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="700" y="370">Object Store</text>
+
+                        <!-- External Services -->
+                        <rect class="box-external" x="800" y="220" width="150" height="60" rx="5"/>
+                        <text class="text-label" x="875" y="250">External Services</text>
+                        <text class="text-label" x="875" y="270" style="font-size: 10px;">(Email, SSO, etc.)</text>
+
+                        <!-- Arrows -->
+                        <line class="arrow" x1="125" y1="80" x2="280" y2="120"/>
+                        <line class="arrow" x1="325" y1="80" x2="300" y2="120"/>
+                        <line class="arrow" x1="525" y1="80" x2="350" y2="120"/>
+
+                        <line class="arrow" x1="215" y1="180" x2="115" y2="220"/>
+                        <line class="arrow" x1="300" y1="180" x2="275" y2="220"/>
+                        <line class="arrow" x1="350" y1="180" x2="435" y2="220"/>
+                        <line class="arrow" x1="380" y1="180" x2="595" y2="220"/>
+
+                        <line class="arrow" x1="115" y1="280" x2="160" y2="340"/>
+                        <line class="arrow" x1="275" y1="280" x2="340" y2="340"/>
+                        <line class="arrow" x1="435" y1="280" x2="520" y2="340"/>
+                        <line class="arrow" x1="595" y1="280" x2="700" y2="340"/>
+
+                        <line class="arrow" x1="660" y1="250" x2="800" y2="250"/>
+                    </svg>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e3f2fd; border-color: #667eea;"></div>
+                        <span>Components (UI, Gateway)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f3e5f5; border-color: #764ba2;"></div>
+                        <span>Services (Business Logic)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e8f5e9; border-color: #4caf50;"></div>
+                        <span>Storage (Data Layer)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #fff3e0; border-color: #ff9800;"></div>
+                        <span>External Services</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layered Architecture Section -->
+            <div id="layered" class="diagram-section">
+                <h2 class="section-header">Layered Architecture</h2>
+
+                <div class="diagram-description">
+                    The system is organized into four main layers: Presentation, Application, Data Access, and Integration. Each layer has specific responsibilities and can be scaled independently.
+                </div>
+
+                <h3 class="diagram-title">Architecture Layers</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Presentation Layer -->
+                        <rect class="box-component" x="50" y="30" width="700" height="90" rx="5"/>
+                        <text style="font-size: 16px; font-weight: bold; fill: #667eea;" x="60" y="55">Presentation Layer</text>
+                        <text class="text-label" x="200" y="90">Web UI</text>
+                        <text class="text-label" x="400" y="90">Mobile App</text>
+                        <text class="text-label" x="600" y="90">API Gateway</text>
+                        <text class="text-label" x="700" y="90">CDN</text>
+
+                        <!-- Application Layer -->
+                        <rect class="box-service" x="50" y="150" width="700" height="140" rx="5"/>
+                        <text style="font-size: 16px; font-weight: bold; fill: #764ba2;" x="60" y="175">Application Layer (Services)</text>
+
+                        <rect fill="#f3e5f5" stroke="#764ba2" stroke-width="1" x="70" y="195" width="130" height="70" rx="3"/>
+                        <text class="text-label" x="135" y="235">LMS Service</text>
+
+                        <rect fill="#f3e5f5" stroke="#764ba2" stroke-width="1" x="215" y="195" width="130" height="70" rx="3"/>
+                        <text class="text-label" x="280" y="235">Assessment Service</text>
+
+                        <rect fill="#f3e5f5" stroke="#764ba2" stroke-width="1" x="360" y="195" width="130" height="70" rx="3"/>
+                        <text class="text-label" x="425" y="235">Analytics Service</text>
+
+                        <rect fill="#f3e5f5" stroke="#764ba2" stroke-width="1" x="505" y="195" width="130" height="70" rx="3"/>
+                        <text class="text-label" x="570" y="235">AI & Grading</text>
+
+                        <rect fill="#f3e5f5" stroke="#764ba2" stroke-width="1" x="650" y="195" width="90" height="70" rx="3"/>
+                        <text class="text-label" x="695" y="225">Notification</text>
+                        <text class="text-label" x="695" y="245">Service</text>
+
+                        <!-- Data Access Layer -->
+                        <rect class="box-storage" x="50" y="320" width="700" height="120" rx="5"/>
+                        <text style="font-size: 16px; font-weight: bold; fill: #4caf50;" x="60" y="345">Data Access Layer</text>
+
+                        <rect fill="#e8f5e9" stroke="#4caf50" stroke-width="1" x="70" y="365" width="130" height="60" rx="3"/>
+                        <text class="text-label" x="135" y="395">Relational DB</text>
+
+                        <rect fill="#e8f5e9" stroke="#4caf50" stroke-width="1" x="215" y="365" width="130" height="60" rx="3"/>
+                        <text class="text-label" x="280" y="395">Search Index</text>
+
+                        <rect fill="#e8f5e9" stroke="#4caf50" stroke-width="1" x="360" y="365" width="130" height="60" rx="3"/>
+                        <text class="text-label" x="425" y="395">Distributed Cache</text>
+
+                        <rect fill="#e8f5e9" stroke="#4caf50" stroke-width="1" x="505" y="365" width="130" height="60" rx="3"/>
+                        <text class="text-label" x="570" y="395">Message Queue</text>
+
+                        <rect fill="#e8f5e9" stroke="#4caf50" stroke-width="1" x="650" y="365" width="90" height="60" rx="3"/>
+                        <text class="text-label" x="695" y="395">Object Store</text>
+
+                        <!-- Integration Layer -->
+                        <rect class="box-external" x="50" y="470" width="700" height="100" rx="5"/>
+                        <text style="font-size: 16px; font-weight: bold; fill: #ff9800;" x="60" y="495">External Integration Layer</text>
+                        <text class="text-label" x="150" y="535">SSO/LDAP</text>
+                        <text class="text-label" x="300" y="535">Email Services</text>
+                        <text class="text-label" x="450" y="535">Storage Services</text>
+                        <text class="text-label" x="600" y="535">Analytics Tools</text>
+                    </svg>
+                </div>
+
+                <div class="note">
+                    <strong>Key Principle:</strong> Each layer can be scaled independently. Increase API gateway replicas for request volume, or scale database read replicas for query-heavy workloads.
+                </div>
+            </div>
+
+            <!-- Data Flow Section -->
+            <div id="data-flow" class="diagram-section">
+                <h2 class="section-header">Data Flow Patterns</h2>
+
+                <h3 class="diagram-title">1. Synchronous Request-Response Flow</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#667eea"/>
+                            </marker>
+                        </defs>
+
+                        <rect class="box-component" x="50" y="50" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="110" y="85">User/Client</text>
+
+                        <rect class="box-component" x="200" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="270" y="85">API Gateway</text>
+
+                        <rect class="box-service" x="390" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="460" y="85">Service</text>
+
+                        <rect class="box-storage" x="580" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="650" y="85">Database</text>
+
+                        <!-- Forward flow -->
+                        <line class="arrow" x1="170" y1="80" x2="200" y2="80" marker-end="url(#arrowhead)"/>
+                        <text class="arrow-label" x="180" y="70">Request</text>
+
+                        <line class="arrow" x1="340" y1="80" x2="390" y2="80" marker-end="url(#arrowhead)"/>
+                        <text class="arrow-label" x="360" y="70">Route</text>
+
+                        <line class="arrow" x1="530" y1="80" x2="580" y2="80" marker-end="url(#arrowhead)"/>
+                        <text class="arrow-label" x="550" y="70">Query</text>
+
+                        <!-- Return flow -->
+                        <line class="arrow" x1="580" y1="130" x2="530" y2="130" marker-end="url(#arrowhead)" stroke="#4caf50"/>
+                        <text class="arrow-label" x="550" y="150" fill="#4caf50">Data</text>
+
+                        <line class="arrow" x1="390" y1="130" x2="340" y2="130" marker-end="url(#arrowhead)" stroke="#4caf50"/>
+                        <text class="arrow-label" x="360" y="150" fill="#4caf50">Process</text>
+
+                        <line class="arrow" x1="200" y1="130" x2="170" y2="130" marker-end="url(#arrowhead)" stroke="#4caf50"/>
+                        <text class="arrow-label" x="180" y="150" fill="#4caf50">Response</text>
+
+                        <text style="font-size: 12px; fill: #666; text-anchor: middle;" x="450" y="250">Timeline: &lt;500ms (p95)</text>
+                    </svg>
+                </div>
+
+                <h3 class="diagram-title">2. Asynchronous Processing Flow (Grading Example)</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#764ba2"/>
+                            </marker>
+                        </defs>
+
+                        <!-- Step 1 -->
+                        <rect class="box-component" x="50" y="30" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="115" y="65">Learner</text>
+                        <text class="text-label" x="115" y="80" style="font-size: 11px;">Submits Exam</text>
+
+                        <!-- Step 2 -->
+                        <rect class="box-service" x="230" y="30" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="295" y="65">API Handler</text>
+                        <text class="text-label" x="295" y="80" style="font-size: 11px;">(Acknowledge)</text>
+
+                        <!-- Step 3 -->
+                        <rect class="box-storage" x="410" y="30" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="475" y="65">Message Queue</text>
+                        <text class="text-label" x="475" y="80" style="font-size: 11px;">(Job enqueued)</text>
+
+                        <!-- Step 4 -->
+                        <rect class="box-service" x="590" y="30" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="655" y="65">Grading Worker</text>
+                        <text class="text-label" x="655" y="80" style="font-size: 11px;">(Process job)</text>
+
+                        <!-- Step 5 -->
+                        <rect class="box-storage" x="770" y="30" width="100" height="60" rx="5"/>
+                        <text class="text-label" x="820" y="65">Database</text>
+                        <text class="text-label" x="820" y="80" style="font-size: 11px;">(Save result)</text>
+
+                        <!-- Step 6 -->
+                        <rect class="box-component" x="410" y="150" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="475" y="185">Event Stream</text>
+                        <text class="text-label" x="475" y="200" style="font-size: 11px;">(Completion event)</text>
+
+                        <!-- Step 7 -->
+                        <rect class="box-service" x="590" y="150" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="655" y="185">Notification Service</text>
+                        <text class="text-label" x="655" y="200" style="font-size: 11px;">(Send message)</text>
+
+                        <!-- Arrows -->
+                        <line class="arrow" x1="180" y1="60" x2="230" y2="60" marker-end="url(#arrowhead2)"/>
+                        <line class="arrow" x1="360" y1="60" x2="410" y2="60" marker-end="url(#arrowhead2)"/>
+                        <line class="arrow" x1="540" y1="60" x2="590" y2="60" marker-end="url(#arrowhead2)"/>
+                        <line class="arrow" x1="720" y1="60" x2="770" y2="60" marker-end="url(#arrowhead2)"/>
+
+                        <line class="arrow" x1="655" y1="90" x2="475" y2="150" marker-end="url(#arrowhead2)" stroke="#4caf50"/>
+                        <line class="arrow" x1="540" y1="180" x2="590" y2="180" marker-end="url(#arrowhead2)" stroke="#4caf50"/>
+
+                        <text style="font-size: 12px; fill: #666; text-anchor: middle;" x="450" y="300">User gets job ID immediately (1s), processing happens asynchronously</text>
+                        <text style="font-size: 12px; fill: #666; text-anchor: middle;" x="450" y="320">User notified when grading completes (2-5 minutes)</text>
+                    </svg>
+                </div>
+
+                <h3 class="diagram-title">3. Real-Time Data Updates (Analytics Dashboard)</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg">
+                        <rect class="box-component" x="50" y="50" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="115" y="85">Learner Activity</text>
+
+                        <rect class="box-storage" x="230" y="50" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="295" y="85">Event Stream</text>
+
+                        <rect class="box-service" x="410" y="50" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="475" y="85">Analytics Engine</text>
+
+                        <rect class="box-storage" x="590" y="50" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="655" y="85">Time-Series DB</text>
+
+                        <rect class="box-component" x="230" y="150" width="130" height="60" rx="5"/>
+                        <text class="text-label" x="295" y="185">Dashboard (WebSocket)</text>
+
+                        <!-- Arrows -->
+                        <line class="arrow" x1="180" y1="80" x2="230" y2="80"/>
+                        <line class="arrow" x1="360" y1="80" x2="410" y2="80"/>
+                        <line class="arrow" x1="540" y1="80" x2="590" y2="80"/>
+                        <line class="arrow" x1="475" y1="110" x2="295" y2="150" stroke="#4caf50"/>
+
+                        <text style="font-size: 12px; fill: #666; text-anchor: middle;" x="400" y="230">Real-time updates pushed to dashboard via WebSocket (~100ms latency)</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Deployment Section -->
+            <div id="deployment" class="diagram-section">
+                <h2 class="section-header">Deployment Architecture</h2>
+
+                <div class="diagram-description">
+                    The system is designed for cloud-native deployment with multiple availability zones, auto-scaling, and disaster recovery capabilities.
+                </div>
+
+                <h3 class="diagram-title">Production Deployment Topology</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Internet -->
+                        <text style="font-size: 14px; font-weight: bold; fill: #666;" x="50" y="30">Internet</text>
+
+                        <!-- Global Load Balancer -->
+                        <rect class="box-component" x="200" y="50" width="600" height="50" rx="5"/>
+                        <text class="text-label" x="500" y="80">Global Load Balancer / DNS</text>
+
+                        <!-- Region 1 -->
+                        <text style="font-size: 12px; font-weight: bold; fill: #667eea;" x="50" y="150">Primary Region</text>
+                        <rect x="50" y="160" width="420" height="400" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="5,5" rx="5"/>
+
+                        <!-- AZ1 -->
+                        <rect x="60" y="170" width="200" height="380" fill="none" stroke="#667eea" stroke-width="1" rx="3"/>
+                        <text style="font-size: 11px; fill: #667eea;" x="70" y="190">Availability Zone 1</text>
+
+                        <rect class="box-component" x="70" y="210" width="180" height="40" rx="3"/>
+                        <text class="text-label" x="160" y="235">API Gateway</text>
+
+                        <rect class="box-service" x="70" y="270" width="180" height="40" rx="3"/>
+                        <text class="text-label" x="160" y="295">Service Replicas</text>
+
+                        <rect class="box-storage" x="70" y="330" width="180" height="40" rx="3"/>
+                        <text class="text-label" x="160" y="355">Database Replica</text>
+
+                        <rect class="box-storage" x="70" y="390" width="180" height="40" rx="3"/>
+                        <text class="text-label" x="160" y="415">Cache Node</text>
+
+                        <!-- AZ2 -->
+                        <rect x="270" y="170" width="200" height="380" fill="none" stroke="#667eea" stroke-width="1" rx="3"/>
+                        <text style="font-size: 11px; fill: #667eea;" x="280" y="190">Availability Zone 2</text>
+
+                        <rect class="box-component" x="280" y="210" width="180" height="40" rx="3"/>
+                        <text class="text-label" x="370" y="235">API Gateway</text>
+
+                        <rect class="box-service" x="280" y="270" width="180" height="40" rx="3"/>
+                        <text class="text-label" x="370" y="295">Service Replicas</text>
+
+                        <rect class="box-storage" x="280" y="330" width="180" height="40" rx="3"/>
+                        <text class="text-label" x="370" y="355">Database Replica</text>
+
+                        <rect class="box-storage" x="280" y="390" width="180" height="40" rx="3"/>
+                        <text class="text-label" x="370" y="415">Cache Node</text>
+
+                        <!-- Region 2 (Secondary) -->
+                        <text style="font-size: 12px; font-weight: bold; fill: #764ba2;" x="530" y="150">Secondary Region (DR)</text>
+                        <rect x="530" y="160" width="420" height="400" fill="none" stroke="#764ba2" stroke-width="2" stroke-dasharray="5,5" rx="5"/>
+
+                        <rect x="540" y="170" width="400" height="380" fill="none" stroke="#764ba2" stroke-width="1" rx="3"/>
+                        <text style="font-size: 11px; fill: #764ba2;" x="550" y="190">Standby Environment</text>
+
+                        <rect class="box-component" x="550" y="230" width="180" height="40" rx="3" opacity="0.5"/>
+                        <text class="text-label" x="640" y="255" opacity="0.7">API Gateway (Standby)</text>
+
+                        <rect class="box-service" x="550" y="300" width="180" height="40" rx="3" opacity="0.5"/>
+                        <text class="text-label" x="640" y="325" opacity="0.7">Services (Standby)</text>
+
+                        <rect class="box-storage" x="550" y="370" width="180" height="40" rx="3" opacity="0.5"/>
+                        <text class="text-label" x="640" y="395" opacity="0.7">Replica Database</text>
+
+                        <rect class="box-storage" x="750" y="230" width="180" height="110" rx="3"/>
+                        <text class="text-label" x="840" y="270">Backups</text>
+                        <text class="text-label" x="840" y="290" style="font-size: 11px;">(Geo-redundant)</text>
+
+                        <!-- Connections -->
+                        <line class="arrow" x1="500" y1="100" x2="160" y2="160"/>
+                        <line class="arrow" x1="500" y1="100" x2="370" y2="160"/>
+                        <line class="arrow" x1="500" y1="100" x2="640" y2="160"/>
+                    </svg>
+                </div>
+
+                <h3 class="diagram-title">Auto-Scaling Strategy</h3>
+                <table>
+                    <tr>
+                        <th>Component</th>
+                        <th>Scaling Metric</th>
+                        <th>Threshold (Scale Up)</th>
+                        <th>Cool-down Period</th>
+                    </tr>
+                    <tr>
+                        <td>API Gateway</td>
+                        <td>CPU Utilization</td>
+                        <td>&gt; 70%</td>
+                        <td>2 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>LMS Service</td>
+                        <td>Request Count</td>
+                        <td>&gt; 1000 RPS</td>
+                        <td>3 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Grading Workers</td>
+                        <td>Queue Depth</td>
+                        <td>&gt; 5000 jobs</td>
+                        <td>2 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Database Read Replicas</td>
+                        <td>Query Latency</td>
+                        <td>&gt; 500ms p95</td>
+                        <td>5 minutes</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Workflows Section -->
+            <div id="workflows" class="diagram-section">
+                <h2 class="section-header">Key System Workflows</h2>
+
+                <h3 class="diagram-title">1. Course Creation Workflow</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+                        <text style="font-size: 13px; fill: #666; text-anchor: middle;" x="400" y="25">Trainer creates course with AI assistance</text>
+
+                        <rect class="box-component" x="50" y="50" width="100" height="60" rx="5"/>
+                        <text class="text-label" x="100" y="85">Trainer</text>
+
+                        <rect class="box-service" x="200" y="50" width="150" height="60" rx="5"/>
+                        <text class="text-label" x="275" y="85">LMS Service</text>
+
+                        <rect class="box-service" x="400" y="50" width="150" height="60" rx="5"/>
+                        <text class="text-label" x="475" y="85">AI Service</text>
+
+                        <rect class="box-storage" x="600" y="50" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="660" y="85">Content Store</text>
+
+                        <!-- Flow -->
+                        <line class="arrow" x1="150" y1="80" x2="200" y2="80"/>
+                        <text class="arrow-label" x="170" y="70">1. Create course</text>
+
+                        <line class="arrow" x1="350" y1="80" x2="400" y2="80"/>
+                        <text class="arrow-label" x="360" y="70">2. Generate outline</text>
+
+                        <line class="arrow" x1="550" y1="80" x2="600" y2="80"/>
+                        <text class="arrow-label" x="560" y="70">3. Store</text>
+
+                        <!-- Review stage -->
+                        <rect class="box-component" x="200" y="160" width="400" height="60" rx="5" fill="#fff9c4" stroke="#f57f17" stroke-width="2"/>
+                        <text class="text-label" x="400" y="195">4. Human Review & Approval (Quality Gate)</text>
+
+                        <!-- Publish -->
+                        <line class="arrow" x1="400" y1="220" x2="400" y2="280"/>
+                        <rect class="box-service" x="300" y="280" width="200" height="60" rx="5" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+                        <text class="text-label" x="400" y="315">5. Publish & Index</text>
+                    </svg>
+                </div>
+
+                <h3 class="diagram-title">2. Assessment Workflow</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+                        <text style="font-size: 13px; fill: #666; text-anchor: middle;" x="450" y="25">Learner takes exam and receives feedback</text>
+
+                        <!-- Start -->
+                        <rect class="box-component" x="50" y="50" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="110" y="85">Learner</text>
+
+                        <!-- Load exam -->
+                        <line class="arrow" x1="170" y1="80" x2="230" y2="80"/>
+                        <rect class="box-service" x="230" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="300" y="85">Assessment Service</text>
+
+                        <!-- Submit answers -->
+                        <line class="arrow" x1="370" y1="80" x2="430" y2="80"/>
+                        <rect class="box-storage" x="430" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="500" y="85">Submit Answers</text>
+
+                        <!-- Grading - Parallel processes -->
+                        <line class="arrow" x1="500" y1="110" x2="300" y2="160"/>
+                        <line class="arrow" x1="500" y1="110" x2="500" y2="160"/>
+                        <line class="arrow" x1="500" y1="110" x2="700" y2="160"/>
+
+                        <!-- Grading branches -->
+                        <rect class="box-service" x="200" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="270" y="195">Auto-Grade</text>
+                        <text class="text-label" x="270" y="210" style="font-size: 11px;">(MCQ, T/F)</text>
+
+                        <rect class="box-service" x="430" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="500" y="195">AI Essay Grading</text>
+                        <text class="text-label" x="500" y="210" style="font-size: 11px;">(with rubric)</text>
+
+                        <rect class="box-service" x="660" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="730" y="195">Manual Grading</text>
+                        <text class="text-label" x="730" y="210" style="font-size: 11px;">(instructor queue)</text>
+
+                        <!-- Combine results -->
+                        <line class="arrow" x1="270" y1="220" x2="450" y2="280"/>
+                        <line class="arrow" x1="500" y1="220" x2="450" y2="280"/>
+                        <line class="arrow" x1="730" y1="220" x2="450" y2="280"/>
+
+                        <rect class="box-service" x="350" y="280" width="200" height="60" rx="5" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+                        <text class="text-label" x="450" y="315">Generate Results & Feedback</text>
+
+                        <!-- Notify -->
+                        <line class="arrow" x1="450" y1="340" x2="110" y2="340"/>
+                        <text class="arrow-label" x="270" y="330">Notify Learner</text>
+                    </svg>
+                </div>
+
+                <h3 class="diagram-title">3. Adaptive Learning Path Workflow</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg">
+                        <text style="font-size: 13px; fill: #666; text-anchor: middle;" x="450" y="25">System recommends personalized learning path</text>
+
+                        <rect class="box-component" x="50" y="50" width="100" height="60" rx="5"/>
+                        <text class="text-label" x="100" y="85">Learner Data</text>
+
+                        <line class="arrow" x1="150" y1="80" x2="210" y2="80"/>
+
+                        <rect class="box-service" x="210" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="280" y="85">Analytics Engine</text>
+
+                        <line class="arrow" x1="350" y1="80" x2="410" y2="80"/>
+
+                        <rect class="box-service" x="410" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="480" y="85">AI Recommendation</text>
+
+                        <!-- Analysis branches -->
+                        <line class="arrow" x1="280" y1="110" x2="200" y2="160"/>
+                        <line class="arrow" x1="280" y1="110" x2="350" y2="160"/>
+                        <line class="arrow" x1="280" y1="110" x2="500" y2="160"/>
+
+                        <rect class="box-storage" x="130" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="200" y="195">Performance</text>
+                        <text class="text-label" x="200" y="210" style="font-size: 11px;">Analysis</text>
+
+                        <rect class="box-storage" x="280" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="350" y="195">Knowledge Gap</text>
+                        <text class="text-label" x="350" y="210" style="font-size: 11px;">Detection</text>
+
+                        <rect class="box-storage" x="430" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="500" y="195">Learning Style</text>
+                        <text class="text-label" x="500" y="210" style="font-size: 11px;">Matching</text>
+
+                        <!-- Recommendation -->
+                        <line class="arrow" x1="200" y1="220" x2="450" y2="280"/>
+                        <line class="arrow" x1="350" y1="220" x2="450" y2="280"/>
+                        <line class="arrow" x1="500" y1="220" x2="450" y2="280"/>
+
+                        <rect class="box-service" x="350" y="280" width="200" height="60" rx="5" fill="#e3f2fd" stroke="#667eea" stroke-width="2"/>
+                        <text class="text-label" x="450" y="315">Personalized Path</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Auth & Security Section -->
+            <div id="auth" class="diagram-section">
+                <h2 class="section-header">Authentication & Authorization</h2>
+
+                <h3 class="diagram-title">Authentication Flow</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+                        <rect class="box-component" x="50" y="50" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="110" y="85">User</text>
+
+                        <line class="arrow" x1="170" y1="80" x2="230" y2="80"/>
+
+                        <rect class="box-component" x="230" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="300" y="85">Login Page</text>
+
+                        <line class="arrow" x1="370" y1="80" x2="430" y2="80"/>
+
+                        <rect class="box-service" x="430" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="500" y="85">Identity Service</text>
+
+                        <!-- Verify credentials branches -->
+                        <line class="arrow" x1="500" y1="110" x2="300" y2="160"/>
+                        <line class="arrow" x1="500" y1="110" x2="500" y2="160"/>
+                        <line class="arrow" x1="500" y1="110" x2="700" y2="160"/>
+
+                        <rect class="box-storage" x="200" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="270" y="195">Local Auth DB</text>
+
+                        <rect class="box-storage" x="430" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="500" y="195">LDAP/AD</text>
+
+                        <rect class="box-storage" x="660" y="160" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="730" y="195">OAuth/SAML</text>
+
+                        <!-- MFA (conditional) -->
+                        <rect class="box-component" x="330" y="280" width="240" height="60" rx="5" fill="#fff9c4" stroke="#f57f17" stroke-width="2"/>
+                        <text class="text-label" x="450" y="315">MFA (if enabled)</text>
+
+                        <!-- Success -->
+                        <rect class="box-service" x="330" y="300" width="240" height="60" rx="5" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2" y="300"/>
+
+                        <!-- Token generation -->
+                        <text style="font-size: 12px; fill: #666; text-anchor: middle;" x="450" y="360">Issue JWT Token + Secure Session Cookie</text>
+                    </svg>
+                </div>
+
+                <h3 class="diagram-title">Authorization (RBAC) Flow</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+                        <rect class="box-component" x="50" y="50" width="120" height="60" rx="5"/>
+                        <text class="text-label" x="110" y="85">Request with</text>
+                        <text class="text-label" x="110" y="100" style="font-size: 11px;">Auth Token</text>
+
+                        <line class="arrow" x1="170" y1="80" x2="230" y2="80"/>
+
+                        <rect class="box-service" x="230" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="300" y="85">RBAC Service</text>
+
+                        <!-- Check roles -->
+                        <line class="arrow" x1="370" y1="80" x2="430" y2="80"/>
+
+                        <rect class="box-storage" x="430" y="50" width="140" height="60" rx="5"/>
+                        <text class="text-label" x="500" y="85">Role Definitions</text>
+
+                        <!-- Decision point -->
+                        <line class="arrow" x1="500" y1="110" x2="400" y2="160"/>
+
+                        <!-- Yes / No -->
+                        <rect class="box-service" x="250" y="160" width="140" height="60" rx="5" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+                        <text class="text-label" x="320" y="195">Allow Request</text>
+
+                        <rect class="box-service" x="450" y="160" width="140" height="60" rx="5" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+                        <text class="text-label" x="520" y="195">Deny (403)</text>
+
+                        <!-- Example roles -->
+                        <text style="font-size: 12px; fill: #666; margin-top: 20px;" x="50" y="280">Example Roles: Admin, Trainer, Learner, Manager</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Multi-Tenancy Section -->
+            <div id="tenancy" class="diagram-section">
+                <h2 class="section-header">Multi-Tenancy Architecture</h2>
+
+                <h3 class="diagram-title">Recommended: Row-Level Security (RLS) Model</h3>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg">
+                        <rect class="box-component" x="50" y="50" width="800" height="280" rx="5" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text style="font-size: 14px; font-weight: bold; fill: #667eea;" x="60" y="70">Single Database Instance with Row-Level Security</text>
+
+                        <!-- Tenant A -->
+                        <rect class="box-service" x="70" y="100" width="180" height="200" rx="3" fill="#f3e5f5" stroke="#764ba2" stroke-width="1"/>
+                        <text class="text-label" x="160" y="130" style="font-weight: bold;">Tenant A</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="80" y="160">Users Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="80" y="175">WHERE tenant_id = 'A'</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="80" y="200">Courses Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="80" y="215">WHERE tenant_id = 'A'</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="80" y="240">Assessments Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="80" y="255">WHERE tenant_id = 'A'</text>
+
+                        <!-- Tenant B -->
+                        <rect class="box-service" x="270" y="100" width="180" height="200" rx="3" fill="#e3f2fd" stroke="#667eea" stroke-width="1"/>
+                        <text class="text-label" x="360" y="130" style="font-weight: bold;">Tenant B</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="280" y="160">Users Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="280" y="175">WHERE tenant_id = 'B'</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="280" y="200">Courses Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="280" y="215">WHERE tenant_id = 'B'</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="280" y="240">Assessments Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="280" y="255">WHERE tenant_id = 'B'</text>
+
+                        <!-- Tenant C -->
+                        <rect class="box-service" x="470" y="100" width="180" height="200" rx="3" fill="#e8f5e9" stroke="#4caf50" stroke-width="1"/>
+                        <text class="text-label" x="560" y="130" style="font-weight: bold;">Tenant C</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="480" y="160">Users Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="480" y="175">WHERE tenant_id = 'C'</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="480" y="200">Courses Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="480" y="215">WHERE tenant_id = 'C'</text>
+
+                        <text style="font-size: 11px; fill: #333;" x="480" y="240">Assessments Table</text>
+                        <text style="font-size: 10px; fill: #666;" x="480" y="255">WHERE tenant_id = 'C'</text>
+
+                        <!-- Storage -->
+                        <rect class="box-storage" x="670" y="100" width="150" height="200" rx="3"/>
+                        <text class="text-label" x="747" y="160">Object Store</text>
+                        <text style="font-size: 11px; fill: #333; text-anchor: middle;" x="747" y="185">Tenant A/</text>
+                        <text style="font-size: 11px; fill: #333; text-anchor: middle;" x="747" y="202">Tenant B/</text>
+                        <text style="font-size: 11px; fill: #333; text-anchor: middle;" x="747" y="219">Tenant C/</text>
+                    </svg>
+                </div>
+
+                <h3 class="diagram-title">Tenant Isolation Strategy Comparison</h3>
+                <table>
+                    <tr>
+                        <th>Strategy</th>
+                        <th>Data Isolation</th>
+                        <th>Cost</th>
+                        <th>Maintenance</th>
+                        <th>Use Case</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Row-Level Security (RLS)</strong></td>
+                        <td>Logical isolation via tenant_id</td>
+                        <td>Low ($)</td>
+                        <td>Simple</td>
+                        <td>High-volume SaaS</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Schema Isolation</strong></td>
+                        <td>Separate schema per tenant</td>
+                        <td>Medium ($$)</td>
+                        <td>Moderate</td>
+                        <td>Mid-market SaaS</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Database Isolation</strong></td>
+                        <td>Separate database per tenant</td>
+                        <td>High ($$$)</td>
+                        <td>Complex</td>
+                        <td>Compliance-heavy</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    <strong>Recommendation:</strong> Use Row-Level Security for cost efficiency and scalability, with optional schema separation for high-value enterprise customers with specific compliance needs.
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>📄 System Architecture Documentation • Version 1.0 • Last Updated: 2026-09-28</p>
+            <p>This document is part of the AI-Powered Training & Assessment Platform technical specification.</p>
+        </footer>
+    </div>
+
+    <script>
+        function openDiagram(evt, diagramName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.diagram-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected section and highlight button
+            document.getElementById(diagramName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+
+            // Scroll to top of content
+            document.querySelector('.content').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<div class="course-detail-container">
+  <div *ngIf="loading" class="loading">
+    <p>Loading course details...</p>
+  </div>
+
+  <div *ngIf="!loading && course" class="course-header">
+    <h1>{{ course.title }}</h1>
+    <p class="description">{{ course.description }}</p>
+
+    <div class="course-info">
+      <span class="level" [class]="course.level">{{ course.level }}</span>
+      <span class="status" [class]="course.status">{{ course.status }}</span>
+      <span *ngIf="course.duration_hours" class="duration">
+        {{ course.duration_hours }} hours
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && course" class="course-content">
+    <section class="modules">
+      <h2>Modules</h2>
+      <p *ngIf="modules.length === 0">No modules found for this course</p>
+      <div *ngFor="let module of modules" class="module-card">
+        <h3>{{ module.title }}</h3>
+        <p>{{ module.description }}</p>
+      </div>
+    </section>
+  </div>
+</div>

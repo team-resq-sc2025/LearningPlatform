@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AI-Powered Training Platform</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #f9f9fb;
+  --bg-alt: #ffffff;
+  --text: #1a1a2e;
+  --text-secondary: #6b7280;
+  --border: #e5e7eb;
+  --accent: #4f46e5;
+  --accent-light: #eef2ff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f172a;
+    --bg-alt: #1e293b;
+    --text: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --border: #334155;
+    --accent: #6366f1;
+    --accent-light: #312e81;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-alt: #1e293b;
+  --text: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --border: #334155;
+  --accent: #6366f1;
+  --accent-light: #312e81;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: env(safe-area-inset-top, 0) 16px env(safe-area-inset-bottom, 0) 16px;
+}
+
+h1 { font-size: 2rem; font-weight: 700; margin: 0 0 0.5rem 0; }
+h2 { font-size: 1.5rem; font-weight: 700; margin: 2rem 0 1rem 0; border-bottom: 3px solid var(--accent); padding-bottom: 0.5rem; }
+h3 { font-size: 1.125rem; font-weight: 600; margin: 1.5rem 0 0.75rem 0; color: var(--accent); }
+h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem 0; }
+p { margin: 0 0 1rem 0; color: var(--text-secondary); }
+
+.container { max-width: 1200px; margin: 0 auto; }
+
+.header {
+  background: var(--bg-alt);
+  border-bottom: 2px solid var(--border);
+  padding-block: 2rem;
+  margin-bottom: 2rem;
+  position: sticky;
+  top: env(safe-area-inset-top, 0);
+  z-index: 10;
+}
+
+.header h1 { color: var(--accent); margin-bottom: 0.25rem; }
+.header p { margin: 0; font-size: 0.95rem; }
+
+.section { margin-bottom: 3rem; }
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.feature-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.feature-card h4 { margin-top: 0; color: var(--accent); }
+.feature-card p { margin: 0.5rem 0 0 0; font-size: 0.95rem; }
+.feature-card ul { margin: 0.75rem 0; padding-left: 1.5rem; }
+.feature-card li { margin: 0.25rem 0; font-size: 0.95rem; }
+
+.use-case-box {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.use-case-box h4 { margin-top: 0; }
+.use-case-box .tag { display: inline-block; background: var(--accent-light); color: var(--accent); padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem; font-weight: 500; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+
+.code-block {
+  background: rgba(0, 0, 0, 0.05);
+  border-left: 3px solid var(--accent);
+  padding: 1rem;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .code-block { background: rgba(255, 255, 255, 0.05); }
+}
+
+.highlight-box {
+  background: linear-gradient(135deg, var(--accent-light) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border-left: 4px solid var(--accent);
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+}
+
+.highlight-box strong { color: var(--accent); }
+
+.table-responsive {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th {
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+tr:hover { background: var(--accent-light); }
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 1.5rem 0;
+}
+
+.workflow-step {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  border-left: 4px solid var(--accent);
+}
+
+.workflow-step .step-num {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 32px;
+  font-weight: 600;
+  margin-right: 1rem;
+}
+
+.workflow-step h4 { display: inline-block; margin: 0; }
+
+.footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 800px) {
+  .two-col { grid-template-columns: 1fr; }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>🤖 AI-Powered Training & Assessment Platform</h1>
+  <p>Comprehensive AI capabilities for content generation, validation, personalization, and intelligence</p>
+</div>
+
+<div class="section">
+  <h2>1. AI Use Cases Overview</h2>
+
+  <div class="highlight-box">
+    <strong>AI can transform the platform by automating content creation, enhancing learning experiences, ensuring quality, providing personalization, and delivering actionable insights.</strong>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>📝 Content Generation</h4>
+      <p>Auto-generate course materials, quizzes, practice exams, summaries, and examples from source materials or prompts.</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>✅ Content Validation</h4>
+      <p>Verify accuracy, detect plagiarism, validate sources, fact-check claims, and ensure content quality.</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>🎯 Personalization</h4>
+      <p>Personalized learning paths, adaptive difficulty, custom recommendations based on learner profile.</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>📊 Assessment & Grading</h4>
+      <p>Auto-grade essays, evaluate complex answers, detect cheating, provide detailed feedback.</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>💡 Analytics & Insights</h4>
+      <p>Predict learner performance, identify at-risk students, analyze course effectiveness, spot trends.</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>🤝 Support & Engagement</h4>
+      <p>AI chatbot for Q&A, personalized coaching, real-time feedback, 24/7 learner support.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>2. AI-Powered Content Generation</h2>
+
+  <h3>📚 Auto-Generate Course Material Content</h3>
+
+  <div class="use-case-box">
+    <h4>📖 Text Content Generation</h4>
+    <span class="tag">High Value</span> <span class="tag">High Adoption</span>
+
+    <p><strong>What It Does:</strong> AI generates comprehensive course content from minimal input (topic, skill level, target audience).</p>
+
+    <p><strong>Input Options:</strong></p>
+    <ul>
+      <li>Topic/Title + Skill Level → Generate full course outline & lessons</li>
+      <li>Source Documents → Summarize & create lesson content</li>
+      <li>Video Transcripts → Convert to text, create summaries & key points</li>
+      <li>Learning Objectives → Generate content aligned to objectives</li>
+    </ul>
+
+    <p><strong>Generated Outputs:</strong></p>
+    <ul>
+      <li>Course outline (module structure, lessons)</li>
+      <li>Lesson content (introduction, explanation, examples)</li>
+      <li>Key takeaways & summary points</li>
+      <li>Real-world examples & case studies</li>
+      <li>Practice exercises & activities</li>
+      <li>Resource recommendations</li>
+      <li>Glossary of terms</li>
+    </ul>
+
+    <p><strong>AI Implementation:</strong></p>
+    <div class="code-block">
+Input: {
+  "topic": "Python Data Analysis",
+  "skill_level": "Intermediate",
+  "target_audience": "Business Analysts",
+  "course_duration": "4 weeks",
+  "learning_objectives": ["Learn pandas", "Create visualizations", "Statistical analysis"]
+}
+
+Output: {
+  "course_title": "Python Data Analysis for Business Analysts",
+  "modules": [
+    {
+      "title": "Module 1: Getting Started with Pandas",
+      "lessons": [
+        {
+          "title": "Introduction to Pandas",
+          "content": "[AI-generated content]",
+          "examples": "[AI-generated code examples]"
+        }
+      ]
+    }
+  ]
+}
+    </div>
+
+    <p><strong>Benefits:</strong></p>
+    <ul>
+      <li>50-70% faster course creation</li>
+      <li>Consistent content quality</li>
+      <li>Scalable content production</li>
+      <li>Multiple language support</li>
+      <li>Customizable tone & style</li>
+    </ul>
+  </div>
+
+  <div class="use-case-box">
+    <h4>🖼️ Visual Content Generation</h4>
+    <span class="tag">Medium Value</span> <span class="tag">Emerging</span>
+
+    <p><strong>What It Does:</strong> Generate diagrams, infographics, flowcharts, and visual explanations.</p>
+
+    <p><strong>AI Capabilities:</strong></p>
+    <ul>
+      <li><strong>Diagrams:</strong> Architecture diagrams, process flows, system design diagrams</li>
+      <li><strong>Infographics:</strong> Data visualizations, comparison charts, statistics</li>
+      <li><strong>Flowcharts:</strong> Decision trees, process diagrams, workflow illustrations</li>
+      <li><strong>Code Syntax Diagrams:</strong> Visual explanations of programming concepts</li>
+    </ul>
+
+    <p><strong>Implementation:</strong> Use specialized AI models (e.g., Claude for diagram descriptions, D2/Mermaid for rendering).</p>
+  </div>
+
+  <h3>✍️ Auto-Generate Quizzes & Practice Exams</h3>
+
+  <div class="use-case-box">
+    <h4>❓ Question Generation</h4>
+    <span class="tag">High Value</span> <span class="tag">Quick Win</span>
+
+    <p><strong>What It Does:</strong> Generate high-quality quiz and exam questions from course content or topic specifications.</p>
+
+    <p><strong>Question Types AI Can Generate:</strong></p>
+    <ul>
+      <li><strong>Multiple Choice:</strong> Question + 4-5 options (1 correct, 3-4 distractors)</li>
+      <li><strong>True/False:</strong> Factual statements</li>
+      <li><strong>Multiple Select:</strong> Question with multiple correct answers</li>
+      <li><strong>Short Answer:</strong> Fill-in-the-blank, matching pairs</li>
+      <li><strong>Essay/Free-Form:</strong> Open-ended questions with sample answers</li>
+      <li><strong>Scenario-Based:</strong> Real-world cases with questions</li>
+      <li><strong>Code-Based:</strong> Programming problems with test cases</li>
+    </ul>
+
+    <p><strong>Generation Process:</strong></p>
+    <div class="workflow-step">
+      <span class="step-num">1</span>
+      <h4>Input Source Material</h4>
+      <p>Provide course content, textbook chapter, or learning objectives</p>
+    </div>
+
+    <div class="workflow-step">
+      <span class="step-num">2</span>
+      <h4>Specify Parameters</h4>
+      <p>Question type, difficulty level, number of questions, topics to cover</p>
+    </div>
+
+    <div class="workflow-step">
+      <span class="step-num">3</span>
+      <h4>AI Generates Questions</h4>
+      <p>AI creates questions, distractors, answer keys, and explanations</p>
+    </div>
+
+    <div class="workflow-step">
+      <span class="step-num">4</span>
+      <h4>Human Review</h4>
+      <p>Trainer reviews, edits, validates, and approves questions</p>
+    </div>
+
+    <div class="workflow-step">
+      <span class="step-num">5</span>
+      <h4>Publish & Track</h4>
+      <p>Add to question bank, use in quizzes, monitor performance metrics</p>
+    </div>
+
+    <p><strong>Example: AI Question Generation</strong></p>
+    <div class="code-block">
+Input:
+Course Topic: "OAuth 2.0 Authentication"
+Difficulty: Intermediate
+Type: Multiple Choice
+Count: 5
+
+Output:
+Q1: "In OAuth 2.0, what is the primary purpose of the authorization code?"
+A) To directly access user data
+B) To obtain an access token through a secure backend exchange ✓
+C) To replace the user's password
+D) To authenticate the user to the OAuth server
+
+Q2: "Which grant type is most suitable for mobile applications without a backend server?"
+A) Authorization Code
+B) Client Credentials
+C) Implicit (or PKCE Authorization Code) ✓
+D) Resource Owner Password
+
+[Questions 3-5 follow similar format]
+
+Answer Keys: [Provided with explanations]
+    </div>
+
+    <p><strong>Benefits:</strong></p>
+    <ul>
+      <li>Generate 100+ questions in minutes (vs. hours manually)</li>
+      <li>Consistent question quality & difficulty</li>
+      <li>Reduced trainer workload</li>
+      <li>Diverse question coverage</li>
+      <li>Scalable question bank</li>
+    </ul>
+  </div>
+
+  <div class="use-case-box">
+    <h4>📋 Practice Exam Generation</h4>
+    <span class="tag">High Value</span> <span class="tag">High Adoption</span>
+
+    <p><strong>What It Does:</strong> Generate full practice exams with balanced difficulty, topic coverage, and answer keys.</p>
+
+    <p><strong>AI Exam Creation:</strong></p>
+    <ul>
+      <li>Select question bank & difficulty distribution</li>
+      <li>AI creates exam with balanced topics (e.g., 20% easy, 60% medium, 20% hard)</li>
+      <li>Avoid similar/duplicate questions in same exam</li>
+      <li>Generate multiple exam variants for practice</li>
+      <li>Include detailed explanations for each answer</li>
+      <li>Provide study recommendations based on wrong answers</li>
+    </ul>
+
+    <p><strong>Personalized Practice:</strong></p>
+    <ul>
+      <li>Generate practice exams targeting weak areas</li>
+      <li>Adaptive difficulty based on learner performance</li>
+      <li>Timed practice tests with realistic conditions</li>
+      <li>Spaced repetition of challenging topics</li>
+    </ul>
+  </div>
+
+  <div class="use-case-box">
+    <h4>💬 Code Examples & Scenarios</h4>
+    <span class="tag">High Value</span>
+
+    <p><strong>What It Does:</strong> Generate practical code examples, algorithms, and real-world scenarios for technical courses.</p>
+
+    <p><strong>Examples AI Can Generate:</strong></p>
+    <ul>
+      <li><strong>Code Snippets:</strong> Working code examples in various languages</li>
+      <li><strong>Full Projects:</strong> Complete application examples (with comments & documentation)</li>
+      <li><strong>Algorithms:</strong> Implementations of common algorithms with explanations</li>
+      <li><strong>Use Cases:</strong> Real-world scenarios and business cases</li>
+      <li><strong>Problem Sets:</strong> Coding challenges with starter code & test cases</li>
+      <li><strong>Debugging Exercises:</strong> Intentionally buggy code for learners to fix</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>3. AI Content Validation & Source Management</h2>
+
+  <h3>✅ Content Validation</h3>
+
+  <div class="use-case-box">
+    <h4>🔍 Fact-Checking & Accuracy Verification</h4>
+    <span class="tag">Critical</span> <span class="tag">Required</span>
+
+    <p><strong>What It Does:</strong> Verify factual accuracy of generated or uploaded content.</p>
+
+    <p><strong>AI Validation Capabilities:</strong></p>
+    <ul>
+      <li><strong>Claim Verification:</strong> Check factual claims against knowledge base</li>
+      <li><strong>Logical Consistency:</strong> Ensure content doesn't contradict itself</li>
+      <li><strong>Currency Check:</strong> Flag outdated information (e.g., old statistics)</li>
+      <li><strong>Technical Accuracy:</strong> Verify code examples run correctly</li>
+      <li><strong>Citation Validation:</strong> Verify referenced sources exist & are correctly cited</li>
+      <li><strong>Domain-Specific Validation:</strong> Medical accuracy, financial accuracy, legal compliance</li>
+    </ul>
+
+    <p><strong>Implementation:</strong></p>
+    <div class="workflow-step">
+      <span class="step-num">1</span>
+      <h4>Content Submission</h4>
+      <p>Trainer uploads or generates content</p>
+    </div>
+
+    <div class="workflow-step">
+      <span class="step-num">2</span>
+      <h4>AI Fact-Check</h4>
+      <p>AI analyzes content for factual claims and verifies them</p>
+    </div>
+
+    <div class="workflow-step">
+      <span class="step-num">3</span>
+      <h4>Confidence Scoring</h4>
+      <p>AI provides confidence level for each claim (High/Medium/Low)</p>
+    </div>
+
+    <div class="workflow-step">
+      <span class="step-num">4</span>
+      <h4>Detailed Report</h4>
+      <p>List flagged claims with explanations & recommended corrections</p>
+    </div>
+
+    <div class="workflow-step">
+      <span class="step-num">5</span>
+      <h4>Human Review</h4>
+      <p>Trainer reviews AI findings and makes final approval</p>
+    </div>
+
+    <p><strong>Example Report:</strong></p>
+    <div class="code-block">
+Content: "Python was created in 1989"
+Status: ✓ VERIFIED (Confidence: 95%)
+Source: Wikipedia, Python Official Documentation
+
+Content: "Python is used by 90% of data scientists"
+Status: ⚠️ NEEDS VERIFICATION (Confidence: 30%)
+Reason: Specific percentage claim hard to verify
+Suggestion: Cite specific survey if using this statistic
+
+Content: "TensorFlow runs on GPUs faster than CPU by 100x"
+Status: ❌ PARTIALLY INACCURATE (Confidence: 85%)
+Current: "100x faster"
+More Accurate: "Typically 10-100x faster depending on workload"
+Suggestion: Add disclaimer about variation by use case
+    </div>
+  </div>
+
+  <h3>📚 Source Management & Attribution</h3>
+
+  <div class="use-case-box">
+    <h4>🔗 Source Detection & Attribution</h4>
+    <span class="tag">Critical</span> <span class="tag">Compliance</span>
+
+    <p><strong>What It Does:</strong> AI identifies sources used in content and provides proper attribution.</p>
+
+    <p><strong>Source Validation Process:</strong></p>
+    <ul>
+      <li><strong>Plagiarism Detection:</strong> Scan content against millions of sources</li>
+      <li><strong>Source Matching:</strong> Identify which sources content is derived from</li>
+      <li><strong>Attribution Scoring:</strong> Percentage of content from each source</li>
+      <li><strong>Citation Generation:</strong> Auto-create citations in APA/MLA/Chicago format</li>
+      <li><strong>Permission Check:</strong> Flag if source requires license/permission</li>
+    </ul>
+
+    <p><strong>Generated Content Attribution:</strong></p>
+    <div class="code-block">
+Generated Content: "Introduction to Machine Learning course"
+
+Sources Used (AI-Detected):
+1. "Machine Learning Basics" - Andrew Ng, Coursera (40%)
+   Citation: Ng, A. (2020). Machine Learning. Coursera.
+   License: Creative Commons BY-NC-ND 4.0
+   Action: ALLOWED (Educational use permitted)
+
+2. "Pattern Recognition and Machine Learning" - Christopher Bishop (35%)
+   Citation: Bishop, C. M. (2006). Pattern Recognition and Machine Learning.
+   License: Commercial (REQUIRES LICENSE)
+   Action: NEEDS PERMISSION (Contact author for license)
+
+3. "Deep Learning" - Goodfellow, Bengio, Courville (15%)
+   License: MIT
+   Action: ALLOWED
+
+4. Original Content (10%)
+
+Overall Assessment:
+Originality Score: 10%
+Derivative Work: YES
+License Compatibility: MIXED (See details above)
+Recommendation: Obtain license for Bishop reference OR rewrite that section
+    </div>
+
+    <p><strong>Implementation Features:</strong></p>
+    <ul>
+      <li><strong>Citation Auto-Generation:</strong> AI creates proper citations automatically</li>
+      <li><strong>License Tracker:</strong> Monitor license restrictions (MIT, Apache, GPL, Commercial, etc.)</li>
+      <li><strong>Permission Manager:</strong> Track licenses obtained and compliance status</li>
+      <li><strong>Originality Report:</strong> Percentage of original vs. derived content</li>
+      <li><strong>Source Inventory:</strong> Central repository of all sources used</li>
+    </ul>
+  </div>
+
+  <div class="use-case-box">
+    <h4>🚨 Content Quality Scoring</h4>
+    <span class="tag">High Value</span>
+
+    <p><strong>What It Does:</strong> Automated scoring of content quality across multiple dimensions.</p>
+
+    <p><strong>Quality Metrics AI Evaluates:</strong></p>
+    <ul>
+      <li><strong>Readability:</strong> Flesch Reading Ease, clarity, length appropriateness</li>
+      <li><strong>Accuracy:</strong> Factual correctness, consistency</li>
+      <li><strong>Completeness:</strong> Covers learning objectives, adequate examples</li>
+      <li><strong>Engagement:</strong> Tone, examples, interactive elements</li>
+      <li><strong>Structure:</strong> Logical flow, proper organization</li>
+      <li><strong>Grammar & Style:</strong> Spelling, punctuation, consistent style</li>
+      <li><strong>Compliance:</strong> Meets accessibility standards, inclusive language</li>
+    </ul>
+
+    <p><strong>Output: Quality Score (0-100) with actionable recommendations</strong></p>
+    <div class="code-block">
+Content Quality Report:
+Overall Score: 78/100 ⚠️ NEEDS IMPROVEMENT
+
+Breakdown:
+- Readability: 85/100 ✓ Good (Grade 8-9 level)
+- Accuracy: 92/100 ✓ Excellent
+- Completeness: 68/100 ⚠️ Missing examples for Topic C
+- Engagement: 65/100 ⚠️ Could add more interactive elements
+- Structure: 82/100 ✓ Good logical flow
+- Grammar: 95/100 ✓ Excellent
+- Compliance: 72/100 ⚠️ Missing alt text for images
+
+Recommendations:
+1. Add 2-3 code examples for "Advanced Algorithms" section
+2. Include interactive quiz mid-lesson to increase engagement
+3. Add alt text to all 5 images (Accessibility)
+4. Break down "Optimization" section into 2 subsections (Length: 2000 words)
+5. Add real-world use case example at end
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>4. AI-Powered Personalization & Adaptive Learning</h2>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>🎯 Personalized Learning Paths</h4>
+      <p><strong>What:</strong> AI creates custom learning journeys based on learner profile, goals, and skill level.</p>
+      <p><strong>How:</strong> Analyze learner background, take diagnostic quiz, set goals → AI recommends optimal sequence of courses & topics</p>
+      <p><strong>Benefit:</strong> 30-40% faster learning, higher engagement</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>📈 Adaptive Difficulty</h4>
+      <p><strong>What:</strong> Exam difficulty adjusts based on performance in real-time.</p>
+      <p><strong>How:</strong> Easy question answered correctly? Next is harder. Wrong answer? Next is easier.</p>
+      <p><strong>Benefit:</strong> More accurate skill assessment, optimal challenge level</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>💡 Smart Recommendations</h4>
+      <p><strong>What:</strong> AI recommends next course based on progress, interests, and skill gaps.</p>
+      <p><strong>How:</strong> Analyze performance data, course completion patterns, peer recommendations</p>
+      <p><strong>Benefit:</strong> Increased completion rates, better learning outcomes</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>🔍 Skill Gap Analysis</h4>
+      <p><strong>What:</strong> AI identifies missing skills and recommends targeted learning.</p>
+      <p><strong>How:</strong> Compare learner skills vs. role requirements → identify gaps</p>
+      <p><strong>Benefit:</strong> Targeted upskilling, career development</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>⏰ Smart Scheduling</h4>
+      <p><strong>What:</strong> AI recommends optimal times and frequency for learning based on engagement patterns.</p>
+      <p><strong>How:</strong> Analyze when learner is most engaged, retention patterns, spaced repetition</p>
+      <p><strong>Benefit:</strong> Higher retention, optimized learning schedule</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>👥 Cohort Comparison</h4>
+      <p><strong>What:</strong> AI compares learner performance to similar learners (anonymized).</p>
+      <p><strong>How:</strong> Match learners with similar profiles, compare scores, identify best performers</p>
+      <p><strong>Benefit:</strong> Motivation, identify high performers to mentor</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>5. AI-Powered Assessment & Grading</h2>
+
+  <div class="use-case-box">
+    <h4>🤖 Automatic Essay Grading</h4>
+    <span class="tag">High Value</span> <span class="tag">Reduces Workload</span>
+
+    <p><strong>What It Does:</strong> AI grades essays and free-form responses using NLP and rubric-based scoring.</p>
+
+    <p><strong>How It Works:</strong></p>
+    <ul>
+      <li>Trainer defines rubric (criteria, point values, grade ranges)</li>
+      <li>Learner submits essay/response</li>
+      <li>AI analyzes response against rubric criteria</li>
+      <li>AI assigns scores for each rubric dimension</li>
+      <li>AI generates detailed feedback</li>
+      <li>Trainer reviews & adjusts if needed (feedback loop)</li>
+    </ul>
+
+    <p><strong>Rubric Dimensions AI Can Evaluate:</strong></p>
+    <ul>
+      <li>Content Accuracy: 0-25 points</li>
+      <li>Completeness: 0-25 points</li>
+      <li>Clarity & Organization: 0-20 points</li>
+      <li>Grammar & Spelling: 0-15 points</li>
+      <li>Critical Thinking: 0-15 points</li>
+    </ul>
+
+    <p><strong>Example Output:</strong></p>
+    <div class="code-block">
+Student Response: "Explain OAuth 2.0 flow in 5 sentences"
+
+AI Evaluation:
+✓ Content Accuracy (22/25): Correctly explains auth code flow, one minor detail about scope missing
+✓ Completeness (20/25): Covers main steps, could include refresh token details
+✓ Clarity (18/20): Well-structured, one sentence is awkward
+✓ Grammar (14/15): One spelling error
+✓ Critical Thinking (12/15): Good explanation, missing comparison to OAuth 1.0
+
+Total Score: 86/100 (B+)
+
+AI Feedback:
+"Your explanation of the OAuth 2.0 authorization code flow is clear and mostly accurate. You've explained the key actors and steps well. To improve:
+1. Clarify what scopes are and why they matter
+2. Mention the refresh token and when it's used
+3. Compare OAuth 2.0 to OAuth 1.0 to show deeper understanding
+4. Fix: 'authorization' not 'authorisation' (line 2)"
+
+Confidence Level: 92%
+Recommendation: ACCEPT (High confidence in this score)
+    </div>
+
+    <p><strong>Benefits:</strong></p>
+    <ul>
+      <li>Instant feedback to learners (no wait for grading)</li>
+      <li>Consistent grading (no human bias)</li>
+      <li>Reduce trainer workload by 60-70%</li>
+      <li>Detailed feedback automatically generated</li>
+      <li>Scalable to 1000+ submissions</li>
+    </ul>
+  </div>
+
+  <div class="use-case-box">
+    <h4>🚨 Cheating Detection</h4>
+    <span class="tag">Critical</span> <span class="tag">Integrity</span>
+
+    <p><strong>What It Does:</strong> AI detects cheating, plagiarism, and suspicious behavior.</p>
+
+    <p><strong>Detection Methods:</strong></p>
+    <ul>
+      <li><strong>Plagiarism Detection:</strong> Compare submission to all sources, previous submissions, internet</li>
+      <li><strong>Behavioral Analysis:</strong> Detect unusual patterns (copy-paste, time anomalies, suspicious mouse/keyboard patterns)</li>
+      <li><strong>Answer Similarity:</strong> Flag if multiple submissions have suspiciously similar answers</li>
+      <li><strong>Session Anomalies:</strong> Detect tab switching, multiple logins, suspicious IP changes</li>
+      <li><strong>Writing Style Analysis:</strong> Detect if writing style differs significantly from normal (suggests answer wasn't written by learner)</li>
+      <li><strong>AI-Generated Content Detection:</strong> Identify if answer was AI-generated (GPT, Claude, etc.)</li>
+    </ul>
+
+    <p><strong>Cheating Detection Report:</strong></p>
+    <div class="code-block">
+Submission Analysis:
+Candidate: John Doe
+Exam: Python Intermediate Assessment
+Submission: Q3 Free-Form Code Solution
+
+Risk Indicators:
+⚠️ Plagiarism: 42% match to Stack Overflow solution
+   Source: https://stackoverflow.com/questions/12345/...
+   Confidence: 85%
+
+🚨 Writing Style Anomaly: 89% different from candidate's normal writing
+   Reason: Highly polished, uses advanced terminology not seen in previous submissions
+   Confidence: 78%
+
+⚠️ AI-Generated Content: Possible GPT usage detected
+   Indicators: Overly formal tone, perfect punctuation, explanation style consistent with AI
+   Confidence: 72%
+
+✓ Browser Activity: Clean (no suspicious tab switches)
+✓ Time per Question: Normal pattern
+
+Overall Risk Score: 8.2/10 🚨 HIGH RISK
+Recommendation: FLAG FOR MANUAL REVIEW
+
+Actions Available:
+- Request submission of supplementary code walkthrough video
+- Mark submission as suspicious pending review
+- Require proctored retake exam
+- Award partial credit pending investigation
+    </div>
+  </div>
+
+  <div class="use-case-box">
+    <h4>📝 Intelligent Feedback Generation</h4>
+    <span class="tag">High Value</span>
+
+    <p><strong>What It Does:</strong> AI generates personalized, actionable feedback for each learner based on their submission.</p>
+
+    <p><strong>Feedback Types:</strong></p>
+    <ul>
+      <li><strong>Corrective Feedback:</strong> Identify errors and explain corrections</li>
+      <li><strong>Descriptive Feedback:</strong> What was done well, what needs improvement</li>
+      <li><strong>Prescriptive Feedback:</strong> Specific steps to improve</li>
+      <li><strong>Encouraging Feedback:</strong> Personalized motivation based on progress</li>
+      <li><strong>Resource Recommendations:</strong> Link to relevant learning materials</li>
+    </ul>
+
+    <p><strong>Example Feedback:</strong></p>
+    <div class="code-block">
+"Great effort on this SQL query challenge! Your approach to the join is correct, and you've properly filtered the results.
+
+However, there's an inefficiency: you're using DISTINCT on the entire result set (Line 5). Since you already have a GROUP BY, the DISTINCT is redundant. Removing it will improve query performance on large datasets.
+
+Here's the optimized version:
+[Shows corrected code]
+
+To master this concept better, check out: "SQL Query Optimization Techniques" (in your recommended resources).
+
+Keep up the excellent work! You've improved significantly since last week. 💪"
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>6. AI Analytics & Predictive Intelligence</h2>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>🔮 Predict Learner Performance</h4>
+      <p><strong>What:</strong> AI predicts who will pass/fail before they complete course.</p>
+      <p><strong>Input:</strong> Quiz scores, time spent, engagement patterns</p>
+      <p><strong>Output:</strong> Success probability + early intervention recommendations</p>
+      <p><strong>Benefit:</strong> Proactive support for at-risk learners</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>📉 Identify At-Risk Learners</h4>
+      <p><strong>What:</strong> Flag learners likely to drop out or fail.</p>
+      <p><strong>How:</strong> Analyze engagement, login patterns, score trends</p>
+      <p><strong>Action:</strong> Auto-send support resources, manager alerts</p>
+      <p><strong>Benefit:</strong> Reduce dropout rate by 15-25%</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>📊 Course Effectiveness Analysis</h4>
+      <p><strong>What:</strong> Measure which courses are most effective.</p>
+      <p><strong>Metrics:</strong> Completion rate, satisfaction, job impact, time-to-benefit</p>
+      <p><strong>Output:</strong> Identify courses needing improvement</p>
+      <p><strong>Benefit:</strong> Data-driven content decisions</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>🔍 Learning Pattern Analysis</h4>
+      <p><strong>What:</strong> Identify patterns in successful learners.</p>
+      <p><strong>How:</strong> Find common behaviors of high performers</p>
+      <p><strong>Output:</strong> Recommendations for other learners</p>
+      <p><strong>Benefit:</strong> Leverage best practices organization-wide</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>💼 ROI & Impact Measurement</h4>
+      <p><strong>What:</strong> Measure training impact on business metrics.</p>
+      <p><strong>Correlate:</strong> Certification → promotion, certification → salary increase</p>
+      <p><strong>Output:</strong> Cost-per-competency gained, training ROI</p>
+      <p><strong>Benefit:</strong> Justify L&D investments to leadership</p>
+    </div>
+
+    <div class="feature-card">
+      <h4>🎯 Skill Demand Forecasting</h4>
+      <p><strong>What:</strong> Predict which skills will be in demand.</p>
+      <p><strong>Data:</strong> Job market trends, company strategy, technology trends</p>
+      <p><strong>Output:</strong> Recommend upskilling courses</p>
+      <p><strong>Benefit:</strong> Future-proof workforce</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>7. AI Support & Engagement</h2>
+
+  <div class="use-case-box">
+    <h4>🤖 AI Chatbot Support</h4>
+    <span class="tag">High Value</span> <span class="tag">24/7 Support</span>
+
+    <p><strong>What It Does:</strong> AI chatbot provides instant answers to learner questions.</p>
+
+    <p><strong>Capabilities:</strong></p>
+    <ul>
+      <li>Answer course-related questions (extract from materials)</li>
+      <li>Explain concepts in different ways based on learner preference</li>
+      <li>Provide examples and use cases</li>
+      <li>Troubleshoot technical issues</li>
+      <li>Direct to resources for deeper learning</li>
+      <li>Answer FAQs instantly</li>
+      <li>Escalate complex issues to human support</li>
+    </ul>
+
+    <p><strong>Chatbot Conversation Example:</strong></p>
+    <div class="code-block">
+Learner: "I don't understand the OAuth 2.0 authorization code flow"
+Chatbot: "I can explain that! There are 3 main steps:
+1. User asks app for access
+2. App redirects user to OAuth provider (like Google)
+3. User grants permission, and provider sends authorization code
+4. App exchanges code for access token
+5. App uses token to access user's data
+
+Is that clear? Would you like me to:
+- Explain any of these steps in more detail?
+- Show you a code example?
+- Draw a diagram?
+- Compare to other OAuth grant types?"
+
+Learner: "Can you show a code example?"
+Chatbot: "Sure! Here's a Node.js example... [shows code]
+Related resources:
+- OAuth 2.0 Documentation (in your course materials)
+- Video: Understanding OAuth (video link)
+- Practice Exercise: Implement OAuth integration (exercise link)"
+    </div>
+
+    <p><strong>Benefits:</strong></p>
+    <ul>
+      <li>Instant answers (no wait for human support)</li>
+      <li>24/7 availability</li>
+      <li>Reduce support ticket volume by 40-50%</li>
+      <li>Improve learner satisfaction</li>
+      <li>Reduce trainer workload</li>
+    </ul>
+  </div>
+
+  <div class="use-case-box">
+    <h4>💪 Personalized Coaching</h4>
+    <span class="tag">Medium Value</span>
+
+    <p><strong>What It Does:</strong> AI provides personalized coaching messages and encouragement.</p>
+
+    <p><strong>Coaching Examples:</strong></p>
+    <ul>
+      <li>"You're making great progress! You've completed 60% of the course. One more module to go!"</li>
+      <li>"I notice you struggled with arrays. Would you like me to recommend a review exercise?"</li>
+      <li>"You answered incorrectly. Here's a simpler explanation to help. Try again?"</li>
+      <li>"Way to go! You improved your score from 65 to 85. Keep it up!"</li>
+      <li>"You haven't logged in for 3 days. The course is due Friday. Want a reminder?"</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>8. Implementation Architecture</h2>
+
+  <h3>AI Models & APIs</h3>
+  <div class="table-responsive">
+    <table>
+      <tr>
+        <th>Use Case</th>
+        <th>Recommended AI Model</th>
+        <th>Approach</th>
+      </tr>
+      <tr>
+        <td>Content Generation</td>
+        <td>Claude, GPT-4, LLaMA</td>
+        <td>API calls + prompt engineering</td>
+      </tr>
+      <tr>
+        <td>Question Generation</td>
+        <td>Claude, GPT-4</td>
+        <td>Fine-tuned model + prompt templates</td>
+      </tr>
+      <tr>
+        <td>Fact-Checking</td>
+        <td>Specialized APIs (Perplexity, FactCheck)</td>
+        <td>Verify claims against knowledge bases</td>
+      </tr>
+      <tr>
+        <td>Plagiarism Detection</td>
+        <td>Turnitin API, Copyscape, Grammarly</td>
+        <td>Third-party API integration</td>
+      </tr>
+      <tr>
+        <td>Essay Grading</td>
+        <td>Custom model (fine-tuned LLM)</td>
+        <td>Train on rubric + sample graded essays</td>
+      </tr>
+      <tr>
+        <td>Cheating Detection</td>
+        <td>Custom ML model</td>
+        <td>Anomaly detection + plagiarism check</td>
+      </tr>
+      <tr>
+        <td>Personalization</td>
+        <td>Collaborative Filtering + Custom ML</td>
+        <td>Historical data + embedding models</td>
+      </tr>
+      <tr>
+        <td>Predictive Analytics</td>
+        <td>XGBoost, Random Forest, Neural Networks</td>
+        <td>Supervised learning on historical data</td>
+      </tr>
+      <tr>
+        <td>Chatbot</td>
+        <td>Claude, GPT-4, or specialized chatbot</td>
+        <td>API + RAG (Retrieval Augmented Generation)</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>Data Flow Architecture</h3>
+  <div class="code-block">
+User Input (Trainer/Learner)
+    ↓
+Platform Application
+    ↓
+    ├→ Content Generation Engine
+    │   └→ LLM API (Claude/GPT-4)
+    │
+    ├→ Validation Engine
+    │   ├→ Fact-Check Service
+    │   ├→ Plagiarism Detection (Turnitin)
+    │   ├→ Source Verification
+    │   └→ Quality Scoring
+    │
+    ├→ Assessment Engine
+    │   ├→ Auto-Grading Model
+    │   ├→ Cheating Detection
+    │   └→ Feedback Generation
+    │
+    ├→ Personalization Engine
+    │   ├→ Learner Profile DB
+    │   ├→ Recommendation Model
+    │   └→ Adaptive Engine
+    │
+    └→ Analytics Engine
+        ├→ Predictive Models
+        ├→ Performance Tracking
+        └→ Reporting
+    ↓
+Database (Store results, history, audit trail)
+    ↓
+Output (Dashboards, Reports, Feedback)
+  </div>
+
+  <h3>Quality Assurance for AI</h3>
+  <ul>
+    <li><strong>Human-in-the-Loop:</strong> AI suggestions reviewed by humans (especially critical for grading, validation)</li>
+    <li><strong>Confidence Scoring:</strong> AI provides confidence levels for all outputs</li>
+    <li><strong>Manual Override:</strong> Trainers can override AI decisions with explanations</li>
+    <li><strong>Feedback Loop:</strong> Learn from human corrections to improve model over time</li>
+    <li><strong>Regular Audits:</strong> Test AI outputs for bias, accuracy, and consistency</li>
+    <li><strong>Version Control:</strong> Track model versions, performance metrics, deployment history</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>9. Implementation Roadmap</h2>
+
+  <h3>Phase 1 (Months 1-3): Foundation</h3>
+  <ul>
+    <li>AI Question Generation (Multiple Choice, True/False)</li>
+    <li>Basic Content Quality Scoring</li>
+    <li>Plagiarism Detection Integration</li>
+    <li>Simple Chatbot (FAQ bot)</li>
+  </ul>
+
+  <h3>Phase 2 (Months 4-6): Content & Assessment</h3>
+  <ul>
+    <li>AI Course Content Generation</li>
+    <li>Advanced Question Generation (Essay, Scenario-Based)</li>
+    <li>Automatic Essay Grading (Rubric-Based)</li>
+    <li>Fact-Checking & Source Validation</li>
+    <li>Basic Cheating Detection</li>
+  </ul>
+
+  <h3>Phase 3 (Months 7-9): Personalization & Intelligence</h3>
+  <ul>
+    <li>Personalized Learning Paths</li>
+    <li>Adaptive Difficulty Exams</li>
+    <li>Predictive Analytics (At-Risk Learner Detection)</li>
+    <li>Smart Recommendations</li>
+    <li>Advanced Chatbot (Multi-turn conversations)</li>
+  </ul>
+
+  <h3>Phase 4 (Months 10-12): Advanced & Optimization</h3>
+  <ul>
+    <li>Advanced Cheating Detection (Writing Style, Behavior)</li>
+    <li>AI-Generated Content Detection</li>
+    <li>Course Effectiveness Analysis</li>
+    <li>Learning Pattern Analysis</li>
+    <li>ROI & Impact Measurement</li>
+    <li>Continuous Model Improvement</li>
+  </ul>
+</div>
+
+<div class="footer">
+  <p><strong>AI integration can significantly enhance platform capabilities, automate routine tasks, and provide personalized learning experiences.</strong></p>
+  <p>All AI features should include human oversight, explainability, and the ability for humans to review/override AI decisions.</p>
+  <p>Last updated: 2026-09-28</p>
+</div>
+
+</div>
+
+<script>
+// Placeholder for any interactions
+console.log('AI Features Guide Loaded');
+</script>
+</body>
+</html>

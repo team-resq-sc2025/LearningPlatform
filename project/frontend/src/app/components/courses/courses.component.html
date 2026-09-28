@@ -1,0 +1,36 @@
+<div class="courses-container">
+  <div class="header">
+    <h1>Courses</h1>
+    <button class="btn-primary">Create Course</button>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading courses...</p>
+  </div>
+
+  <div *ngIf="!loading && courses.length === 0" class="no-data">
+    <p>No courses found</p>
+  </div>
+
+  <div *ngIf="!loading && courses.length > 0" class="courses-grid">
+    <div *ngFor="let course of courses" class="course-card">
+      <h3>{{ course.title }}</h3>
+      <p class="description">{{ course.description }}</p>
+      <div class="course-meta">
+        <span class="level" [class]="course.level">{{ course.level }}</span>
+        <span class="status" [class]="course.status">{{ course.status }}</span>
+      </div>
+      <a [routerLink]="['/courses', course.id]" class="btn-secondary">View Details</a>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="pagination">
+    <button (click)="onPreviousPage()" [disabled]="currentPage === 0">Previous</button>
+    <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+    <button (click)="onNextPage()" [disabled]="(currentPage + 1) * pageSize >= totalCourses">Next</button>
+  </div>
+</div>

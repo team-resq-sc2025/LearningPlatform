@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Professional Training & Assessment Platform</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #f9f9fb;
+  --bg-alt: #ffffff;
+  --text: #1a1a2e;
+  --text-secondary: #6b7280;
+  --border: #e5e7eb;
+  --accent: #4f46e5;
+  --accent-light: #eef2ff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f172a;
+    --bg-alt: #1e293b;
+    --text: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --border: #334155;
+    --accent: #6366f1;
+    --accent-light: #312e81;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-alt: #1e293b;
+  --text: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --border: #334155;
+  --accent: #6366f1;
+  --accent-light: #312e81;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: env(safe-area-inset-top, 0) 16px env(safe-area-inset-bottom, 0) 16px;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem 0;
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 0.5rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+  color: var(--accent);
+}
+
+h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem 0;
+  color: var(--text);
+}
+
+p { margin: 0 0 1rem 0; color: var(--text-secondary); }
+
+.container { max-width: 1200px; margin: 0 auto; }
+
+.header {
+  background: var(--bg-alt);
+  border-bottom: 2px solid var(--border);
+  padding-block: 2rem;
+  margin-bottom: 2rem;
+  position: sticky;
+  top: env(safe-area-inset-top, 0);
+  z-index: 10;
+}
+
+.header h1 { color: var(--accent); margin-bottom: 0.25rem; }
+.header p { margin: 0; font-size: 0.95rem; }
+
+.section { margin-bottom: 3rem; }
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.feature-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.feature-card h4 {
+  margin-top: 0;
+  color: var(--accent);
+}
+
+.feature-card p { margin: 0.5rem 0 0 0; }
+.feature-card ul { margin: 0.75rem 0; padding-left: 1.5rem; }
+.feature-card li { margin: 0.25rem 0; font-size: 0.95rem; }
+
+.persona-box {
+  background: var(--bg-alt);
+  border-left: 4px solid var(--accent);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.persona-box h4 { margin-top: 0; }
+.persona-box .role-title { color: var(--accent); font-weight: 600; }
+.persona-box .key-tasks { margin: 1rem 0; }
+.persona-box .key-tasks strong { display: block; margin-top: 0.5rem; }
+
+.badge {
+  display: inline-block;
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2rem 0;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th {
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+tr:hover {
+  background: var(--accent-light);
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 800px) {
+  .two-col { grid-template-columns: 1fr; }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+}
+
+.highlight-box {
+  background: linear-gradient(135deg, var(--accent-light) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border-left: 4px solid var(--accent);
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+}
+
+.highlight-box strong { color: var(--accent); }
+
+.footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+ul li { margin-bottom: 0.5rem; }
+
+.icon { margin-right: 0.5rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>🎓 Professional Training & Assessment Platform</h1>
+  <p>Comprehensive Feature Set, Roles & Personas for Commercial Applications</p>
+</div>
+
+<div class="section">
+  <h2>1. Core Platform Features Overview</h2>
+
+  <div class="highlight-box">
+    <strong>Purpose:</strong> A comprehensive enterprise-grade platform that combines learning management, assessment, certification, and analytics capabilities for organizations of all sizes.
+  </div>
+
+  <h3>Primary Capabilities</h3>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>📚 Learning Management</h4>
+      <ul>
+        <li>Course creation & publishing</li>
+        <li>Lesson structure & sequencing</li>
+        <li>Learning materials (videos, documents, interactive)</li>
+        <li>Progress tracking</li>
+        <li>Assignments & projects</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>✍️ Assessment & Exams</h4>
+      <ul>
+        <li>Multiple question types</li>
+        <li>Question banks & randomization</li>
+        <li>Flexible scoring rules</li>
+        <li>Proctoring & security</li>
+        <li>Attempt management</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>🏅 Certification & Credentials</h4>
+      <ul>
+        <li>Certificate generation</li>
+        <li>Digital badges</li>
+        <li>Credential verification</li>
+        <li>Expiry & renewal tracking</li>
+        <li>Public credential profiles</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>📊 Analytics & Reporting</h4>
+      <ul>
+        <li>Individual dashboards</li>
+        <li>Cohort analytics</li>
+        <li>Learning trends</li>
+        <li>Compliance reporting</li>
+        <li>Custom reports & exports</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>👥 Collaboration & Social</h4>
+      <ul>
+        <li>Discussion forums</li>
+        <li>Peer feedback</li>
+        <li>Study groups</li>
+        <li>Leaderboards</li>
+        <li>Badges & gamification</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>🔧 Administration & Management</h4>
+      <ul>
+        <li>User management</li>
+        <li>Role-based access</li>
+        <li>Multi-tenancy support</li>
+        <li>White-labeling</li>
+        <li>Audit trails & compliance</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>2. Organizational & Learner Roles (13 Personas)</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>Administrative Roles</h3>
+      <div class="persona-box">
+        <div class="role-title">🔐 Superadmin / Platform Admin</div>
+        <p><strong>Scope:</strong> Entire platform across all organizations</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>System configuration & settings</li>
+            <li>User & organization management</li>
+            <li>Billing & subscriptions</li>
+            <li>Security & compliance</li>
+            <li>Support & escalations</li>
+            <li>API & integrations</li>
+          </ul>
+        </div>
+        <span class="badge">Full Access</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">🏢 Organization Lead / Director</div>
+        <p><strong>Scope:</strong> Single organization, strategic level</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Strategic planning & program approval</li>
+            <li>Executive reporting & KPIs</li>
+            <li>Budget allocation</li>
+            <li>Organization-wide policies</li>
+            <li>ROI analysis</li>
+          </ul>
+        </div>
+        <span class="badge">Org Admin</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">⚙️ System Administrator</div>
+        <p><strong>Scope:</strong> Single organization, technical level</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>User provisioning/deprovisioning</li>
+            <li>SSO & authentication setup</li>
+            <li>Integration configuration</li>
+            <li>Data management & backups</li>
+            <li>System maintenance</li>
+          </ul>
+        </div>
+        <span class="badge">Org Admin</span>
+      </div>
+    </div>
+
+    <div>
+      <h3>Content & Learning Roles</h3>
+      <div class="persona-box">
+        <div class="role-title">👨‍🏫 Trainer / Instructor / Subject Matter Expert</div>
+        <p><strong>Scope:</strong> Course/content creation & delivery</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Course design & creation</li>
+            <li>Learning materials & content</li>
+            <li>Exam/question development</li>
+            <li>Student feedback & grading</li>
+            <li>Content updates & maintenance</li>
+          </ul>
+        </div>
+        <span class="badge">Content Creator</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">✂️ Content Editor / Reviewer</div>
+        <p><strong>Scope:</strong> Quality control & content approval</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Review content quality</li>
+            <li>Check for accuracy & consistency</li>
+            <li>Approve/reject submissions</li>
+            <li>Manage revisions & versions</li>
+            <li>Ensure compliance standards</li>
+          </ul>
+        </div>
+        <span class="badge">Reviewer</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">🎯 Instructional Designer</div>
+        <p><strong>Scope:</strong> Learning program design</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Design learning outcomes</li>
+            <li>Create learning paths</li>
+            <li>Curriculum development</li>
+            <li>Assessment strategy</li>
+            <li>Evaluate effectiveness</li>
+          </ul>
+        </div>
+        <span class="badge">Designer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>Exam & Assessment Roles</h3>
+      <div class="persona-box">
+        <div class="role-title">📋 Exam Coordinator</div>
+        <p><strong>Scope:</strong> Exam administration & logistics</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Exam creation & configuration</li>
+            <li>Schedule & deadlines</li>
+            <li>Generate & manage invite links</li>
+            <li>Candidate bulk import</li>
+            <li>Monitor exam progress</li>
+            <li>Release scores & results</li>
+          </ul>
+        </div>
+        <span class="badge">Coordinator</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">📊 Quality Assurance / Test Analyst</div>
+        <p><strong>Scope:</strong> Exam quality & psychometrics</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Question quality review</li>
+            <li>Difficulty analysis</li>
+            <li>Discrimination analysis</li>
+            <li>Bias detection</li>
+            <li>Test reliability metrics</li>
+          </ul>
+        </div>
+        <span class="badge">Analyst</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">✅ Grader / Evaluator</div>
+        <p><strong>Scope:</strong> Manual grading & assessment</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Grade free-form responses</li>
+            <li>Apply rubrics consistently</li>
+            <li>Provide constructive feedback</li>
+            <li>Manage submissions queue</li>
+            <li>Track grading metrics</li>
+          </ul>
+        </div>
+        <span class="badge">Grader</span>
+      </div>
+    </div>
+
+    <div>
+      <h3>Management & Operations Roles</h3>
+      <div class="persona-box">
+        <div class="role-title">👔 Manager / Supervisor</div>
+        <p><strong>Scope:</strong> Team/department level</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Track team learning progress</li>
+            <li>Assign courses/certifications</li>
+            <li>Monitor performance metrics</li>
+            <li>Identify skill gaps</li>
+            <li>Send recommendations</li>
+          </ul>
+        </div>
+        <span class="badge">Manager</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">💼 HR / Talent Development</div>
+        <p><strong>Scope:</strong> Organizational learning strategy</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Design training programs</li>
+            <li>Manage certifications</li>
+            <li>Recruitment assessments</li>
+            <li>Skill gap analysis</li>
+            <li>Career development plans</li>
+          </ul>
+        </div>
+        <span class="badge">HR/L&D</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">💳 Billing / License Manager</div>
+        <p><strong>Scope:</strong> License & subscription management</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>License allocation & tracking</li>
+            <li>Usage monitoring</li>
+            <li>Billing & invoicing</li>
+            <li>Contract management</li>
+            <li>Renewal scheduling</li>
+          </ul>
+        </div>
+        <span class="badge">Finance</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">🛡️ Compliance / Security Officer</div>
+        <p><strong>Scope:</strong> Compliance & governance</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Audit trails & logging</li>
+            <li>Regulatory compliance</li>
+            <li>Data privacy (GDPR, CCPA)</li>
+            <li>Security policies</li>
+            <li>Compliance reporting</li>
+          </ul>
+        </div>
+        <span class="badge">Compliance</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>Support & Operations Roles</h3>
+      <div class="persona-box">
+        <div class="role-title">🛠️ Support / Help Desk</div>
+        <p><strong>Scope:</strong> User support & troubleshooting</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Handle support tickets</li>
+            <li>Password resets</li>
+            <li>Access issues</li>
+            <li>Technical troubleshooting</li>
+            <li>Candidate accommodations</li>
+          </ul>
+        </div>
+        <span class="badge">Support</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">📈 Data Analyst / Business Intelligence</div>
+        <p><strong>Scope:</strong> Analytics & insights</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Create custom reports</li>
+            <li>Learning analytics</li>
+            <li>Trend analysis</li>
+            <li>Data visualization</li>
+            <li>Business intelligence</li>
+          </ul>
+        </div>
+        <span class="badge">Analyst</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">🤝 Customer Success Manager</div>
+        <p><strong>Scope:</strong> Customer relationship & adoption</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Customer onboarding</li>
+            <li>Training & enablement</li>
+            <li>Feature adoption</li>
+            <li>Success metrics & reporting</li>
+            <li>Proactive support</li>
+          </ul>
+        </div>
+        <span class="badge">Customer Ops</span>
+      </div>
+    </div>
+
+    <div>
+      <h3>Learner Roles</h3>
+      <div class="persona-box">
+        <div class="role-title">👤 Learner / Student / Candidate</div>
+        <p><strong>Scope:</strong> Personal learning & development</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>Complete courses</li>
+            <li>Take exams/assessments</li>
+            <li>Submit assignments</li>
+            <li>Track progress</li>
+            <li>Earn credentials</li>
+          </ul>
+        </div>
+        <span class="badge">User</span>
+      </div>
+
+      <div class="persona-box">
+        <div class="role-title">🔌 API Consumer / Integration Partner</div>
+        <p><strong>Scope:</strong> System integration & automation</p>
+        <div class="key-tasks">
+          <strong>Key Responsibilities:</strong>
+          <ul>
+            <li>API integration development</li>
+            <li>Data synchronization</li>
+            <li>Custom workflows</li>
+            <li>Webhook configuration</li>
+            <li>Error handling</li>
+          </ul>
+        </div>
+        <span class="badge">Developer</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="section">
+  <h2>3. Comprehensive Features by Functional Area</h2>
+
+  <h3>📚 Learning Management System (LMS)</h3>
+  <table>
+    <tr>
+      <th>Feature Area</th>
+      <th>Capabilities</th>
+      <th>Key Users</th>
+    </tr>
+    <tr>
+      <td><strong>Course Management</strong></td>
+      <td>Create, publish, version, archive courses; organize by modules; set prerequisites; configure prerequisites</td>
+      <td>Trainer, Instructional Designer, Content Editor</td>
+    </tr>
+    <tr>
+      <td><strong>Content Library</strong></td>
+      <td>Upload materials (video, PDF, slides, documents); organize by topics; version control; reuse across courses</td>
+      <td>Trainer, Content Editor</td>
+    </tr>
+    <tr>
+      <td><strong>Interactive Lessons</strong></td>
+      <td>Create lessons with multiple media types; interactive elements; quizzes within lessons; progress tracking</td>
+      <td>Trainer, Instructional Designer</td>
+    </tr>
+    <tr>
+      <td><strong>Progress Tracking</strong></td>
+      <td>Track completion %; time spent; lesson-level progress; suspend/resume capability; bookmarks</td>
+      <td>Learner, Manager, Trainer</td>
+    </tr>
+    <tr>
+      <td><strong>Learning Paths</strong></td>
+      <td>Sequential course paths; recommended learning; skill-based paths; role-based recommendations</td>
+      <td>Instructional Designer, Trainer, Manager</td>
+    </tr>
+  </table>
+
+  <h3>✍️ Assessment & Examination Engine</h3>
+  <table>
+    <tr>
+      <th>Feature Area</th>
+      <th>Capabilities</th>
+      <th>Key Users</th>
+    </tr>
+    <tr>
+      <td><strong>Question Management</strong></td>
+      <td>Multiple types (MCQ, True/False, Essay, Code, Matching); difficulty levels; topic tags; answer keys; explanations</td>
+      <td>Trainer, Content Editor, QA Analyst</td>
+    </tr>
+    <tr>
+      <td><strong>Question Banks</strong></td>
+      <td>Repository of questions; randomization; item pools; weighted selection; version control</td>
+      <td>Trainer, Exam Coordinator</td>
+    </tr>
+    <tr>
+      <td><strong>Exam Builder</strong></td>
+      <td>Drag-and-drop builder; configure scoring; set time limits; define randomization; set pass threshold</td>
+      <td>Trainer, Exam Coordinator</td>
+    </tr>
+    <tr>
+      <td><strong>Proctoring Options</strong></td>
+      <td>Browser lock; tab switch detection; webcam monitoring; IP tracking; device fingerprinting; recorded sessions</td>
+      <td>Exam Coordinator, Compliance Officer</td>
+    </tr>
+    <tr>
+      <td><strong>Automatic Grading</strong></td>
+      <td>Auto-score objective questions; AI-grade essays; rubric-based scoring; instant feedback</td>
+      <td>Exam Coordinator, QA Analyst</td>
+    </tr>
+    <tr>
+      <td><strong>Manual Grading</strong></td>
+      <td>Queue management; rubric application; batch grading; feedback entry; peer review</td>
+      <td>Grader, Trainer, Evaluator</td>
+    </tr>
+  </table>
+
+  <h3>🏅 Certification & Credentialing</h3>
+  <table>
+    <tr>
+      <th>Feature Area</th>
+      <th>Capabilities</th>
+      <th>Key Users</th>
+    </tr>
+    <tr>
+      <td><strong>Certificate Generation</strong></td>
+      <td>Automated certificate creation; custom templates; digital signatures; PDF export; email delivery</td>
+      <td>Exam Coordinator, Trainer</td>
+    </tr>
+    <tr>
+      <td><strong>Digital Badges</strong></td>
+      <td>Shareable badges; OpenBadge format; LinkedIn integration; portfolio display; expiry tracking</td>
+      <td>Learner, Trainer</td>
+    </tr>
+    <tr>
+      <td><strong>Credential Verification</strong></td>
+      <td>Verification links with QR codes; public profile; third-party validation; blockchain support</td>
+      <td>Learner, Employer, QA Officer</td>
+    </tr>
+    <tr>
+      <td><strong>Expiry Management</strong></td>
+      <td>Set validity periods; expiry alerts; renewal workflows; recertification tracking; historical records</td>
+      <td>HR/L&D, Compliance Officer, Exam Coordinator</td>
+    </tr>
+  </table>
+
+  <h3>📊 Analytics, Reporting & Data</h3>
+  <table>
+    <tr>
+      <th>Feature Area</th>
+      <th>Capabilities</th>
+      <th>Key Users</th>
+    </tr>
+    <tr>
+      <td><strong>Personal Dashboard</strong></td>
+      <td>My courses, progress, scores, badges, certificates, learning timeline, recommendations</td>
+      <td>Learner</td>
+    </tr>
+    <tr>
+      <td><strong>Manager Dashboard</strong></td>
+      <td>Team progress, completion rates, performance metrics, skill matrix, alerts</td>
+      <td>Manager, Supervisor</td>
+    </tr>
+    <tr>
+      <td><strong>Cohort Analytics</strong></td>
+      <td>Aggregate performance, pass rates, score distribution, time-to-pass, completion trends</td>
+      <td>Trainer, Exam Coordinator, Analyst</td>
+    </tr>
+    <tr>
+      <td><strong>Executive Reporting</strong></td>
+      <td>KPI dashboard, ROI analysis, training spend, certification status, compliance metrics</td>
+      <td>Organization Lead, Director, HR</td>
+    </tr>
+    <tr>
+      <td><strong>Custom Reports</strong></td>
+      <td>Report builder, scheduled reports, email delivery, CSV/PDF export, data visualization</td>
+      <td>Data Analyst, Manager, HR</td>
+    </tr>
+    <tr>
+      <td><strong>Question Analytics</strong></td>
+      <td>Difficulty index, discrimination index, pass rate per question, option effectiveness, bias analysis</td>
+      <td>QA Analyst, Trainer</td>
+    </tr>
+  </table>
+
+  <h3>👥 Collaboration & Engagement</h3>
+  <table>
+    <tr>
+      <th>Feature Area</th>
+      <th>Capabilities</th>
+      <th>Key Users</th>
+    </tr>
+    <tr>
+      <td><strong>Discussion Forums</strong></td>
+      <td>Course-level forums, threaded conversations, moderation, Q&A, resource sharing</td>
+      <td>Learner, Trainer</td>
+    </tr>
+    <tr>
+      <td><strong>Peer Feedback</strong></td>
+      <td>Peer grading, peer review, comments on submissions, ratings</td>
+      <td>Learner, Trainer</td>
+    </tr>
+    <tr>
+      <td><strong>Study Groups</strong></td>
+      <td>Create groups, group chat, shared resources, group assignments, collaborative projects</td>
+      <td>Learner</td>
+    </tr>
+    <tr>
+      <td><strong>Leaderboards</strong></td>
+      <td>Public/private leaderboards, skill-based rankings, achievement tracking, badges</td>
+      <td>Learner, Manager</td>
+    </tr>
+    <tr>
+      <td><strong>Gamification</strong></td>
+      <td>Points, badges, streaks, levels, achievements, progress bars, challenges</td>
+      <td>Learner</td>
+    </tr>
+  </table>
+
+  <h3>🔐 Administration & Governance</h3>
+  <table>
+    <tr>
+      <th>Feature Area</th>
+      <th>Capabilities</th>
+      <th>Key Users</th>
+    </tr>
+    <tr>
+      <td><strong>User Management</strong></td>
+      <td>Create/deactivate users, bulk import, SSO integration, SAML, LDAP, profile management</td>
+      <td>Superadmin, System Admin</td>
+    </tr>
+    <tr>
+      <td><strong>Role-Based Access Control (RBAC)</strong></td>
+      <td>Define roles, assign permissions, view hierarchy, granular controls, delegation</td>
+      <td>Superadmin, Organization Lead</td>
+    </tr>
+    <tr>
+      <td><strong>Multi-Tenancy</strong></td>
+      <td>Separate orgs, org isolation, shared infrastructure, independent data, org settings</td>
+      <td>Superadmin, Organization Lead</td>
+    </tr>
+    <tr>
+      <td><strong>White-Labeling</strong></td>
+      <td>Custom branding, domain mapping, email templates, logo/colors, custom features</td>
+      <td>Organization Lead, System Admin</td>
+    </tr>
+    <tr>
+      <td><strong>Audit Trails</strong></td>
+      <td>Log all actions, user tracking, timestamp recording, data changes, compliance audit</td>
+      <td>Compliance Officer, System Admin</td>
+    </tr>
+    <tr>
+      <td><strong>Data Management</strong></td>
+      <td>Backup/restore, data export, archiving, retention policies, GDPR compliance, data deletion</td>
+      <td>System Admin, Compliance Officer</td>
+    </tr>
+  </table>
+
+  <h3>🔌 Integration & API</h3>
+  <table>
+    <tr>
+      <th>Feature Area</th>
+      <th>Capabilities</th>
+      <th>Key Users</th>
+    </tr>
+    <tr>
+      <td><strong>LMS Integrations</strong></td>
+      <td>Moodle, Canvas, Blackboard, SAP SuccessFactors, Workday, SAP Learning Hub</td>
+      <td>System Admin, API Consumer</td>
+    </tr>
+    <tr>
+      <td><strong>SSO/Authentication</strong></td>
+      <td>SAML 2.0, OAuth 2.0, LDAP, Active Directory, Google Workspace, Microsoft Entra ID</td>
+      <td>System Admin, Security Officer</td>
+    </tr>
+    <tr>
+      <td><strong>HR System Connectors</strong></td>
+      <td>Send certifications to HR systems, sync employee data, job role mapping, reporting</td>
+      <td>HR/L&D, System Admin</td>
+    </tr>
+    <tr>
+      <td><strong>REST APIs</strong></td>
+      <td>User management, course data, exam data, results/attempts, webhooks for events</td>
+      <td>API Consumer, Developer</td>
+    </tr>
+    <tr>
+      <td><strong>Webhooks</strong></td>
+      <td>Course completion, exam passed, certificate issued, user enrolled, custom triggers</td>
+      <td>API Consumer, Developer</td>
+    </tr>
+    <tr>
+      <td><strong>Slack Integration</strong></td>
+      <td>Notification delivery, progress alerts, command-line interface for admin, reporting</td>
+      <td>Manager, Learner</td>
+    </tr>
+  </table>
+
+  <h3>💳 Commercial & Licensing</h3>
+  <table>
+    <tr>
+      <th>Feature Area</th>
+      <th>Capabilities</th>
+      <th>Key Users</th>
+    </tr>
+    <tr>
+      <td><strong>Subscription Management</strong></td>
+      <td>Tier management, license allocation, usage tracking, overage handling, renewal alerts</td>
+      <td>Superadmin, Billing Manager</td>
+    </tr>
+    <tr>
+      <td><strong>Billing & Invoicing</strong></td>
+      <td>Auto-billing, invoice generation, payment processing, tax calculation, financial reporting</td>
+      <td>Superadmin, Finance</td>
+    </tr>
+    <tr>
+      <td><strong>Usage Metering</strong></td>
+      <td>Track licenses used, identify surplus/shortage, forecast usage, cost allocation</td>
+      <td>Billing Manager, Finance</td>
+    </tr>
+    <tr>
+      <td><strong>Customer Portal</strong></td>
+      <td>View license status, usage reports, invoice history, upgrade/downgrade options, billing</td>
+      <td>Organization Lead, Billing Manager</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>4. Feature Prioritization by Implementation Phase</h2>
+
+  <h3>🔴 Phase 1: MVP (Core Essentials)</h3>
+  <ul>
+    <li><strong>Course Management:</strong> Create, publish, enroll learners</li>
+    <li><strong>Basic Assessments:</strong> MCQs, basic scoring, pass/fail</li>
+    <li><strong>User Management:</strong> Roles, access control, basic auth</li>
+    <li><strong>Progress Tracking:</strong> Completion %, scores, dashboards</li>
+    <li><strong>Certificates:</strong> Auto-generate on passing</li>
+    <li><strong>Basic Reporting:</strong> Individual & cohort reports</li>
+  </ul>
+
+  <h3>🟡 Phase 2: Enhanced Features</h3>
+  <ul>
+    <li><strong>Advanced Assessments:</strong> Multiple question types, proctoring basics</li>
+    <li><strong>Attempt Management:</strong> Retries, time limits, link expiry</li>
+    <li><strong>Metadata & Tagging:</strong> Domain, role, skill level classifications</li>
+    <li><strong>Learning Paths:</strong> Prerequisites, recommendations</li>
+    <li><strong>Gamification:</strong> Badges, leaderboards, streaks</li>
+    <li><strong>Integrations:</strong> SSO, basic LMS connectors, email notifications</li>
+    <li><strong>Advanced Analytics:</strong> Psychometric analysis, trends</li>
+  </ul>
+
+  <h3>🟢 Phase 3: Advanced & Enterprise</h3>
+  <ul>
+    <li><strong>Advanced Proctoring:</strong> Webcam monitoring, full AI proctoring</li>
+    <li><strong>Content Marketplace:</strong> Share/sell content, licensing</li>
+    <li><strong>Multi-Tenancy:</strong> Full isolation, white-labeling</li>
+    <li><strong>Advanced Reporting:</strong> Custom builder, BI tools integration</li>
+    <li><strong>Compliance:</strong> GDPR, HIPAA, SOX audit support</li>
+    <li><strong>Advanced APIs:</strong> Webhooks, complex workflows</li>
+    <li><strong>Mobile Apps:</strong> Native iOS/Android</li>
+  </ul>
+
+  <h3>🟣 Phase 4: Specialized & Niche</h3>
+  <ul>
+    <li><strong>AI-Powered Features:</strong> Personalized learning paths, chatbot support</li>
+    <li><strong>Blockchain:</strong> Credential verification, digital wallets</li>
+    <li><strong>Advanced Analytics:</strong> Predictive analytics, learning analytics</li>
+    <li><strong>Content Creation AI:</strong> Auto-generate questions, summarize content</li>
+    <li><strong>Advanced Collaboration:</strong> Live sessions, breakout rooms, peer mentoring</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>5. Platform Architecture Considerations</h2>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>🏗️ Technology Stack</h4>
+      <ul>
+        <li>Backend: Node.js, Python, Go, Java</li>
+        <li>Frontend: React, Vue, Angular</li>
+        <li>Database: PostgreSQL, MongoDB</li>
+        <li>Cache: Redis, Memcached</li>
+        <li>Queue: RabbitMQ, Apache Kafka</li>
+        <li>Search: Elasticsearch</li>
+        <li>Storage: S3, Cloud Storage</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>☁️ Deployment Options</h4>
+      <ul>
+        <li>SaaS (Cloud-hosted)</li>
+        <li>On-Premise (Self-hosted)</li>
+        <li>Hybrid (Mix of cloud & on-prem)</li>
+        <li>Private Cloud</li>
+        <li>Container-based (Docker, Kubernetes)</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>🔒 Security & Compliance</h4>
+      <ul>
+        <li>GDPR, CCPA, HIPAA compliance</li>
+        <li>End-to-end encryption</li>
+        <li>SSO/SAML support</li>
+        <li>Audit logging</li>
+        <li>Penetration testing</li>
+        <li>Regular security updates</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>📈 Scalability</h4>
+      <ul>
+        <li>Horizontal scaling</li>
+        <li>Load balancing</li>
+        <li>Database replication</li>
+        <li>CDN for content delivery</li>
+        <li>API rate limiting</li>
+        <li>Auto-scaling policies</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>🎯 Performance</h4>
+      <ul>
+        <li>Page load < 2 seconds</li>
+        <li>API response < 500ms</li>
+        <li>99.9% uptime SLA</li>
+        <li>Real-time notifications</li>
+        <li>Optimized media streaming</li>
+        <li>Analytics processing</li>
+      </ul>
+    </div>
+
+    <div class="feature-card">
+      <h4>📱 Multi-Platform</h4>
+      <ul>
+        <li>Responsive web design</li>
+        <li>iOS mobile app</li>
+        <li>Android mobile app</li>
+        <li>Desktop applications</li>
+        <li>Progressive Web App (PWA)</li>
+        <li>Offline capabilities</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>6. Business Model Considerations</h2>
+
+  <h3>💰 Pricing Strategies</h3>
+  <ul>
+    <li><strong>Per-User Pricing:</strong> Pay per active learner/month</li>
+    <li><strong>Per-Course Pricing:</strong> Fixed price per course</li>
+    <li><strong>Seat-Based:</strong> Fixed number of concurrent users</li>
+    <li><strong>Enterprise:</strong> Custom pricing for large organizations</li>
+    <li><strong>Freemium:</strong> Free tier with paid upgrades</li>
+    <li><strong>Certification-Based:</strong> Pay per certification exam</li>
+  </ul>
+
+  <h3>🎯 Target Markets</h3>
+  <ul>
+    <li><strong>Corporate L&D:</strong> Employee training, compliance, upskilling</li>
+    <li><strong>Higher Education:</strong> Universities, online degrees, MOOCs</li>
+    <li><strong>Professional Services:</strong> Consulting, legal, accounting firms</li>
+    <li><strong>Government & Non-Profit:</strong> Public sector training</li>
+    <li><strong>Tech & Software:</strong> Developer training, certifications</li>
+    <li><strong>Healthcare:</strong> Medical training, compliance, licensing</li>
+    <li><strong>Financial Services:</strong> Regulatory training, compliance</li>
+  </ul>
+
+  <h3>📊 Key Metrics & KPIs</h3>
+  <ul>
+    <li><strong>User Metrics:</strong> DAU, MAU, retention rate, churn rate</li>
+    <li><strong>Learning Metrics:</strong> Course completion, average time, assessment pass rate</li>
+    <li><strong>Business Metrics:</strong> ARR, ARPU, customer LTV, CAC payback period</li>
+    <li><strong>Quality Metrics:</strong> NPS, customer satisfaction, support ticket resolution</li>
+    <li><strong>Engagement Metrics:</strong> Login frequency, time on platform, feature adoption</li>
+  </ul>
+</div>
+
+<div class="footer">
+  <p><strong>This comprehensive guide covers all aspects of a professional training-cum-assessment platform suitable for commercial deployment.</strong></p>
+  <p>The platform can be scaled from MVP to enterprise-grade solution with phased implementation of features.</p>
+  <p>Last updated: 2026-09-28</p>
+</div>
+
+</div>
+
+<script>
+// Auto-collapse Zero-Shot on load (if you have cards)
+document.querySelectorAll('.card').forEach(card => {
+  if (card.querySelector('h3')?.textContent?.includes('Zero-Shot')) {
+    card.classList.add('collapsed');
+  }
+});
+</script>
+</body>
+</html>
