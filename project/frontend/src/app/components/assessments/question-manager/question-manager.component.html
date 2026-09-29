@@ -1,0 +1,97 @@
+<div class="question-manager">
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">← Back to Questions</button>
+    <h1>{{ isEditMode ? 'Edit Question' : 'Create New Question' }}</h1>
+  </div>
+
+  <form [formGroup]="questionForm" class="question-form">
+    <!-- BASIC INFO -->
+    <div class="form-section">
+      <h3>Question Details</h3>
+
+      <div class="form-group">
+        <label>Question Text *</label>
+        <textarea formControlName="text" class="form-control" rows="4" placeholder="Enter the question text"></textarea>
+        <span class="error" *ngIf="questionForm.get('text')?.hasError('required')">Question text is required</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Question Type *</label>
+          <select formControlName="type" class="form-control">
+            <option *ngFor="let type of questionTypes" [value]="type">
+              {{ type | titlecase }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Difficulty *</label>
+          <select formControlName="difficulty" class="form-control">
+            <option *ngFor="let level of difficultyLevels" [value]="level">
+              {{ level | titlecase }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Points *</label>
+          <input type="number" formControlName="points" class="form-control" min="1" step="1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Topic Tags (comma-separated)</label>
+        <input type="text" formControlName="topic_tags" class="form-control" placeholder="e.g., algebra, geometry, calculus">
+      </div>
+
+      <div class="form-group">
+        <label>Explanation</label>
+        <textarea formControlName="explanation" class="form-control" rows="3" placeholder="Provide an explanation for the correct answer"></textarea>
+      </div>
+    </div>
+
+    <!-- MULTIPLE CHOICE OPTIONS -->
+    <div *ngIf="questionForm.get('type')?.value === 'multiple_choice' || questionForm.get('type')?.value === 'true_false'" class="form-section">
+      <h3>Answer Options</h3>
+
+      <div class="options-list">
+        <div *ngFor="let option of options; let i = index" class="option-item">
+          <div class="option-header">
+            <span class="option-label">Option {{ i + 1 }}</span>
+            <label class="correct-label">
+              <input type="radio" [checked]="option.is_correct" (change)="setCorrectOption(i)" class="form-radio">
+              Correct Answer
+            </label>
+          </div>
+
+          <div class="option-content">
+            <textarea class="form-control" [(ngModel)]="option.text" [ngModelOptions]="{standalone: true}" placeholder="Option text"></textarea>
+          </div>
+
+          <div class="option-actions">
+            <button type="button" class="btn btn-sm btn-secondary" (click)="saveOption(i)">Save</button>
+            <button type="button" class="btn btn-sm btn-danger" (click)="removeOption(i)">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-secondary" (click)="addOption()">
+        ➕ Add Option
+      </button>
+    </div>
+
+    <!-- FORM ACTIONS -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary" (click)="saveQuestion()" [disabled]="!questionForm.valid || loading">
+        {{ loading ? 'Saving...' : 'Save Question' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        Cancel
+      </button>
+      <button type="button" *ngIf="isEditMode" class="btn btn-danger" (click)="deleteQuestion()" [disabled]="loading">
+        Delete
+      </button>
+    </div>
+  </form>
+</div>

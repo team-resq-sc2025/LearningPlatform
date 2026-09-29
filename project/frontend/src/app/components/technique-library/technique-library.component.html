@@ -1,0 +1,71 @@
+<div class="technique-library-container">
+  <div class="library-header">
+    <h1>📚 Prompting Techniques Library</h1>
+    <p>Learn different prompting approaches to improve your prompt quality</p>
+
+    <div class="library-controls">
+      <button class="btn-control" (click)="expandAll()">Expand All</button>
+      <button class="btn-control" (click)="collapseAll()">Collapse All</button>
+    </div>
+  </div>
+
+  <div class="techniques-grid">
+    <div
+      class="technique-card"
+      *ngFor="let technique of techniques"
+      [class.expanded]="technique.expanded"
+    >
+      <!-- Card Header (Clickable) -->
+      <div
+        class="card-header"
+        (click)="toggleTechnique(technique.id)"
+      >
+        <div class="header-content">
+          <h3>{{ technique.name }}</h3>
+          <p class="subtitle">{{ technique.subtitle }}</p>
+        </div>
+        <div class="toggle-icon" [class.rotated]="technique.expanded">▼</div>
+      </div>
+
+      <!-- Card Content (Collapsible) -->
+      <div class="card-content" *ngIf="technique.expanded">
+        <!-- Description -->
+        <div class="content-section">
+          <p class="description">{{ technique.description }}</p>
+        </div>
+
+        <!-- Example Box -->
+        <div class="example-box">
+          <strong>Example:</strong>
+          <pre>{{ technique.example }}</pre>
+        </div>
+
+        <!-- Best For -->
+        <div class="content-section">
+          <strong>Best for:</strong>
+          <div class="tag-list">
+            <span class="tag" *ngFor="let item of technique.bestFor">
+              {{ item }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Strengths -->
+        <div class="content-section">
+          <strong>✓ Strengths:</strong>
+          <ul class="list">
+            <li *ngFor="let strength of technique.strengths">{{ strength }}</li>
+          </ul>
+        </div>
+
+        <!-- Weaknesses -->
+        <div class="content-section">
+          <strong>⚠ Weaknesses:</strong>
+          <ul class="list">
+            <li *ngFor="let weakness of technique.weaknesses">{{ weakness }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

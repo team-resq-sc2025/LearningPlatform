@@ -1,0 +1,188 @@
+<div class="prompt-editor-container">
+  <div class="editor-header">
+    <h1>{{ editingId ? 'Edit Prompt' : 'Create New Prompt' }}</h1>
+    <button class="btn-back" (click)="goBack()">← Back to Prompts</button>
+  </div>
+
+  <div class="editor-content" *ngIf="!isLoading">
+    <!-- Left Panel: Editor -->
+    <div class="editor-panel">
+      <div class="form-group">
+        <label>Prompt Title</label>
+        <input
+          type="text"
+          [(ngModel)]="prompt.title"
+          placeholder="Give your prompt a descriptive title"
+          class="input-field"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Technique</label>
+          <select [(ngModel)]="prompt.technique" class="select-field">
+            <option value="">Select a technique...</option>
+            <option *ngFor="let t of techniques" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Domain</label>
+          <select [(ngModel)]="prompt.domain" class="select-field">
+            <option value="">Select a domain...</option>
+            <option *ngFor="let d of domains" [value]="d">{{ d }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Prompt Content</label>
+        <textarea
+          [(ngModel)]="prompt.content"
+          placeholder="Write your prompt here..."
+          class="textarea-field"
+          rows="15"
+        ></textarea>
+      </div>
+
+      <div class="editor-actions">
+        <button
+          class="btn btn-primary"
+          (click)="savePrompt()"
+          [disabled]="isSaving"
+        >
+          {{ isSaving ? 'Saving...' : 'Save Draft' }}
+        </button>
+
+        <button
+          class="btn btn-success"
+          (click)="evaluatePrompt()"
+          [disabled]="isEvaluating || !editingId"
+        >
+          {{ isEvaluating ? 'Evaluating...' : '✓ Evaluate' }}
+        </button>
+
+        <button
+          class="btn btn-info"
+          (click)="publishPrompt()"
+          [disabled]="isSaving || !editingId || prompt.status === 'published'"
+        >
+          Publish
+        </button>
+
+        <button class="btn btn-secondary" (click)="clearForm()">Clear</button>
+      </div>
+    </div>
+
+    <!-- Right Panel: Stats & Feedback -->
+    <div class="stats-panel">
+      <!-- Counter Cards -->
+      <div class="stats-section">
+        <h3>Content Stats</h3>
+        <div class="stat-card">
+          <div class="stat-value">{{ characterCount }}</div>
+          <div class="stat-label">Characters</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ wordCount }}</div>
+          <div class="stat-label">Words</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ estimatedTokens }}</div>
+          <div class="stat-label">Est. Tokens</div>
+        </div>
+      </div>
+
+      <!-- Evaluation Results -->
+      <div class="stats-section" *ngIf="evaluation">
+        <h3>Evaluation Results</h3>
+
+        <!-- Overall Score -->
+        <div class="overall-score">
+          <div class="score-circle" [style.background-color]="scoreColor">
+            {{ evaluation.total_score.toFixed(0) }}/100
+          </div>
+        </div>
+
+        <!-- Dimension Scores -->
+        <div class="dimension-scores">
+          <div class="score-bar">
+            <div class="score-label">Clarity</div>
+            <div class="score-bar-container">
+              <div
+                class="score-bar-fill"
+                [style.width.%]="(evaluation.clarity_score / 25) * 100"
+              ></div>
+            </div>
+            <div class="score-value">{{ evaluation.clarity_score.toFixed(1) }}/25</div>
+          </div>
+
+          <div class="score-bar">
+            <div class="score-label">Specificity</div>
+            <div class="score-bar-container">
+              <div
+                class="score-bar-fill"
+                [style.width.%]="(evaluation.specificity_score / 25) * 100"
+              ></div>
+            </div>
+            <div class="score-value">{{ evaluation.specificity_score.toFixed(1) }}/25</div>
+          </div>
+
+          <div class="score-bar">
+            <div class="score-label">Structure</div>
+            <div class="score-bar-container">
+              <div
+                class="score-bar-fill"
+                [style.width.%]="(evaluation.structure_score / 20) * 100"
+              ></div>
+            </div>
+            <div class="score-value">{{ evaluation.structure_score.toFixed(1) }}/20</div>
+          </div>
+
+          <div class="score-bar">
+            <div class="score-label">Completeness</div>
+            <div class="score-bar-container">
+              <div
+                class="score-bar-fill"
+                [style.width.%]="(evaluation.completeness_score / 15) * 100"
+              ></div>
+            </div>
+            <div class="score-value">{{ evaluation.completeness_score.toFixed(1) }}/15</div>
+          </div>
+
+          <div class="score-bar">
+            <div class="score-label">Efficiency</div>
+            <div class="score-bar-container">
+              <div
+                class="score-bar-fill"
+                [style.width.%]="(evaluation.efficiency_score / 15) * 100"
+              ></div>
+            </div>
+            <div class="score-value">{{ evaluation.efficiency_score.toFixed(1) }}/15</div>
+          </div>
+        </div>
+
+        <!-- Feedback -->
+        <div class="feedback-section" *ngIf="evaluation.feedback">
+          <h4>Feedback</h4>
+          <div class="feedback-text">
+            {{ evaluation.feedback }}
+          </div>
+        </div>
+      </div>
+
+      <!-- No Evaluation Yet -->
+      <div class="stats-section" *ngIf="!evaluation && editingId">
+        <div class="empty-state">
+          <p>No evaluation yet</p>
+          <p class="small">Click "Evaluate" to run analysis</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <p>Loading prompt...</p>
+  </div>
+</div>

@@ -1,0 +1,180 @@
+<div class="assessment-analytics">
+  <div class="header">
+    <h1>📊 {{ assessment?.title || 'Assessment' }} Analytics</h1>
+    <button class="btn btn-primary" (click)="exportReport()">⬇️ Export Report</button>
+  </div>
+
+  <div class="tabs">
+    <button
+      class="tab"
+      [class.active]="activeTab === 'overview'"
+      (click)="activeTab = 'overview'">
+      Overview
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab === 'questions'"
+      (click)="activeTab = 'questions'">
+      Question Analysis
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab === 'attempts'"
+      (click)="activeTab = 'attempts'">
+      Attempts
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading analytics...</div>
+
+  <!-- OVERVIEW TAB -->
+  <div *ngIf="!loading && activeTab === 'overview'" class="tab-content">
+    <div class="analytics-grid">
+      <!-- KEY METRICS -->
+      <div class="metric-card">
+        <div class="metric-label">Total Attempts</div>
+        <div class="metric-value">{{ analytics?.total_attempts || 0 }}</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">Average Score</div>
+        <div class="metric-value">{{ analytics?.average_score | number: '1.1-1' }}%</div>
+        <div class="metric-subtitle">Median: {{ analytics?.median_score | number: '1.1-1' }}%</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">Pass Rate</div>
+        <div class="metric-value" [ngClass]="getPassPercentageClass(analytics?.pass_rate || 0)">
+          {{ analytics?.pass_rate | number: '1.1-1' }}%
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">Score Range</div>
+        <div class="metric-value">{{ analytics?.min_score | number: '1.1-1' }}% - {{ analytics?.max_score | number: '1.1-1' }}%</div>
+        <div class="metric-subtitle">Std Dev: {{ analytics?.std_dev | number: '1.1-1' }}</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">Average Time</div>
+        <div class="metric-value">{{ analytics?.average_time_minutes | number: '1.0-0' }} min</div>
+      </div>
+    </div>
+
+    <!-- PASS/FAIL DISTRIBUTION -->
+    <div class="section">
+      <h3>Pass/Fail Distribution</h3>
+      <div class="distribution-table">
+        <div *ngFor="let data of passFailData" class="distribution-row">
+          <div class="distribution-label">{{ data.status }}</div>
+          <div class="distribution-bar">
+            <div class="bar-fill" [style.width.%]="data.percentage" [ngClass]="'bar-' + data.status.toLowerCase()">
+              {{ data.percentage }}%
+            </div>
+          </div>
+          <div class="distribution-count">{{ data.count }} attempts</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORE DISTRIBUTION -->
+    <div class="section">
+      <h3>Score Distribution</h3>
+      <div class="score-ranges">
+        <div *ngFor="let range of scoreDistribution" class="score-range-item">
+          <span class="range-label">{{ range.range }}</span>
+          <div class="range-bar">
+            <div class="bar-segment" [style.height.px]="(range.count || 0) * 3"></div>
+          </div>
+          <span class="range-count">{{ range.count }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTIONS TAB -->
+  <div *ngIf="!loading && activeTab === 'questions'" class="tab-content">
+    <div class="questions-analytics">
+      <div class="section">
+        <h3>Question Quality Metrics</h3>
+        <div class="questions-list">
+          <div *ngFor="let qa of questionAnalytics" class="question-analytics-item">
+            <div class="qa-header">
+              <span class="qa-attempts">{{ qa.attempts }} attempts</span>
+              <span class="qa-pass-rate" [ngClass]="getPassPercentageClass(qa.pass_rate)">
+                {{ qa.pass_rate | number: '1.1-1' }}% pass
+              </span>
+            </div>
+
+            <div class="qa-metrics">
+              <div class="qa-metric">
+                <label>Difficulty Index</label>
+                <div class="metric-bar">
+                  <div class="bar-fill" [style.width.%]="qa.difficulty_index * 100" [ngClass]="getDifficultyColor(qa.difficulty_index)">
+                    {{ (qa.difficulty_index * 100) | number: '1.0-0' }}%
+                  </div>
+                </div>
+              </div>
+
+              <div class="qa-metric">
+                <label>Discrimination Index</label>
+                <div class="metric-bar">
+                  <div class="bar-fill" [style.width.%]="(qa.discrimination_index + 1) * 50" [ngClass]="getDiscriminationColor(qa.discrimination_index)">
+                    {{ (qa.discrimination_index * 100) | number: '1.0-0' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="qa.option_statistics" class="qa-options">
+              <h5>Option Effectiveness</h5>
+              <div *ngFor="let opt of qa.option_statistics" class="option-stat">
+                <span class="opt-text" [ngClass]="opt.is_correct ? 'correct' : 'incorrect'">
+                  {{ opt.option_text }}
+                </span>
+                <span class="opt-percent">{{ opt.selection_percentage }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATTEMPTS TAB -->
+  <div *ngIf="!loading && activeTab === 'attempts'" class="tab-content">
+    <div class="attempts-section">
+      <h3>All Attempts</h3>
+      <table class="attempts-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Attempt #</th>
+            <th>Score</th>
+            <th>Status</th>
+            <th>Duration</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let attempt of attempts">
+            <td>{{ attempt.user_id }}</td>
+            <td>{{ attempt.attempt_number }}</td>
+            <td>
+              <span [ngClass]="getPassPercentageClass(attempt.percentage_score || 0)">
+                {{ attempt.percentage_score | number: '1.0-0' }}%
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + attempt.status">
+                {{ attempt.status | uppercase }}
+              </span>
+            </td>
+            <td>{{ attempt.duration_minutes || '-' }} min</td>
+            <td>{{ attempt.end_time | date: 'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

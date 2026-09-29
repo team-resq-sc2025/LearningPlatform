@@ -1,0 +1,243 @@
+<div class="course-builder">
+  <div class="header">
+    <h1>{{ courseId ? 'Edit Course' : 'Create New Course' }}</h1>
+    <div class="status-badge" *ngIf="course">
+      <span class="badge" [ngClass]="'badge-' + course.status">
+        {{ course.status | uppercase }}
+      </span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button
+      class="tab"
+      [class.active]="activeTab === 'details'"
+      (click)="activeTab = 'details'">
+      📋 Course Details
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab === 'modules'"
+      (click)="activeTab = 'modules'"
+      [disabled]="!courseId">
+      📚 Modules & Lessons
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab === 'settings'"
+      (click)="activeTab = 'settings'"
+      [disabled]="!courseId">
+      ⚙️ Settings
+    </button>
+  </div>
+
+  <!-- DETAILS TAB -->
+  <div *ngIf="activeTab === 'details'" class="tab-content">
+    <form [formGroup]="courseForm" class="form-grid">
+      <div class="form-section">
+        <h3>Basic Information</h3>
+
+        <div class="form-group">
+          <label>Course Title *</label>
+          <input type="text" formControlName="title" class="form-control" placeholder="Course title">
+          <span class="error" *ngIf="courseForm.get('title')?.hasError('required')">Title is required</span>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea formControlName="description" class="form-control" rows="4" placeholder="Course description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Thumbnail URL</label>
+          <input type="text" formControlName="thumbnail_url" class="form-control" placeholder="https://example.com/image.jpg">
+          <div *ngIf="courseForm.get('thumbnail_url')?.value" class="thumbnail-preview">
+            <img [src]="courseForm.get('thumbnail_url')?.value" alt="thumbnail" class="thumbnail-img">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Course Details</h3>
+
+        <div class="form-group">
+          <label>Category *</label>
+          <select formControlName="category" class="form-control">
+            <option value="">Select category</option>
+            <option value="programming">Programming</option>
+            <option value="business">Business</option>
+            <option value="design">Design</option>
+            <option value="data">Data Science</option>
+            <option value="marketing">Marketing</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Level *</label>
+          <select formControlName="level" class="form-control">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+            <option value="expert">Expert</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Duration (hours)</label>
+            <input type="number" formControlName="duration_hours" class="form-control" min="0">
+          </div>
+
+          <div class="form-group">
+            <label>Est. Completion (days)</label>
+            <input type="number" formControlName="estimated_completion_days" class="form-control" min="1">
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="actions">
+      <button class="btn btn-primary" (click)="saveCourse()" [disabled]="!courseForm.valid || loading">
+        {{ loading ? 'Saving...' : 'Save Course' }}
+      </button>
+      <button class="btn btn-secondary" *ngIf="courseId && course?.status === 'draft'" (click)="publishCourse()" [disabled]="loading">
+        Publish
+      </button>
+      <button class="btn btn-danger" *ngIf="courseId" (click)="archiveCourse()" [disabled]="loading">
+        Archive
+      </button>
+    </div>
+  </div>
+
+  <!-- MODULES TAB -->
+  <div *ngIf="activeTab === 'modules'" class="tab-content">
+    <div class="modules-section">
+      <div class="section-header">
+        <h3>Course Structure ({{ modules.length }} modules)</h3>
+        <button class="btn btn-primary" (click)="addModule()">
+          ➕ Add Module
+        </button>
+      </div>
+
+      <div class="modules-list">
+        <div *ngIf="modules.length === 0" class="empty-state">
+          <p>No modules yet. Create your first module to get started.</p>
+        </div>
+
+        <div *ngFor="let module of modules; let i = index" class="module-item">
+          <div class="module-header">
+            <span class="module-number">M{{ i + 1 }}</span>
+            <h4>{{ module.title }}</h4>
+            <span class="lesson-count">{{ module.total_lessons }} lessons</span>
+          </div>
+
+          <div class="module-actions">
+            <button class="btn btn-sm btn-secondary" (click)="manageLessons(module.id)">
+              Manage Lessons
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="deleteModule(module.id)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div *ngIf="activeTab === 'settings'" class="tab-content">
+    <form [formGroup]="courseSettingsForm" class="form-grid">
+      <div class="form-section">
+        <h3>Enrollment Settings</h3>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="allow_enrollment" class="form-checkbox">
+            Allow New Enrollments
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="allow_unenrollment" class="form-checkbox">
+            Allow Unenrollment
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="is_self_paced" class="form-checkbox">
+            Self-Paced Course
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>Max Participants</label>
+          <input type="number" formControlName="max_participants" class="form-control" min="1">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Learning Settings</h3>
+
+        <div class="form-group">
+          <label>Passing Score (%)</label>
+          <input type="number" formControlName="passing_score" class="form-control" min="0" max="100">
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="allow_lesson_replay" class="form-checkbox">
+            Allow Lesson Replay
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="track_time_spent" class="form-checkbox">
+            Track Time Spent
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="display_progress_bar" class="form-checkbox">
+            Display Progress Bar
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="display_completion_percentage" class="form-checkbox">
+            Display Completion %
+          </label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Email Settings</h3>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="send_completion_emails" class="form-checkbox">
+            Send Completion Emails
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="send_reminder_emails" class="form-checkbox">
+            Send Reminder Emails
+          </label>
+        </div>
+      </div>
+    </form>
+
+    <div class="actions">
+      <button class="btn btn-primary" (click)="saveSettings()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save Settings' }}
+      </button>
+    </div>
+  </div>
+</div>

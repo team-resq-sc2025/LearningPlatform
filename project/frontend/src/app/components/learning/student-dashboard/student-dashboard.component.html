@@ -1,0 +1,201 @@
+<div class="student-dashboard">
+  <div class="header">
+    <h1>📚 My Learning Dashboard</h1>
+    <div class="header-info">
+      <span class="info-badge">Total Learning Hours: {{ dashboard?.progress_summary.total_learning_hours || 0 }}h</span>
+      <span class="info-badge">Courses Completed: {{ dashboard?.progress_summary.total_courses_completed || 0 }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading your dashboard...</div>
+
+  <div *ngIf="!loading && dashboard" class="dashboard-content">
+    <!-- PROGRESS SUMMARY -->
+    <section class="summary-section">
+      <h2>Your Progress</h2>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-label">Courses Enrolled</div>
+          <div class="summary-value">{{ dashboard.progress_summary.total_courses_enrolled }}</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-label">Courses Completed</div>
+          <div class="summary-value">{{ dashboard.progress_summary.total_courses_completed }}</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-label">Total Learning Hours</div>
+          <div class="summary-value">{{ dashboard.progress_summary.total_learning_hours }}h</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-label">Avg Completion Rate</div>
+          <div class="summary-value">{{ dashboard.progress_summary.average_completion_rate | number: '1.0-0' }}%</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-label">Certifications Earned</div>
+          <div class="summary-value">{{ dashboard.progress_summary.certifications_earned }}</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-label">Skills Acquired</div>
+          <div class="summary-value">{{ dashboard.progress_summary.skills_acquired.length }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVE COURSES -->
+    <section class="courses-section">
+      <h2>In Progress ({{ dashboard.active_courses.length }})</h2>
+
+      <div class="courses-grid">
+        <div *ngIf="dashboard.active_courses.length === 0" class="empty-state">
+          <p>No active courses. Explore recommended courses below!</p>
+        </div>
+
+        <div *ngFor="let course of dashboard.active_courses; let enrollment of dashboard.enrollments" class="course-card">
+          <div class="course-header">
+            <img *ngIf="course.thumbnail_url" [src]="course.thumbnail_url" alt="{{ course.title }}" class="course-thumbnail">
+            <div class="course-info">
+              <h4>{{ course.title }}</h4>
+              <span class="course-level" [ngClass]="'level-' + course.level">{{ course.level }}</span>
+            </div>
+          </div>
+
+          <div class="course-progress">
+            <div class="progress-info">
+              <span class="progress-label">Progress</span>
+              <span class="progress-value">{{ enrollment?.completion_percentage || 0 }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="enrollment?.completion_percentage || 0" [ngClass]="getProgressColor(enrollment?.completion_percentage || 0)"></div>
+            </div>
+          </div>
+
+          <div class="course-actions">
+            <button class="btn btn-primary" (click)="resumeCourse(course.id)">
+              ▶️ Resume
+            </button>
+            <button class="btn btn-secondary">
+              📈 Progress
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPLETED COURSES -->
+    <section class="courses-section" *ngIf="dashboard.completed_courses.length > 0">
+      <h2>Completed ({{ dashboard.completed_courses.length }})</h2>
+
+      <div class="courses-grid">
+        <div *ngFor="let course of dashboard.completed_courses" class="course-card completed">
+          <div class="course-header">
+            <img *ngIf="course.thumbnail_url" [src]="course.thumbnail_url" alt="{{ course.title }}" class="course-thumbnail">
+            <div class="course-info">
+              <h4>{{ course.title }}</h4>
+              <span class="completion-badge">✓ Completed</span>
+            </div>
+          </div>
+
+          <div class="course-actions">
+            <button class="btn btn-secondary">
+              📜 View Certificate
+            </button>
+            <button class="btn btn-secondary">
+              🔄 Review
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECOMMENDED COURSES -->
+    <section class="courses-section">
+      <h2>Recommended For You ({{ dashboard.recommended_courses.length }})</h2>
+      <p class="section-subtitle">Based on your learning history and career interests</p>
+
+      <div class="courses-grid">
+        <div *ngIf="dashboard.recommended_courses.length === 0" class="empty-state">
+          <p>No recommendations at this time. Check back later!</p>
+        </div>
+
+        <div *ngFor="let course of dashboard.recommended_courses" class="course-card recommended">
+          <div class="recommendation-badge">Recommended</div>
+
+          <div class="course-header">
+            <img *ngIf="course.thumbnail_url" [src]="course.thumbnail_url" alt="{{ course.title }}" class="course-thumbnail">
+            <div class="course-info">
+              <h4>{{ course.title }}</h4>
+              <p class="course-desc">{{ course.description | slice: 0: 60 }}...</p>
+              <span class="course-level" [ngClass]="'level-' + course.level">{{ course.level }}</span>
+            </div>
+          </div>
+
+          <div class="course-stats">
+            <span *ngIf="course.duration_hours" class="stat">⏱️ {{ course.duration_hours }}h</span>
+            <span class="stat">📊 {{ course.category }}</span>
+          </div>
+
+          <button class="btn btn-primary btn-full" (click)="enrollCourse(course.id)">
+            Enroll Now
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECOMMENDED PATHS -->
+    <section class="paths-section" *ngIf="dashboard.recommended_paths.length > 0">
+      <h2>Learning Paths for You</h2>
+
+      <div class="paths-grid">
+        <div *ngFor="let path of dashboard.recommended_paths" class="path-card">
+          <h4>{{ path.name }}</h4>
+          <p>{{ path.description }}</p>
+          <div class="path-courses">
+            <span class="course-badge">{{ path.courses.length }} courses</span>
+            <span *ngIf="path.estimated_duration_hours" class="duration-badge">{{ path.estimated_duration_hours }}h</span>
+          </div>
+          <button class="btn btn-secondary btn-full">
+            View Path
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECENT ACTIVITY -->
+    <section class="activity-section" *ngIf="dashboard.recent_activity.length > 0">
+      <h2>Recent Activity</h2>
+
+      <div class="activity-list">
+        <div *ngFor="let activity of dashboard.recent_activity | slice: 0: 5" class="activity-item">
+          <div class="activity-icon">
+            <span *ngIf="activity.activity_type === 'lesson_completed'">✓</span>
+            <span *ngIf="activity.activity_type === 'course_completed'">🏆</span>
+            <span *ngIf="activity.activity_type === 'quiz_passed'">✓</span>
+            <span *ngIf="activity.activity_type === 'material_viewed'">📖</span>
+          </div>
+          <div class="activity-info">
+            <p class="activity-title">{{ activity.title }}</p>
+            <p class="activity-time">{{ activity.timestamp | date: 'short' }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BADGES -->
+    <section class="badges-section" *ngIf="dashboard.badges_earned.length > 0">
+      <h2>Badges Earned</h2>
+
+      <div class="badges-grid">
+        <div *ngFor="let badge of dashboard.badges_earned" class="badge-item">
+          <img [src]="badge.image_url" [alt]="badge.badge_name" class="badge-image">
+          <p class="badge-name">{{ badge.badge_name }}</p>
+          <p class="badge-date">{{ badge.earned_at | date: 'short' }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

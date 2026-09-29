@@ -1,0 +1,248 @@
+<div class="exam-builder">
+  <div class="header">
+    <h1>{{ assessmentId ? 'Edit Assessment' : 'Create New Assessment' }}</h1>
+    <div class="status-badge" *ngIf="assessment">
+      <span class="badge" [ngClass]="'badge-' + assessment.status">
+        {{ assessment.status | uppercase }}
+      </span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button
+      class="tab"
+      [class.active]="activeTab === 'settings'"
+      (click)="activeTab = 'settings'">
+      ⚙️ Settings
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab === 'questions'"
+      (click)="activeTab = 'questions'"
+      [disabled]="!assessmentId">
+      ❓ Questions
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab === 'config'"
+      (click)="activeTab = 'config'"
+      [disabled]="!assessmentId">
+      ⏱️ Attempt Config
+    </button>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div *ngIf="activeTab === 'settings'" class="tab-content">
+    <form [formGroup]="assessmentForm" class="form-grid">
+      <div class="form-section">
+        <h3>Basic Information</h3>
+        <div class="form-group">
+          <label>Title *</label>
+          <input type="text" formControlName="title" class="form-control" placeholder="Assessment title">
+          <span class="error" *ngIf="assessmentForm.get('title')?.hasError('required')">Title is required</span>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea formControlName="description" class="form-control" rows="3" placeholder="Assessment description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Type *</label>
+          <select formControlName="type" class="form-control">
+            <option value="quiz">Quiz</option>
+            <option value="exam">Exam</option>
+            <option value="assignment">Assignment</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Scoring & Passing</h3>
+        <div class="form-group">
+          <label>Pass Percentage *</label>
+          <div class="input-group">
+            <input type="number" formControlName="pass_percentage" class="form-control" min="0" max="100">
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Time Limit (minutes)</label>
+          <div class="input-group">
+            <input type="number" formControlName="time_limit_minutes" class="form-control" min="0">
+            <span class="input-suffix">min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Retakes & Attempts</h3>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="allow_retakes" class="form-checkbox">
+            Allow Retakes
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="assessmentForm.get('allow_retakes')?.value">
+          <label>Max Retakes</label>
+          <input type="number" formControlName="max_retakes" class="form-control" min="0">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Results & Feedback</h3>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="show_correct_answers" class="form-checkbox">
+            Show Correct Answers
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="show_feedback" class="form-checkbox">
+            Show Feedback
+          </label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Randomization</h3>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="randomize_questions" class="form-checkbox">
+            Randomize Questions
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="randomize_options" class="form-checkbox">
+            Randomize Options
+          </label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Proctoring</h3>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="proctoring_enabled" class="form-checkbox">
+            Enable Proctoring
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="assessmentForm.get('proctoring_enabled')?.value">
+          <label>Proctoring Type</label>
+          <select formControlName="proctoring_type" class="form-control">
+            <option value="browser_lock">Browser Lock</option>
+            <option value="webcam">Webcam Monitoring</option>
+            <option value="ip_tracking">IP Tracking</option>
+            <option value="device_fingerprint">Device Fingerprint</option>
+          </select>
+        </div>
+      </div>
+    </form>
+
+    <div class="actions">
+      <button class="btn btn-primary" (click)="saveAssessment()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save Assessment' }}
+      </button>
+      <button class="btn btn-secondary" *ngIf="assessmentId && assessment?.status === 'draft'" (click)="publishAssessment()" [disabled]="loading">
+        Publish
+      </button>
+      <button class="btn btn-danger" *ngIf="assessmentId" (click)="archiveAssessment()" [disabled]="loading">
+        Archive
+      </button>
+    </div>
+  </div>
+
+  <!-- QUESTIONS TAB -->
+  <div *ngIf="activeTab === 'questions'" class="tab-content">
+    <div class="questions-section">
+      <div class="section-header">
+        <h3>Questions ({{ questions.length }})</h3>
+        <button class="btn btn-primary" [routerLink]="['/assessments', assessmentId, 'questions', 'new']">
+          ➕ Add Question
+        </button>
+      </div>
+
+      <div class="questions-list">
+        <div *ngIf="questions.length === 0" class="empty-state">
+          <p>No questions yet. Create your first question to get started.</p>
+        </div>
+
+        <div *ngFor="let q of questions; let i = index" class="question-item">
+          <div class="question-number">Q{{ i + 1 }}</div>
+          <div class="question-info">
+            <h4>{{ q.text }}</h4>
+            <div class="question-meta">
+              <span class="badge badge-type">{{ q.type }}</span>
+              <span class="badge badge-difficulty" [ngClass]="'difficulty-' + q.difficulty">{{ q.difficulty }}</span>
+              <span class="badge badge-points">{{ q.points }} pts</span>
+            </div>
+          </div>
+          <div class="question-actions">
+            <button class="btn btn-sm btn-secondary" [routerLink]="['/assessments', assessmentId, 'questions', q.id]">
+              Edit
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="loadQuestions(assessmentId!)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATTEMPT CONFIG TAB -->
+  <div *ngIf="activeTab === 'config'" class="tab-content">
+    <form [formGroup]="attemptConfigForm" class="form-grid">
+      <div class="form-section">
+        <h3>Attempt Configuration</h3>
+
+        <div class="form-group">
+          <label>Max Attempts *</label>
+          <input type="number" formControlName="max_attempts" class="form-control" min="1">
+        </div>
+
+        <div class="form-group">
+          <label>Time Limit (minutes) *</label>
+          <input type="number" formControlName="time_limit_minutes" class="form-control" min="0">
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="show_results_immediately" class="form-checkbox">
+            Show Results Immediately
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>Show Correct Answers After</label>
+          <select formControlName="show_correct_answers_after" class="form-control">
+            <option value="never">Never</option>
+            <option value="after_submission">After Submission</option>
+            <option value="after_all_attempts">After All Attempts</option>
+            <option value="after_deadline">After Deadline</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="allow_review" class="form-checkbox">
+            Allow Review of Answers
+          </label>
+        </div>
+      </div>
+    </form>
+
+    <div class="actions">
+      <button class="btn btn-primary" (click)="saveAttemptConfig()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save Configuration' }}
+      </button>
+    </div>
+  </div>
+</div>

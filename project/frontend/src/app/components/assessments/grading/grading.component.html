@@ -1,0 +1,168 @@
+<div class="grading-interface">
+  <div class="header">
+    <h1>✍️ Grade Submissions - {{ assessment?.title }}</h1>
+    <button class="btn btn-primary" (click)="exportGradingResults()">⬇️ Export Results</button>
+  </div>
+
+  <div class="grading-container">
+    <!-- LEFT SIDEBAR: ATTEMPTS LIST -->
+    <div class="attempts-list">
+      <div class="list-header">
+        <h3>Submissions ({{ attempts.length }})</h3>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="getProgress()"></div>
+        </div>
+        <span class="progress-text">{{ getProgress() | number: '1.0-0' }}% graded</span>
+      </div>
+
+      <div class="filter-buttons">
+        <button
+          class="filter-btn"
+          [class.active]="filterStatus === 'all'"
+          (click)="filterStatus = 'all'">
+          All
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filterStatus === 'pending'"
+          (click)="filterStatus = 'pending'">
+          Pending
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="filterStatus === 'graded'"
+          (click)="filterStatus = 'graded'">
+          Graded
+        </button>
+      </div>
+
+      <div class="attempts-scroll">
+        <div
+          *ngFor="let attempt of attempts; let i = index"
+          class="attempt-item"
+          [class.active]="currentAttemptIndex === i"
+          (click)="selectAttempt(i)">
+          <div class="attempt-number">Attempt {{ i + 1 }}</div>
+          <div class="attempt-meta">
+            <span class="user-id">{{ attempt.user_id }}</span>
+            <span class="status-badge" [ngClass]="'badge-' + attempt.status">
+              {{ attempt.status | uppercase }}
+            </span>
+          </div>
+          <div class="attempt-score" *ngIf="attempt.score !== null">
+            {{ attempt.score | number: '1.0-0' }} pts
+          </div>
+          <div class="attempt-date">{{ attempt.end_time | date: 'short' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT CONTENT: GRADING INTERFACE -->
+    <div class="grading-content">
+      <div *ngIf="loading" class="loading">Loading...</div>
+
+      <div *ngIf="!loading && currentAnswer" class="answer-section">
+        <!-- NAVIGATION -->
+        <div class="navigation">
+          <span class="nav-info">
+            Answer {{ currentAnswerIndex + 1 }} of {{ currentAnswers.length }}
+          </span>
+          <div class="nav-buttons">
+            <button
+              class="btn btn-sm btn-secondary"
+              [disabled]="currentAnswerIndex === 0"
+              (click)="selectAnswer(currentAnswerIndex - 1)">
+              ← Previous
+            </button>
+            <button
+              class="btn btn-sm btn-secondary"
+              [disabled]="currentAnswerIndex === currentAnswers.length - 1"
+              (click)="selectAnswer(currentAnswerIndex + 1)">
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <!-- ANSWER DISPLAY -->
+        <div class="answer-display">
+          <h4>Student Response</h4>
+          <div class="answer-text">
+            {{ currentAnswer.response_text }}
+          </div>
+
+          <div *ngIf="currentAnswer.response_file_url" class="answer-file">
+            <a [href]="currentAnswer.response_file_url" target="_blank" class="file-link">
+              📎 Download attached file
+            </a>
+          </div>
+        </div>
+
+        <!-- GRADING SECTION -->
+        <div class="grading-section">
+          <h4>Grade This Answer</h4>
+
+          <!-- RUBRIC -->
+          <div *ngIf="rubric" class="rubric-section">
+            <h5>Grading Rubric</h5>
+            <div class="rubric-criteria">
+              <div *ngFor="let criterion of rubric.criteria" class="criterion-item">
+                <label class="criterion-label">{{ criterion.name }}</label>
+                <p class="criterion-description">{{ criterion.description }}</p>
+
+                <div class="criterion-levels">
+                  <div *ngFor="let level of criterion.levels" class="level-option">
+                    <input
+                      type="radio"
+                      [name]="'criterion-' + criterion.id"
+                      [value]="level.points"
+                      (change)="currentScore = level.points"
+                      class="form-radio">
+                    <label class="level-label">
+                      <strong>{{ level.level_name }}</strong> ({{ level.points }} pts)
+                      <span class="level-description">{{ level.description }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCORE INPUT -->
+          <div *ngIf="!rubric" class="score-input">
+            <label>Score / Points</label>
+            <input type="number" [(ngModel)]="currentScore" class="form-control" min="0" step="0.5">
+          </div>
+
+          <!-- FEEDBACK -->
+          <div class="feedback-section">
+            <label>Feedback to Student</label>
+            <textarea
+              [(ngModel)]="currentFeedback"
+              class="form-control"
+              rows="4"
+              placeholder="Provide constructive feedback to help the student improve..."></textarea>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div class="grading-actions">
+            <button
+              class="btn btn-primary"
+              (click)="gradeCurrentAnswer()"
+              [disabled]="loading">
+              {{ loading ? 'Saving...' : '✓ Grade & Next' }}
+            </button>
+            <button
+              class="btn btn-secondary"
+              (click)="selectAnswer(currentAnswerIndex)">
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && currentAnswers.length === 0" class="empty-state">
+        <p>No answers pending grading for this attempt.</p>
+      </div>
+    </div>
+  </div>
+</div>

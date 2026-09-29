@@ -1,0 +1,115 @@
+<div class="prompts-container">
+  <div class="prompts-header">
+    <h1>💡 My Prompts</h1>
+    <button class="btn btn-primary" (click)="createNewPrompt()">
+      + Create New Prompt
+    </button>
+  </div>
+
+  <!-- Filter Controls -->
+  <div class="filter-section">
+    <div class="filter-group">
+      <button
+        class="filter-btn"
+        [class.active]="filterStatus === ''"
+        (click)="filterByStatus('')"
+      >
+        All ({{ total }})
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="filterStatus === 'draft'"
+        (click)="filterByStatus('draft')"
+      >
+        Drafts
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="filterStatus === 'published'"
+        (click)="filterByStatus('published')"
+      >
+        Published
+      </button>
+    </div>
+  </div>
+
+  <!-- Prompts Table -->
+  <div class="prompts-table-container">
+    <div *ngIf="isLoading" class="loading">
+      <p>Loading prompts...</p>
+    </div>
+
+    <div *ngIf="!isLoading && prompts.length === 0" class="empty-state">
+      <p>No prompts yet</p>
+      <button class="btn btn-primary" (click)="createNewPrompt()">
+        Create your first prompt
+      </button>
+    </div>
+
+    <table *ngIf="!isLoading && prompts.length > 0" class="prompts-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Domain</th>
+          <th>Technique</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prompt of prompts" class="prompt-row">
+          <td class="title-cell">
+            <strong>{{ prompt.title }}</strong>
+            <div class="preview">{{ prompt.content.substring(0, 100) }}...</div>
+          </td>
+          <td>{{ prompt.domain || '-' }}</td>
+          <td>{{ prompt.technique || '-' }}</td>
+          <td>
+            <span class="badge" [class]="getStatusBadge(prompt.status)">
+              {{ prompt.status }}
+            </span>
+          </td>
+          <td class="date-cell">{{ prompt.created_at | date:'short' }}</td>
+          <td class="actions-cell">
+            <button
+              class="btn-icon"
+              (click)="editPrompt(prompt.id)"
+              title="Edit"
+            >
+              ✎
+            </button>
+            <button
+              class="btn-icon btn-danger"
+              (click)="deletePrompt(prompt.id)"
+              title="Delete"
+            >
+              🗑
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && prompts.length > 0" class="pagination">
+    <button
+      class="btn btn-secondary"
+      (click)="prevPage()"
+      [disabled]="skip === 0"
+    >
+      ← Previous
+    </button>
+    <span class="pagination-info">
+      Showing {{ skip + 1 }}-{{ Math.min(skip + limit, total) }} of {{ total }}
+    </span>
+    <button
+      class="btn btn-secondary"
+      (click)="nextPage()"
+      [disabled]="skip + limit >= total"
+    >
+      Next →
+    </button>
+  </div>
+</div>
