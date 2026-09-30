@@ -188,6 +188,54 @@ class SubmissionResponse(BaseModel):
     class Config:
         from_attributes = True
 
+# ============== PROMPT SCHEMAS ==============
+class PromptCreate(BaseModel):
+    title: str = Field(..., min_length=1, max_length=255)
+    content: str = Field(..., min_length=1)
+    technique: Optional[str] = None
+    domain: Optional[str] = None
+
+class PromptUpdate(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    technique: Optional[str] = None
+    domain: Optional[str] = None
+    status: Optional[str] = None
+
+class PromptResponse(BaseModel):
+    id: str
+    title: str
+    content: str
+    technique: Optional[str]
+    domain: Optional[str]
+    status: str
+    version: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# ============== PROMPT EVALUATION SCHEMAS ==============
+class PromptEvaluationResponse(BaseModel):
+    id: str
+    prompt_id: str
+    clarity_score: float
+    specificity_score: float
+    structure_score: float
+    completeness_score: float
+    efficiency_score: float
+    total_score: float
+    feedback: Optional[str]
+    recommendations: Optional[str]
+    evaluated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class PromptWithEvaluation(PromptResponse):
+    evaluations: List[PromptEvaluationResponse] = []
+
 # ============== PAGINATION ==============
 class PaginationParams(BaseModel):
     skip: int = 0

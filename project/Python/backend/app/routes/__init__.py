@@ -2,4 +2,4 @@
 API routes package
 """
 
-from . import auth, courses, assessments, users
+from . import auth, courses, assessments, users, prompts

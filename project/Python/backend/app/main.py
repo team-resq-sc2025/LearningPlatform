@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import get_db, check_database_connection, create_tables, database_info
 from app.models import Base
-from app.routes import auth, courses, assessments, users
+from app.routes import auth, courses, assessments, users, prompts
 import logging
 
 # Configure logging
@@ -38,6 +38,7 @@ app.include_router(auth.router)
 app.include_router(courses.router)
 app.include_router(assessments.router)
 app.include_router(users.router)
+app.include_router(prompts.router)
 
 
 @app.on_event("startup")

@@ -183,3 +183,51 @@ class Certificate(Base):
     issued_at = Column(DateTime, default=datetime.utcnow)
     expires_at = Column(DateTime, nullable=True)
     verification_code = Column(String(100), unique=True)
+
+
+class Prompt(Base):
+    """AI Prompt model for evaluation"""
+    __tablename__ = "prompts"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    org_id = Column(String(36), ForeignKey("organizations.id"), nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    title = Column(String(255), nullable=False)
+    content = Column(Text, nullable=False)
+    technique = Column(String(100))  # zero-shot, few-shot, chain-of-thought, etc.
+    domain = Column(String(100))  # code, content, analysis, etc.
+    status = Column(String(50), default="draft")  # draft, published, archived
+    version = Column(Integer, default=1)
+    parent_id = Column(String(36), ForeignKey("prompts.id"), nullable=True)  # for versioning
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    organization = relationship("Organization")
+    user = relationship("User")
+    evaluations = relationship("PromptEvaluation", back_populates="prompt", cascade="all, delete-orphan")
+
+
+class PromptEvaluation(Base):
+    """Evaluation scores for prompts"""
+    __tablename__ = "prompt_evaluations"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    prompt_id = Column(String(36), ForeignKey("prompts.id"), nullable=False)
+
+    # Scoring dimensions (0-100 scale within max points)
+    clarity_score = Column(Float, default=0.0)  # 0-25
+    specificity_score = Column(Float, default=0.0)  # 0-25
+    structure_score = Column(Float, default=0.0)  # 0-20
+    completeness_score = Column(Float, default=0.0)  # 0-15
+    efficiency_score = Column(Float, default=0.0)  # 0-15
+
+    # Overall score and feedback
+    total_score = Column(Float, default=0.0)  # 0-100
+    feedback = Column(Text)  # Detailed feedback
+    recommendations = Column(Text)  # Improvement suggestions (JSON)
+
+    evaluated_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    prompt = relationship("Prompt", back_populates="evaluations")
